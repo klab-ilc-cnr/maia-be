@@ -16,7 +16,28 @@
     <description>demo application for user/roles </description>
     <properties>
         <java.version>11</java.version>
+        <start-class>it.cnr.ilc.projectx.Application</start-class>
+        <log4j2.version>2.17.0</log4j2.version>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>local-dev</id>
+            <properties>
+                <activatedProperties>local-dev</activatedProperties>
+                <datasourceUrl>jdbc:postgresql://localhost:5432/PROJECTX</datasourceUrl>
+                <datasourceUser>postgres</datasourceUser>
+                <datasourcePwd>admin</datasourcePwd>
+                <serverPort>9000</serverPort>
+                <keycloakAuthServerUrl>http://localhost:8080/auth/</keycloakAuthServerUrl>
+                <gayaUserManagerSecret>7e7c6e18-286c-4feb-a931-56dd2f423e71</gayaUserManagerSecret>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -27,11 +48,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -56,6 +72,19 @@
             <version>12.0.2</version>
         </dependency>
 
+        <!-- DB  -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.vladmihalcea</groupId>
+            <artifactId>hibernate-types-52</artifactId>
+            <version>2.9.7</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -68,12 +97,19 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
 </project>
