@@ -63,7 +63,9 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/users").authenticated()
-                .anyRequest().permitAll();
+                .anyRequest().permitAll()
+                .and()
+                .csrf().disable();
     }
 }
 
