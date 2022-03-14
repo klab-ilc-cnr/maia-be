@@ -3,6 +3,7 @@ package it.cnr.ilc.projectx.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * Description of User
@@ -30,15 +31,28 @@ public class User {
     @NonNull
     private String name;
 
+//    @NonNull
+    private String surname;
+
     @NonNull
     private String email;
+
+    private String username;
+
+    private LocalDateTime created;
+
+    private LocalDateTime updated;
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", created=" + created +
+                ", updated=" + updated +
                 '}';
     }
 }
