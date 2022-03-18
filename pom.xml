@@ -29,7 +29,7 @@
                 <datasourceUser>postgres</datasourceUser>
                 <datasourcePwd>admin</datasourcePwd>
                 <serverPort>9000</serverPort>
-                <keycloakAuthServerUrl>http://localhost:8080/auth/</keycloakAuthServerUrl>
+                <keycloakAuthServerUrl>http://localhost:8080/</keycloakAuthServerUrl>
                 <gayaUserManagerSecret>7e7c6e18-286c-4feb-a931-56dd2f423e71</gayaUserManagerSecret>
             </properties>
             <activation>
@@ -63,13 +63,13 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-spring-boot-starter</artifactId>
-            <version>12.0.2</version>
+            <version>17.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>
-            <version>12.0.2</version>
+            <version>17.0.0</version>
         </dependency>
 
         <!-- DB  -->
