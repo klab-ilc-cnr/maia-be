@@ -26,13 +26,12 @@ public class UserController {
     private final UserRepository userRepository;
 
     @GetMapping
-//    @RolesAllowed("Amministratore")
-    @PreAuthorize("hasRole('Amministratore')")
     public List<User> getUsers() {
         return (List<User>) userRepository.findAll();
     }
 
     @PostMapping
+    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.roles.ProjectxRoles).AMMINISTRATORE)")
     void addUser(@RequestBody User user) {
         userRepository.save(user);
     }
