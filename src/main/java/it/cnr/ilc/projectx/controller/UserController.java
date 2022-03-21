@@ -4,8 +4,10 @@ import it.cnr.ilc.projectx.model.User;
 import it.cnr.ilc.projectx.repository.UserRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 /**
@@ -24,6 +26,8 @@ public class UserController {
     private final UserRepository userRepository;
 
     @GetMapping
+//    @RolesAllowed("Amministratore")
+    @PreAuthorize("hasRole('Amministratore')")
     public List<User> getUsers() {
         return (List<User>) userRepository.findAll();
     }
