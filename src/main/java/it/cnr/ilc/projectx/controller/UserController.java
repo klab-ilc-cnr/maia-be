@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.roles.ProjectxRoles).AMMINISTRATORE)")
+    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.roles.Roles).AMMINISTRATORE)")
     void addUser(@RequestBody User user) {
         userRepository.save(user);
     }

@@ -1,9 +1,9 @@
 package it.cnr.ilc.projectx.model;
 
+import it.cnr.ilc.projectx.roles.Roles;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 /**
  * Description of User
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends TracedEntity {
 
     public static final String TABLE_NAME = "users";
     public static final String GENERATOR_NAME = TABLE_NAME + "_generator";
@@ -37,11 +37,12 @@ public class User {
     @NonNull
     private String email;
 
-    private String username;
+//    private String username;
 
-    private LocalDateTime created;
+    @Enumerated(EnumType.STRING)
+    private Roles role;
 
-    private LocalDateTime updated;
+    private boolean active;
 
     @Override
     public String toString() {
@@ -50,9 +51,10 @@ public class User {
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
-                ", username='" + username + '\'' +
-                ", created=" + created +
-                ", updated=" + updated +
+//                ", username='" + username + '\'' +
+                ", role='" + role + '\'' +
+                ", created=" + getCreated() +
+                ", updated=" + getUpdated() +
                 '}';
     }
 }
