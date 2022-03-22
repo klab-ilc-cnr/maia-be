@@ -1,9 +1,9 @@
 package it.cnr.ilc.projectx.model;
 
-import it.cnr.ilc.projectx.roles.Roles;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Description of User
@@ -39,8 +39,11 @@ public class User extends TracedEntity {
 
 //    private String username;
 
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", schema = "public", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Roles role;
+    private Set<Role> roles;
 
     private boolean active;
 
@@ -51,10 +54,8 @@ public class User extends TracedEntity {
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
-//                ", username='" + username + '\'' +
-                ", role='" + role + '\'' +
-                ", created=" + getCreated() +
-                ", updated=" + getUpdated() +
+                ", roles=" + roles +
+                ", active=" + active +
                 '}';
     }
 }

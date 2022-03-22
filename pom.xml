@@ -30,7 +30,7 @@
                 <datasourcePwd>admin</datasourcePwd>
                 <serverPort>9000</serverPort>
                 <keycloakAuthServerUrl>http://localhost:8080/</keycloakAuthServerUrl>
-                <gayaUserManagerSecret>7e7c6e18-286c-4feb-a931-56dd2f423e71</gayaUserManagerSecret>
+                <projectxUserManagerSecret>7e7c6e18-286c-4feb-a931-56dd2f423e71</projectxUserManagerSecret>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -46,6 +46,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -102,14 +107,16 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${project.parent.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
-
 </project>

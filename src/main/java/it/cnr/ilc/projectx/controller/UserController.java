@@ -1,13 +1,13 @@
 package it.cnr.ilc.projectx.controller;
 
-import it.cnr.ilc.projectx.model.User;
-import it.cnr.ilc.projectx.repository.UserRepository;
+import it.cnr.ilc.projectx.dto.UserDto;
+import it.cnr.ilc.projectx.service.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 /**
@@ -23,16 +23,16 @@ import java.util.List;
 public class UserController {
 
     @NonNull
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @GetMapping
-    public List<User> getUsers() {
-        return (List<User>) userRepository.findAll();
+    public ResponseEntity<List<UserDto>> getUsers() {
+        return ResponseEntity.ok(userService.getUsers());
     }
 
     @PostMapping
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.roles.Roles).AMMINISTRATORE)")
-    void addUser(@RequestBody User user) {
-        userRepository.save(user);
+    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
+        return ResponseEntity.ok(userService.save(userDto));
     }
 }

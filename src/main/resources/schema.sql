@@ -10,10 +10,19 @@ CREATE TABLE public.users
     created_by              bigint,
     updated timestamp without time zone,
     updated_by              bigint,
-    role    character varying(30) not null,
     active  bit default 1::bit,
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
+
+--- USER ROLES
+CREATE TABLE public.user_roles
+(
+    user_id bigint NOT NULL,
+    role character varying(30) COLLATE pg_catalog."default"
+);
+
+ALTER TABLE user_roles
+    add CONSTRAINT FK_user_roles_user_id FOREIGN KEY ( user_id ) REFERENCES public.users ( id );
 
 -- -- LANGUAGES
 -- CREATE TABLE public.languages

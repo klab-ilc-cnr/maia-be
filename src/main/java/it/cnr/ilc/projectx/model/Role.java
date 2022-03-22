@@ -1,6 +1,6 @@
-package it.cnr.ilc.projectx.roles;
+package it.cnr.ilc.projectx.model;
 
-public enum Roles {
+public enum Role {
     AMMINISTRATORE,
     SUPERVISORE,
     LESSICOGRAFO,
