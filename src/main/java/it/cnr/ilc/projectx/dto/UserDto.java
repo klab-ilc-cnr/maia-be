@@ -2,6 +2,7 @@ package it.cnr.ilc.projectx.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import it.cnr.ilc.projectx.model.Role;
 import it.cnr.ilc.projectx.utils.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,10 +31,14 @@ public class UserDto implements Serializable {
 
     private String email;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtils.DATE_FORMAT_ISO_LOCAL_DATE_TIME)
-    private LocalDateTime created;
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtils.DATE_FORMAT_ISO_LOCAL_DATE_TIME)
+//    private LocalDateTime created;
+//
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtils.DATE_FORMAT_ISO_LOCAL_DATE_TIME)
+//    private LocalDateTime updated;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtils.DATE_FORMAT_ISO_LOCAL_DATE_TIME)
-    private LocalDateTime updated;
+    private Role role;
+
+    private boolean active;
 
 }

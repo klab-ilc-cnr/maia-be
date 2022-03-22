@@ -1,6 +1,8 @@
 package it.cnr.ilc.projectx.controller;
 
 import it.cnr.ilc.projectx.dto.UserDto;
+import it.cnr.ilc.projectx.mediator.Mediator;
+import it.cnr.ilc.projectx.request.CreateUser;
 import it.cnr.ilc.projectx.service.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,8 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api/users")
 public class UserController {
+    @NonNull
+    private final Mediator mediator;
 
     @NonNull
     private final UserService userService;
@@ -33,6 +37,7 @@ public class UserController {
     @PostMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.save(userDto));
+        final UserDto responseUserDto = mediator.send(new CreateUser(userDto));
+        return ResponseEntity.ok(responseUserDto);
     }
 }

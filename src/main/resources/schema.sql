@@ -10,7 +10,7 @@ CREATE TABLE public.users
     created_by              bigint,
     updated timestamp without time zone,
     updated_by              bigint,
-    active  bit default 1::bit,
+    active  boolean default true,
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
 

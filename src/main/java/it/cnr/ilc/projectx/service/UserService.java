@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,12 +52,14 @@ public class UserService {
     public UserDto mapToDto(User user) {
         UserDto dto = new UserDto();
         BeanUtils.copyProperties(user, dto);
+        dto.setRole(user.getRoles().stream().findFirst().get());
         return dto;
     }
 
     public User mapToEntity(UserDto dto) {
         User user = new User();
         BeanUtils.copyProperties(dto, user);
+        user.setRoles(EnumSet.of(dto.getRole()));
         return user;
     }
 }
