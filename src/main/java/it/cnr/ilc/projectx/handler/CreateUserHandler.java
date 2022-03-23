@@ -8,14 +8,13 @@ import it.cnr.ilc.projectx.service.KeycloakAdminService;
 import it.cnr.ilc.projectx.service.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CreateUserHandler implements RequestHandler<CreateUser, UserDto> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DisplayConsoleMessageRequestHandler.class);
     @NonNull
     private final UserService userService;
 
@@ -31,7 +30,7 @@ public class CreateUserHandler implements RequestHandler<CreateUser, UserDto> {
 
             return userService.save(request.getUser());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            log.error(e.getMessage());
             return null;
         }
     }
