@@ -30,7 +30,7 @@
                 <datasourcePwd>admin</datasourcePwd>
                 <serverPort>9000</serverPort>
                 <keycloakAuthServerUrl>http://localhost:8080/</keycloakAuthServerUrl>
-                <projectxUserManagerSecret>7e7c6e18-286c-4feb-a931-56dd2f423e71</projectxUserManagerSecret>
+                <projectxUserManagerSecret>kfO8opxgurpFz7EuK13JIwdzOmlfxcXF</projectxUserManagerSecret>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
