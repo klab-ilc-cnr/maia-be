@@ -10,11 +10,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +48,12 @@ public class UserService {
     public CreateUserDto add(CreateUserDto userDto) {
         User user = userRepository.save(mapToEntity(userDto));
         return mapToCreateUserDto(user);
+    }
+
+    @Transactional
+    public UserDto update(UserDto userDto) {
+        User user = userRepository.save(mapToEntity(userDto));
+        return mapToDto(user);
     }
 
     private List<UserDto> mapToDtos(List<User> users) {
@@ -87,5 +95,15 @@ public class UserService {
         user.setCreated(LocalDateTime.now());
         user.setUpdated(LocalDateTime.now());
         return user;
+    }
+
+    @Transactional(readOnly = true)
+    public UserDto getUserByEmail(@NotBlank String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            return null;
+        }
+
+        return mapToDto(user.get());
     }
 }

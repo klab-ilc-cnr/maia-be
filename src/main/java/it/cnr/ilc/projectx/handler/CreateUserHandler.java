@@ -33,7 +33,7 @@ public class CreateUserHandler implements RequestHandler<CreateUser, CreateUserD
         try {
             KeycloakAdminService.KeycloakAdminClient keycloakAdminClient = keycloakAdminService.getClient();
             User userEntity = userService.mapToEntity(request.getUser());
-            keycloakAdminClient.createUser(userEntity, "test");
+            keycloakAdminClient.createUser(userEntity, "test"); //FIXME
 
             CreateUserDto responseUserDto = userService.add(request.getUser());
             return new XResult<>(responseUserDto);

@@ -4,6 +4,7 @@ import it.cnr.ilc.projectx.dto.CreateUserDto;
 import it.cnr.ilc.projectx.dto.UserDto;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.CreateUser;
+import it.cnr.ilc.projectx.request.UpdateUser;
 import it.cnr.ilc.projectx.service.UserService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
@@ -52,6 +53,17 @@ public class UserController {
             ResponseEntity.badRequest();
         }
         CreateUserDto responseUserDto = response.getPayload();
+        return ResponseEntity.ok(responseUserDto);
+    }
+
+    @PostMapping("/updateUser")
+    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) throws Exception {
+        XResult<UserDto> response = mediator.sendXResult(new UpdateUser(userDto));
+        if (response.IsFailed()) {
+            ResponseEntity.badRequest();
+        }
+        UserDto responseUserDto = response.getPayload();
         return ResponseEntity.ok(responseUserDto);
     }
 }
