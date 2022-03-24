@@ -1,6 +1,6 @@
 package it.cnr.ilc.projectx.handler;
 
-import it.cnr.ilc.projectx.dto.UserDto;
+import it.cnr.ilc.projectx.dto.CreateUserDto;
 import it.cnr.ilc.projectx.mediator.RequestHandler;
 import it.cnr.ilc.projectx.model.User;
 import it.cnr.ilc.projectx.request.CreateUser;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CreateUserHandler implements RequestHandler<CreateUser, UserDto> {
+public class CreateUserHandler implements RequestHandler<CreateUser, CreateUserDto> {
     @NonNull
     private final UserService userService;
 
@@ -24,18 +24,18 @@ public class CreateUserHandler implements RequestHandler<CreateUser, UserDto> {
     private final KeycloakAdminService keycloakAdminService;
 
     @Override
-    public UserDto handle(CreateUser request) {
+    public CreateUserDto handle(CreateUser request) {
         throw new NotImplementedYetException();
     }
 
     @Override
-    public XResult<UserDto> handleXResult(CreateUser request) {
+    public XResult<CreateUserDto> handleXResult(CreateUser request) {
         try {
             KeycloakAdminService.KeycloakAdminClient keycloakAdminClient = keycloakAdminService.getClient();
             User userEntity = userService.mapToEntity(request.getUser());
             keycloakAdminClient.createUser(userEntity, "test");
 
-            UserDto responseUserDto = userService.save(request.getUser());
+            CreateUserDto responseUserDto = userService.add(request.getUser());
             return new XResult<>(responseUserDto);
         } catch (Exception e) {
             log.error(e.getMessage());

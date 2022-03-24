@@ -1,14 +1,11 @@
 package it.cnr.ilc.projectx.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import it.cnr.ilc.projectx.model.interfaces.ITracedEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -19,13 +16,10 @@ import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @SuperBuilder
 @MappedSuperclass
-@TypeDefs({
-        @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-})
 @NoArgsConstructor
 @Getter
 @Setter
@@ -35,7 +29,7 @@ public abstract class TracedEntity implements Serializable, ITracedEntity {
 
     @Column
     @CreatedDate
-    private Timestamp created;
+    private LocalDateTime created;
 
     @Column
     @CreatedBy
@@ -43,7 +37,7 @@ public abstract class TracedEntity implements Serializable, ITracedEntity {
 
     @Column
     @LastModifiedDate
-    private Timestamp updated;
+    private LocalDateTime updated;
 
     @Column
     @LastModifiedBy

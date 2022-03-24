@@ -13,16 +13,16 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * Description of UserDto
+ * Description of CreateUserDto
  * <p>
- * Created at 22/03/2022 10:34
+ * Created at 24/03/2022 15:34
  * Author Bianca Barattolo (BB) - <b.barattolo@xeel.tech>
  */
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserDto implements Serializable {
+public class CreateUserDto implements Serializable {
     private long id;
 
     private String name;
@@ -30,12 +30,6 @@ public class UserDto implements Serializable {
     private String surname;
 
     private String email;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtils.DATE_FORMAT_ISO_LOCAL_DATE_TIME)
-    private LocalDateTime created;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtils.DATE_FORMAT_ISO_LOCAL_DATE_TIME)
-    private LocalDateTime updated;
 
     private Role role;
 

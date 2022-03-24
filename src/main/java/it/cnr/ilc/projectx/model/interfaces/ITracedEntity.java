@@ -1,13 +1,13 @@
 package it.cnr.ilc.projectx.model.interfaces;
 
 import javax.validation.constraints.Positive;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public interface ITracedEntity {
 
-    Timestamp getCreated();
+    LocalDateTime getCreated();
 
-    void setCreated(Timestamp timestamp);
+    void setCreated(LocalDateTime created);
 
 
     Long getCreatedBy();
@@ -15,9 +15,9 @@ public interface ITracedEntity {
     void setCreatedBy(@Positive Long createdBy);
 
 
-    Timestamp getUpdated();
+    LocalDateTime getUpdated();
 
-    void setUpdated(Timestamp updated);
+    void setUpdated(LocalDateTime updated);
 
 
     Long getUpdatedBy();

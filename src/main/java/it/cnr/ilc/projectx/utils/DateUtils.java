@@ -16,7 +16,7 @@ import static java.util.Objects.isNull;
  */
 public final class DateUtils {
 
-    public static final String DATE_FORMAT_ISO_LOCAL_DATE_TIME = "yyyy-MM-ddTHH:mm:ss";
+    public static final String DATE_FORMAT_ISO_LOCAL_DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     public static final String DATE_FORMAT_ddMMyyyy = "dd/MM/yyyy";
     public static final String DATE_FORMAT_dd_MM_yyyy =  "dd-MM-yyyy";
     public static final String DATE_FORMAT_ddMMyyyyHHmmss = "dd-MM-yyyy HH:mm:ss";
