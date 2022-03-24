@@ -1,7 +1,7 @@
 package it.cnr.ilc.projectx.handler;
 
 import it.cnr.ilc.projectx.dto.UserDto;
-import it.cnr.ilc.projectx.mediator.RequestHandler;
+import it.cnr.ilc.projectx.mediator.RequestHandler2;
 import it.cnr.ilc.projectx.model.User;
 import it.cnr.ilc.projectx.request.CreateUser;
 import it.cnr.ilc.projectx.service.KeycloakAdminService;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CreateUserHandler implements RequestHandler<CreateUser, XResult<UserDto>> {
+public class CreateUserHandler implements RequestHandler2<CreateUser, UserDto> {
     @NonNull
     private final UserService userService;
 

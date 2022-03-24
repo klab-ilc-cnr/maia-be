@@ -1,5 +1,6 @@
 package it.cnr.ilc.projectx.mediator;
 
+import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -60,7 +61,7 @@ public class SpringMediator implements Mediator {
     }
 
     @Override
-    public <T> T send2(Request<T> request) {
+    public <T> XResult<T> send2(Request<T> request) {
         if (request == null) {
             throw new NullPointerException("The given request object cannot be null");
         }
@@ -71,7 +72,7 @@ public class SpringMediator implements Mediator {
         final Class<T> responseType = (Class<T>) ((ParameterizedType) requestType.getGenericInterfaces()[0]).getActualTypeArguments()[0];
 
         // Retrieve RequestHandler beans based on request and response types.
-        final String[] beanNames = context.getBeanNamesForType(ResolvableType.forClassWithGenerics(RequestHandler.class, requestType, responseType));
+        final String[] beanNames = context.getBeanNamesForType(ResolvableType.forClassWithGenerics(RequestHandler2.class, requestType, responseType));
 
         // There must be a registered handler.
         if (beanNames.length == 0) {
