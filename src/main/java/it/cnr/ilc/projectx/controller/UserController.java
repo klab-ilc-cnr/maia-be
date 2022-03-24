@@ -4,6 +4,7 @@ import it.cnr.ilc.projectx.dto.UserDto;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.CreateUser;
 import it.cnr.ilc.projectx.service.UserService;
+import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +37,12 @@ public class UserController {
 
     @PostMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
-        final UserDto responseUserDto = mediator.send(new CreateUser(userDto));
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) throws Exception {
+        XResult<UserDto> response = mediator.send2(new CreateUser(userDto));
+        if (response.IsFailed()) {
+            ResponseEntity.badRequest();
+        }
+        UserDto responseUserDto = response.getPayload();
         return ResponseEntity.ok(responseUserDto);
     }
 }

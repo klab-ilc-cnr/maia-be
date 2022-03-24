@@ -3,8 +3,9 @@ package it.cnr.ilc.projectx.request;
 import it.cnr.ilc.projectx.dto.UserDto;
 import it.cnr.ilc.projectx.mediator.Request;
 import it.cnr.ilc.projectx.model.User;
+import it.cnr.ilc.projectx.xresults.XResult;
 
-public class CreateUser implements Request<UserDto> {
+public class CreateUser implements Request<XResult<UserDto>> {
     private final UserDto user;
 
     public CreateUser(final UserDto user) {
