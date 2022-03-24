@@ -61,7 +61,7 @@ public class SpringMediator implements Mediator {
     }
 
     @Override
-    public <T> XResult<T> send2(Request<T> request) {
+    public <T> XResult<T> sendXResult(Request<T> request) {
         if (request == null) {
             throw new NullPointerException("The given request object cannot be null");
         }
@@ -72,7 +72,7 @@ public class SpringMediator implements Mediator {
         final Class<T> responseType = (Class<T>) ((ParameterizedType) requestType.getGenericInterfaces()[0]).getActualTypeArguments()[0];
 
         // Retrieve RequestHandler beans based on request and response types.
-        final String[] beanNames = context.getBeanNamesForType(ResolvableType.forClassWithGenerics(RequestHandler2.class, requestType, responseType));
+        final String[] beanNames = context.getBeanNamesForType(ResolvableType.forClassWithGenerics(RequestHandler.class, requestType, responseType));
 
         // There must be a registered handler.
         if (beanNames.length == 0) {
@@ -84,8 +84,8 @@ public class SpringMediator implements Mediator {
             throw new IllegalStateException("More than one handlers found. Only one handler per request is allowed.");
         }
 
-        final RequestHandler2<Request<T>, T> requestHandler = (RequestHandler2<Request<T>, T>) context.getBean(beanNames[0]);
+        final RequestHandler<Request<T>, T> requestHandler = (RequestHandler<Request<T>, T>) context.getBean(beanNames[0]);
 
-        return requestHandler.handle(request);
+        return requestHandler.handleXResult(request);
     }
 }

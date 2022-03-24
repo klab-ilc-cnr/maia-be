@@ -38,7 +38,7 @@ public class UserController {
     @PostMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) throws Exception {
-        XResult<UserDto> response = mediator.send2(new CreateUser(userDto));
+        XResult<UserDto> response = mediator.sendXResult(new CreateUser(userDto));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }

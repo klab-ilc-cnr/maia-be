@@ -2,6 +2,8 @@ package it.cnr.ilc.projectx.mediator;
 
 
 import it.cnr.ilc.projectx.xresults.XResult;
+import jdk.jshell.spi.ExecutionControl;
+import org.springframework.web.client.HttpServerErrorException;
 
 /**
  *
@@ -14,5 +16,5 @@ public interface Mediator {
      */
     <T> T send(final Request<T> request);
 
-    <T> XResult<T> send2(final Request<T> request);
+    <T> XResult<T> sendXResult(final Request<T> request);
 }
