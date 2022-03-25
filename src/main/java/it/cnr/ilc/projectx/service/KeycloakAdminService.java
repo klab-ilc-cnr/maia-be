@@ -197,21 +197,21 @@ public class KeycloakAdminService {
 
             //role to remove: original - new
             List<RoleRepresentation> rolesToRemove = getDifferenceBetweenFirstListAndSecond(originalRoleList, roleToBeList);
-            if(!rolesToRemove.isEmpty())
+            if (!rolesToRemove.isEmpty())
                 realm.users()
-                    .get(userId)
-                    .roles()
-                    .realmLevel()
-                    .remove(rolesToRemove);
+                        .get(userId)
+                        .roles()
+                        .realmLevel()
+                        .remove(rolesToRemove);
 
             //role to add: new - original
             List<RoleRepresentation> rolesToAdd = getDifferenceBetweenFirstListAndSecond(roleToBeList, originalRoleList);
-            if(!rolesToAdd.isEmpty())
+            if (!rolesToAdd.isEmpty())
                 realm.users()
-                    .get(userId)
-                    .roles()
-                    .realmLevel()
-                    .add(rolesToAdd);
+                        .get(userId)
+                        .roles()
+                        .realmLevel()
+                        .add(rolesToAdd);
         }
 
         private List<RoleRepresentation> getDifferenceBetweenFirstListAndSecond(List<String> first, List<String> second) {
@@ -230,7 +230,7 @@ public class KeycloakAdminService {
                 if (index != -1) {
                     addingRoles.add(existingRoles.get(index));
                 } else {
-                    log.info("Role "+ role + " doesn't exist");
+                    log.info("Role " + role + " doesn't exist");
                 }
             }
             return addingRoles;
@@ -240,7 +240,11 @@ public class KeycloakAdminService {
             //si ignorano uma e offline (ad uso keycloak)
             return existingRoles
                     .stream()
-                    .map(RoleRepresentation::getName).filter(s -> !(s.equals("uma_authorization") || s.equals("offline_access")))
+                    .map(RoleRepresentation::getName).filter(s ->
+                            !(s.equals("uma_authorization")
+                                    || s.equals("offline_access")
+                                    || s.equals("default-roles-princnr")
+                            ))
                     .collect(Collectors.toList());
         }
 
