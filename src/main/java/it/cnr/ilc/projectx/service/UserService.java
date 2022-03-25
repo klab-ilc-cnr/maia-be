@@ -2,6 +2,7 @@ package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.CreateUserDto;
 import it.cnr.ilc.projectx.dto.UserDto;
+import it.cnr.ilc.projectx.dto.UserUpdatedDto;
 import it.cnr.ilc.projectx.model.User;
 import it.cnr.ilc.projectx.repository.UserRepository;
 import lombok.NonNull;
@@ -51,9 +52,11 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto update(UserDto userDto) {
-        User user = userRepository.save(mapToEntity(userDto));
-        return mapToDto(user);
+    public UserUpdatedDto update(UserDto userDto) {
+        UserUpdatedDto userUpdatedDto = mapToUpdateUserDto(userDto);
+        userRepository.save(mapToEntity(userDto));
+
+        return userUpdatedDto;
     }
 
     private List<UserDto> mapToDtos(List<User> users) {
@@ -105,5 +108,12 @@ public class UserService {
         }
 
         return mapToDto(user.get());
+    }
+
+    public UserUpdatedDto mapToUpdateUserDto(UserDto user) {
+        UserUpdatedDto updatedUserDto = new UserUpdatedDto();
+        BeanUtils.copyProperties(user, updatedUserDto);
+        updatedUserDto.setUpdated(LocalDateTime.now());
+        return updatedUserDto;
     }
 }

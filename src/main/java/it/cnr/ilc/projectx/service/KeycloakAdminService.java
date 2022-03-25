@@ -80,7 +80,7 @@ public class KeycloakAdminService {
 //            userRepresentation.singleAttribute("locale", user.getUserLang().name().toLowerCase());
             userRepresentation.setEmailVerified(true);
             //questo campo deve essere sempre a true sennò le mail da keycloak non vengono inviate
-            userRepresentation.setEnabled(true);
+            userRepresentation.setEnabled(user.isActive());
             if (Objects.nonNull(password)) {
                 CredentialRepresentation credential = new CredentialRepresentation();
                 credential.setType(CredentialRepresentation.PASSWORD);
@@ -132,7 +132,7 @@ public class KeycloakAdminService {
             userRepresentation.setLastName(lastName);
             userRepresentation.setEmailVerified(true);
             //questo campo deve essere sempre a true sennò le mail da keycloak non vengono inviate
-            userRepresentation.setEnabled(true);
+            userRepresentation.setEnabled(user.isActive());
 
             assignRoles(id, user.getRoles());
 

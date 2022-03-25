@@ -34,13 +34,13 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE, T(it.cnr.ilc.projectx.model.Role).UTENTE_VIEWER)")
+    @PreAuthorize("hasAnyRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE, T(it.cnr.ilc.projectx.model.Role).SUPERVISORE)")
     public ResponseEntity<List<UserDto>> getUsers() {
         return ResponseEntity.ok(userService.getUsers());
     }
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE, T(it.cnr.ilc.projectx.model.Role).UTENTE_VIEWER)")
+    @PreAuthorize("hasAnyRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE, T(it.cnr.ilc.projectx.model.Role).SUPERVISORE)")
     public ResponseEntity<UserDto> getUser(@PathVariable @NotNull Long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }

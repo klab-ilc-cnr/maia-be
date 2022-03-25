@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.resteasy.spi.NotImplementedYetException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -28,18 +29,20 @@ public class CreateUserHandler implements RequestHandler<CreateUser, CreateUserD
         throw new NotImplementedYetException();
     }
 
+    @Transactional
     @Override
     public XResult<CreateUserDto> handleXResult(CreateUser request) {
         try {
+            CreateUserDto responseUserDto = userService.add(request.getUser());
+
             KeycloakAdminService.KeycloakAdminClient keycloakAdminClient = keycloakAdminService.getClient();
             User userEntity = userService.mapToEntity(request.getUser());
-            keycloakAdminClient.createUser(userEntity, "test"); //FIXME
+            keycloakAdminClient.createUser(userEntity, null);
 
-            CreateUserDto responseUserDto = userService.add(request.getUser());
             return new XResult<>(responseUserDto);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return null;
+            throw e;
         }
     }
 }
