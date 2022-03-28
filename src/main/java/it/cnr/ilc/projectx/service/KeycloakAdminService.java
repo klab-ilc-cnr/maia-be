@@ -55,15 +55,19 @@ public class KeycloakAdminService {
         keycloak.tokenManager().getAccessToken();
 
         RealmResource realm = keycloak.realm(keycloakConfig.getRealmName());
-        return new KeycloakAdminClient(realm);
+        String defaultRolesName = applicationConfig.getKeycloak().getUserManager().getDefaultRoleName();
+
+        return new KeycloakAdminClient(realm, defaultRolesName);
     }
 
     public static class KeycloakAdminClient {
 
         private final RealmResource realm;
+        private final String defaultRolesName;
 
-        private KeycloakAdminClient(RealmResource realm) {
+        private KeycloakAdminClient(RealmResource realm, String defaultRolesName) {
             this.realm = realm;
+            this.defaultRolesName = defaultRolesName;
         }
 
         public String createUser(User user, String password) {
@@ -215,9 +219,9 @@ public class KeycloakAdminService {
         }
 
         private List<RoleRepresentation> getDifferenceBetweenFirstListAndSecond(List<String> first, List<String> second) {
-            //si ignorano uma e offline (ad uso keycloak)
+            //si ignorano i ruoli di default (ad uso keycloak)
             List<RoleRepresentation> existingRoles = realm.roles().list().stream()
-                    .filter(roleRepresentation -> !(roleRepresentation.getName().equals("uma_authorization") || roleRepresentation.getName().equals("offline_access")))
+                    .filter(roleRepresentation -> !roleRepresentation.getName().equals(defaultRolesName))
                     .collect(Collectors.toList());
             List<String> serverRoleList = getServerExistingRoles(existingRoles);
 
@@ -241,10 +245,8 @@ public class KeycloakAdminService {
             return existingRoles
                     .stream()
                     .map(RoleRepresentation::getName).filter(s ->
-                            !(s.equals("uma_authorization")
-                                    || s.equals("offline_access")
-                                    || s.equals("default-roles-princnr")
-                            ))
+                            !s.equals(defaultRolesName)
+                    )
                     .collect(Collectors.toList());
         }
 

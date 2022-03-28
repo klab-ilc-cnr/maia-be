@@ -31,6 +31,7 @@ public class ApplicationConfig {
 
             private String clientId;
             private String clientSecret;
+            private String defaultRoleName;
 
         }
     }
