@@ -2,17 +2,19 @@ package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.CreateUserDto;
 import it.cnr.ilc.projectx.dto.UserDto;
-import it.cnr.ilc.projectx.dto.UserUpdatedDto;
+import it.cnr.ilc.projectx.dto.UpdateUserDto;
 import it.cnr.ilc.projectx.model.User;
 import it.cnr.ilc.projectx.repository.UserRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
  * Author Bianca Barattolo (BB) - <b.barattolo@xeel.tech>
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService {
 
@@ -52,11 +55,31 @@ public class UserService {
     }
 
     @Transactional
-    public UserUpdatedDto update(UserDto userDto) {
-        UserUpdatedDto userUpdatedDto = mapToUpdateUserDto(userDto);
-        userRepository.save(mapToEntity(userDto));
+    public UserDto update(UpdateUserDto updateUserDto) {
 
-        return userUpdatedDto;
+        UserDto userDto = getUserByEmail(updateUserDto.getEmail());
+
+        if (userDto == null) {
+            log.error("Cannot find user for email " + updateUserDto.getEmail());
+            throw new NotFoundException("Cannot find user for email " + updateUserDto.getEmail());
+        }
+
+        User userUpdatedDto = userRepository.save(mapToEntity(userDto, updateUserDto));
+
+        return mapToDto(userUpdatedDto);
+    }
+
+    private User mapToEntity(UserDto userDto, UpdateUserDto updateUserDto) {
+        User user = new User();
+        BeanUtils.copyProperties(userDto, user);
+
+        user.setRoles(EnumSet.of(updateUserDto.getRole()));
+        user.setUpdated(LocalDateTime.now());
+        user.setActive(updateUserDto.isActive());
+        user.setName(updateUserDto.getName());
+        user.setSurname(updateUserDto.getSurname());
+
+        return user;
     }
 
     private List<UserDto> mapToDtos(List<User> users) {
@@ -108,12 +131,5 @@ public class UserService {
         }
 
         return mapToDto(user.get());
-    }
-
-    public UserUpdatedDto mapToUpdateUserDto(UserDto user) {
-        UserUpdatedDto updatedUserDto = new UserUpdatedDto();
-        BeanUtils.copyProperties(user, updatedUserDto);
-        updatedUserDto.setUpdated(LocalDateTime.now());
-        return updatedUserDto;
     }
 }

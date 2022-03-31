@@ -1,10 +1,11 @@
 package it.cnr.ilc.projectx.controller;
 
 import it.cnr.ilc.projectx.dto.CreateUserDto;
+import it.cnr.ilc.projectx.dto.UpdateUserDto;
 import it.cnr.ilc.projectx.dto.UserDto;
 import it.cnr.ilc.projectx.mediator.Mediator;
-import it.cnr.ilc.projectx.request.CreateUser;
-import it.cnr.ilc.projectx.request.UpdateUser;
+import it.cnr.ilc.projectx.request.CreateUserRequest;
+import it.cnr.ilc.projectx.request.UpdateUserRequest;
 import it.cnr.ilc.projectx.service.UserService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
@@ -48,7 +49,7 @@ public class UserController {
     @PostMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<CreateUserDto> addUser(@RequestBody CreateUserDto createUserDto) throws Exception {
-        XResult<CreateUserDto> response = mediator.sendXResult(new CreateUser(createUserDto));
+        XResult<CreateUserDto> response = mediator.sendXResult(new CreateUserRequest(createUserDto));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }
@@ -58,8 +59,8 @@ public class UserController {
 
     @PostMapping("/updateUser")
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) throws Exception {
-        XResult<UserDto> response = mediator.sendXResult(new UpdateUser(userDto));
+    public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserDto userDto) throws Exception {
+        XResult<UserDto> response = mediator.sendXResult(new UpdateUserRequest(userDto));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }
