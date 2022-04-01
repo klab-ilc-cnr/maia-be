@@ -36,6 +36,7 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasAnyRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<List<UserDto>> getUsers() {
+//        return ResponseEntity.ok(userService.call());
         return ResponseEntity.ok(userService.getUsers());
     }
 

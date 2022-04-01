@@ -7,17 +7,23 @@ import it.cnr.ilc.projectx.model.User;
 import it.cnr.ilc.projectx.repository.UserRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +38,23 @@ public class UserService {
 
     @NonNull
     private final UserRepository userRepository;
+
+    @NonNull
+    private final RestTemplate restTemplate;
+
+    public List<UserDto> call(){
+        HttpServletRequest curRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        headers.add("authorization", curRequest.getHeader("Authorization"));
+        HttpEntity<String> entity = new HttpEntity(headers);
+        //Parse the string after getting the response
+        ResponseEntity<List<UserDto>> users = restTemplate.exchange("http://localhost:9090/fnape/api/utenti",
+                HttpMethod.GET, entity, new ParameterizedTypeReference<List<UserDto>>() {});
+        return users.getBody();
+    }
+
 
     @Transactional(readOnly = true)
     public List<UserDto> getUsers() {

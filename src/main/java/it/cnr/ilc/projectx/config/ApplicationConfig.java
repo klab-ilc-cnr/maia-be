@@ -3,7 +3,12 @@ package it.cnr.ilc.projectx.config;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
+
+import java.time.Duration;
 
 /**
  * Description of ApplicationConfig
@@ -18,6 +23,15 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfig {
 
     private Keycloak keycloak;
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+
+        return builder
+                .setConnectTimeout(Duration.ofMillis(3000))
+                .setReadTimeout(Duration.ofMillis(3000))
+                .build();
+    }
 
     @Getter
     @Setter
