@@ -24,6 +24,42 @@ CREATE TABLE public.user_roles
 ALTER TABLE user_roles
     add CONSTRAINT FK_user_roles_user_id FOREIGN KEY (user_id) REFERENCES public.users (id);
 
+--- WORKSPACES
+CREATE TABLE public.workspaces
+(
+    id      serial NOT NULL,
+    user_id bigint NOT NULL,
+    CONSTRAINT workspaces_pk PRIMARY KEY (id)
+);
+
+--- workspace_items;
+
+CREATE TABLE public.workspace_windows
+(
+    id           serial NOT NULL,
+    workspace_id bigint NOT NULL,
+    window_id    bigint NOT NULL,
+    "rank"       bigint NOT NULL DEFAULT 0,
+    CONSTRAINT workspace_windows_pk PRIMARY KEY (id),
+    CONSTRAINT workspace_windows_un UNIQUE (workspace_id, window_id, "rank"),
+    CONSTRAINT workspace_windows_fk FOREIGN KEY (workspace_id) REFERENCES public.workspaces (id)
+);
+
+
+--- WINDOW
+
+CREATE TABLE public.window
+(
+    id         serial4 NOT NULL,
+    "type"     varchar NOT NULL,
+    x_position decimal NOT NULL DEFAULT 0,
+    y_position decimal NOT NULL DEFAULT 0,
+    x_size     decimal NOT NULL DEFAULT 10,
+    y_size     decimal NOT NULL DEFAULT 10,
+    CONSTRAINT window_pk PRIMARY KEY (id)
+);
+
+
 -- -- LANGUAGES
 -- CREATE TABLE public.languages
 -- (
