@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Description of CreateUserDto
@@ -25,8 +27,6 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CreateUserDto implements Serializable {
-    private Long id;
-
     @NotBlank
     private String name;
 
@@ -40,5 +40,7 @@ public class CreateUserDto implements Serializable {
     private Role role;
 
     private boolean active;
+
+    private List languages;
 
 }

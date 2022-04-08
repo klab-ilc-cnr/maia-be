@@ -14,6 +14,11 @@ import org.jboss.resteasy.spi.NotImplementedYetException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -33,13 +38,13 @@ public class CreateUserHandler implements RequestHandler<CreateUserRequest, Crea
     @Override
     public XResult<CreateUserDto> handleXResult(CreateUserRequest request) {
         try {
-//            request.getUser().setId(null);
-
             CreateUserDto responseUserDto = userService.add(request.getUser());
+
+            List mockLanguagesForUser = List.of("it","de","fr"); //FIXME prendere quelle passate dal frontend
 
             KeycloakAdminService.KeycloakAdminClient keycloakAdminClient = keycloakAdminService.getClient();
             User userEntity = userService.mapToEntity(request.getUser());
-            keycloakAdminClient.createUser(userEntity, null);
+            keycloakAdminClient.createUser(userEntity, null, mockLanguagesForUser);
 
             return new XResult<>(responseUserDto);
         } catch (Exception e) {

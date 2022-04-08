@@ -96,6 +96,7 @@ public class UserService {
 
         user.setRoles(EnumSet.of(updateUserDto.getRole()));
         user.setUpdated(LocalDateTime.now());
+        user.setUpdatedBy(UserUtils.getLoggedUserId());
         user.setActive(updateUserDto.isActive());
         user.setName(updateUserDto.getName());
         user.setSurname(updateUserDto.getSurname());
@@ -135,23 +136,9 @@ public class UserService {
         return user;
     }
 
-//    public User mapToEntity(CreateUserDto dto) {
-//        User user = new User();
-//        BeanUtils.copyProperties(dto, user);
-//        user.setRoles(EnumSet.of(dto.getRole()));
-//        user.setCreated(LocalDateTime.now());
-//        user.setUpdated(LocalDateTime.now());
-//        return user;
-//    }
-
     public User mapToEntity(CreateUserDto dto) {
         User user = new User();
-        user.setActive(dto.isActive());
-        user.setName(dto.getName());
-        user.setSurname(dto.getSurname());
-        user.setEmail(dto.getEmail());
-        user.setCreatedBy(UserUtils.getLoggedUserId());
-        user.setUpdatedBy(UserUtils.getLoggedUserId());
+        BeanUtils.copyProperties(dto, user);
         user.setRoles(EnumSet.of(dto.getRole()));
         user.setCreated(LocalDateTime.now());
         user.setUpdated(LocalDateTime.now());

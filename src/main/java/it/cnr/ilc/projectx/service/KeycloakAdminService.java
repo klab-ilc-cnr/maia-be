@@ -21,8 +21,6 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -73,7 +71,7 @@ public class KeycloakAdminService {
             this.defaultRolesName = defaultRolesName;
         }
 
-        public String createUser(User user, String password) {
+        public String createUser(User user, String password, List mockLanguagesForUser) {
             UsersResource users = realm.users();
 
             String email = user.getEmail();
@@ -86,7 +84,7 @@ public class KeycloakAdminService {
             userRepresentation.setLastName(lastName);
             userRepresentation.setEmailVerified(true);
 
-//            addAttributesOnUser(userRepresentation);
+            addAttributesOnUser(userRepresentation, mockLanguagesForUser);
 
             //questo campo deve essere sempre a true sennò le mail da keycloak non vengono inviate
             userRepresentation.setEnabled(user.isActive());
@@ -128,13 +126,17 @@ public class KeycloakAdminService {
             }
         }
 
-        //FIXME impostare le lingue qui prese dall'api del cnr
-        private void addAttributesOnUser(UserRepresentation userRepresentation) {
-            JSONArray jsonArray = new JSONArray();
+        private void addAttributesOnUser(UserRepresentation userRepresentation, List mockLanguagesForUser) {
+            if(mockLanguagesForUser == null)
+            {
+                return;
+            }
 
-            jsonArray.put("it");
-            jsonArray.put("de");
-            jsonArray.put("fr");
+            JSONArray jsonArray = new JSONArray(mockLanguagesForUser);
+
+//            jsonArray.put("it");
+//            jsonArray.put("de");
+//            jsonArray.put("fr");
 
             //            userRepresentation.singleAttribute("locale", user.getUserLang().name().toLowerCase());
             userRepresentation.singleAttribute("lang", jsonArray.toString());
