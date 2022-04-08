@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class UserController {
 
     @PostMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<CreateUserDto> addUser(@RequestBody CreateUserDto createUserDto) throws Exception {
+    public ResponseEntity<CreateUserDto> addUser(@Valid @RequestBody @NotNull CreateUserDto createUserDto) throws Exception {
         XResult<CreateUserDto> response = mediator.sendXResult(new CreateUserRequest(createUserDto));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
