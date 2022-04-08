@@ -33,6 +33,8 @@ public class CreateUserHandler implements RequestHandler<CreateUserRequest, Crea
     @Override
     public XResult<CreateUserDto> handleXResult(CreateUserRequest request) {
         try {
+//            request.getUser().setId(null);
+
             CreateUserDto responseUserDto = userService.add(request.getUser());
 
             KeycloakAdminService.KeycloakAdminClient keycloakAdminClient = keycloakAdminService.getClient();

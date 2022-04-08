@@ -5,6 +5,7 @@ import it.cnr.ilc.projectx.dto.UserDto;
 import it.cnr.ilc.projectx.dto.UpdateUserDto;
 import it.cnr.ilc.projectx.model.User;
 import it.cnr.ilc.projectx.repository.UserRepository;
+import it.cnr.ilc.projectx.utils.UserUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -114,9 +115,23 @@ public class UserService {
         return user;
     }
 
+//    public User mapToEntity(CreateUserDto dto) {
+//        User user = new User();
+//        BeanUtils.copyProperties(dto, user);
+//        user.setRoles(EnumSet.of(dto.getRole()));
+//        user.setCreated(LocalDateTime.now());
+//        user.setUpdated(LocalDateTime.now());
+//        return user;
+//    }
+
     public User mapToEntity(CreateUserDto dto) {
         User user = new User();
-        BeanUtils.copyProperties(dto, user);
+        user.setActive(dto.isActive());
+        user.setName(dto.getName());
+        user.setSurname(dto.getSurname());
+        user.setEmail(dto.getEmail());
+        user.setCreatedBy(UserUtils.getLoggedUserId());
+        user.setUpdatedBy(UserUtils.getLoggedUserId());
         user.setRoles(EnumSet.of(dto.getRole()));
         user.setCreated(LocalDateTime.now());
         user.setUpdated(LocalDateTime.now());

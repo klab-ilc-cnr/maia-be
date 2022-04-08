@@ -4,9 +4,11 @@ import it.cnr.ilc.projectx.dto.CreateUserDto;
 import it.cnr.ilc.projectx.dto.UpdateUserDto;
 import it.cnr.ilc.projectx.dto.UserDto;
 import it.cnr.ilc.projectx.mediator.Mediator;
+import it.cnr.ilc.projectx.model.User;
 import it.cnr.ilc.projectx.request.CreateUserRequest;
 import it.cnr.ilc.projectx.request.UpdateUserRequest;
 import it.cnr.ilc.projectx.service.UserService;
+import it.cnr.ilc.projectx.utils.UserUtils;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -41,9 +43,15 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE, T(it.cnr.ilc.projectx.model.Role).SUPERVISORE)")
+    @PreAuthorize("hasAnyRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<UserDto> getUser(@PathVariable @NotNull Long id) {
         return ResponseEntity.ok(userService.getUser(id));
+    }
+
+    @GetMapping("/current")
+    public ResponseEntity<UserDto> getCurrentUser() {
+        User user = UserUtils.getLoggedUser();
+        return ResponseEntity.ok(userService.getUser(user.getId()));
     }
 
     @PostMapping
@@ -57,14 +65,14 @@ public class UserController {
         return ResponseEntity.ok(responseUserDto);
     }
 
-    @PostMapping("/updateUser")
+    @PutMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserDto userDto) throws Exception {
+    public ResponseEntity<Boolean> updateUser(@RequestBody UpdateUserDto userDto) throws Exception {
         XResult<UserDto> response = mediator.sendXResult(new UpdateUserRequest(userDto));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }
         UserDto responseUserDto = response.getPayload();
-        return ResponseEntity.ok(responseUserDto);
+        return ResponseEntity.ok(responseUserDto != null);
     }
 }

@@ -1,5 +1,9 @@
 package it.cnr.ilc.projectx.config;
 
+import it.cnr.ilc.projectx.filter.AuthenticatedUserContextFilter;
+import it.cnr.ilc.projectx.repository.UserRepository;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
@@ -17,9 +21,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+
+import javax.servlet.Filter;
 
 /**
  * Description of SecurityConfig
@@ -35,8 +42,12 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
 {
+    @NonNull
+    private final UserRepository userRepository;
+
     @Bean
     public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {
         return new ServletListenerRegistrationBean<HttpSessionEventPublisher>(new HttpSessionEventPublisher());
@@ -73,11 +84,18 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
         http.cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/users").authenticated()
+//                .antMatchers("/api/users").authenticated()
 //                .antMatchers("/api/users").hasAnyRole("Amministratore")
-                .anyRequest().permitAll()
+//                .anyRequest().permitAll()
+                .anyRequest().authenticated()
                 .and()
+                .addFilterAfter(authenticatedUserContextFilter(), FilterSecurityInterceptor.class)
                 .csrf().disable();
+    }
+
+    @Bean
+    public AuthenticatedUserContextFilter authenticatedUserContextFilter() {
+        return new AuthenticatedUserContextFilter(userRepository);
     }
 }
 

@@ -60,20 +60,21 @@ CREATE TABLE public.tiles
     x_position   decimal      NOT NULL DEFAULT 0,
     y_position   decimal      NOT NULL DEFAULT 0,
     x_size       decimal      NOT NULL DEFAULT 10,
-    y_size       decimal      NOT NULL DEFAULT 10,
-    CONSTRAINT tile_pk PRIMARY KEY (id)
+    y_size       decimal      NOT NULL DEFAULT 10
+        CONSTRAINT tile_pk PRIMARY KEY (id)
 );
 
 
 --- TEXT
 CREATE TABLE public.texts
 (
-    id       serial4 NOT NULL,
-    readonly boolean default false,
-    created    timestamp without time zone,
-    created_by bigint,
-    updated    timestamp without time zone,
-    updated_by bigint,
+    id               serial4 NOT NULL,
+    readonly         boolean default false,
+    created          timestamp without time zone,
+    created_by       bigint,
+    updated          timestamp without time zone,
+    updated_by       bigint,
+    external_node_id bigint  NOT NULL,
     CONSTRAINT texts_pk PRIMARY KEY (id)
 );
 
@@ -88,8 +89,9 @@ CREATE TABLE public.layers
 --- ANNOTATION
 CREATE TABLE public.annotations
 (
-    id       serial4 NOT NULL,
-    layer_id bigint  NOT NULL,
+    id               serial4 NOT NULL,
+    layer_id         bigint  NOT NULL,
+    external_node_id bigint  NOT NULL,
     CONSTRAINT annotations_pk PRIMARY KEY (id)
 );
 

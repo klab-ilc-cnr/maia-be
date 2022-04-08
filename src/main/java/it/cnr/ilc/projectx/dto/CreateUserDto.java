@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CreateUserDto implements Serializable {
-    private long id;
+    private Long id;
 
     private String name;
 
