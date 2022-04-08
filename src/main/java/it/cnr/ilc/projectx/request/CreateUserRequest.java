@@ -3,10 +3,10 @@ package it.cnr.ilc.projectx.request;
 import it.cnr.ilc.projectx.dto.CreateUserDto;
 import it.cnr.ilc.projectx.mediator.Request;
 
-public class CreateUser implements Request<CreateUserDto> {
+public class CreateUserRequest implements Request<CreateUserDto> {
     private final CreateUserDto user;
 
-    public CreateUser(final CreateUserDto user) {
+    public CreateUserRequest(final CreateUserDto user) {
         this.user = user;
     }
 

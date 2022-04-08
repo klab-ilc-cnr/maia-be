@@ -3,7 +3,7 @@ package it.cnr.ilc.projectx.handler;
 import it.cnr.ilc.projectx.dto.CreateUserDto;
 import it.cnr.ilc.projectx.mediator.RequestHandler;
 import it.cnr.ilc.projectx.model.User;
-import it.cnr.ilc.projectx.request.CreateUser;
+import it.cnr.ilc.projectx.request.CreateUserRequest;
 import it.cnr.ilc.projectx.service.KeycloakAdminService;
 import it.cnr.ilc.projectx.service.UserService;
 import it.cnr.ilc.projectx.xresults.XResult;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CreateUserHandler implements RequestHandler<CreateUser, CreateUserDto> {
+public class CreateUserHandler implements RequestHandler<CreateUserRequest, CreateUserDto> {
     @NonNull
     private final UserService userService;
 
@@ -25,14 +25,16 @@ public class CreateUserHandler implements RequestHandler<CreateUser, CreateUserD
     private final KeycloakAdminService keycloakAdminService;
 
     @Override
-    public CreateUserDto handle(CreateUser request) {
+    public CreateUserDto handle(CreateUserRequest request) {
         throw new NotImplementedYetException();
     }
 
     @Transactional
     @Override
-    public XResult<CreateUserDto> handleXResult(CreateUser request) {
+    public XResult<CreateUserDto> handleXResult(CreateUserRequest request) {
         try {
+//            request.getUser().setId(null);
+
             CreateUserDto responseUserDto = userService.add(request.getUser());
 
             KeycloakAdminService.KeycloakAdminClient keycloakAdminClient = keycloakAdminService.getClient();
