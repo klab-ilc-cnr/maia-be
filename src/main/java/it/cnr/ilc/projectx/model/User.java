@@ -3,6 +3,7 @@ package it.cnr.ilc.projectx.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,6 +47,9 @@ public class User extends TracedEntity {
     private Set<Role> roles;
 
     private boolean active;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "userId")
+    private List<UserLanguage> languages;
 
     @Override
     public String toString() {

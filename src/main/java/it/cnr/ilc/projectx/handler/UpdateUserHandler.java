@@ -1,5 +1,6 @@
 package it.cnr.ilc.projectx.handler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import it.cnr.ilc.projectx.dto.UserDto;
 import it.cnr.ilc.projectx.mediator.RequestHandler;
 import it.cnr.ilc.projectx.model.User;
@@ -13,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jboss.resteasy.spi.NotImplementedYetException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -31,15 +34,17 @@ public class UpdateUserHandler implements RequestHandler<UpdateUserRequest, User
 
     @Transactional
     @Override
-    public XResult<UserDto> handleXResult(UpdateUserRequest request) {
+    public XResult<UserDto> handleXResult(UpdateUserRequest request) throws JsonProcessingException {
         try {
 
             UserDto userDto = userService.update(request.getUser());
 
+            List selectedLanguagesForUser = request.getUser().getLanguages();
+
             User userEntity = userService.mapToEntity(userDto);
             KeycloakAdminService.KeycloakAdminClient keycloakClient = keycloakAdminService.getClient();
             String userId = keycloakClient.getUserByEmail(userDto.getEmail()).getId();
-            keycloakClient.updateUser(userEntity, userId);
+            keycloakClient.updateUser(userEntity, userId, selectedLanguagesForUser);
 
             return new XResult(userDto);
         } catch (Exception e) {

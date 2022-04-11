@@ -1,8 +1,7 @@
 package it.cnr.ilc.projectx.controller;
 
-import it.cnr.ilc.projectx.dto.UserDto;
+import it.cnr.ilc.projectx.dto.LanguageDto;
 import it.cnr.ilc.projectx.service.LanguagesService;
-import it.cnr.ilc.projectx.service.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,7 @@ public class LanguagesController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<List<String>> retrieveAll() {
+    public ResponseEntity<List<LanguageDto>> retrieveAll() {
         return ResponseEntity.ok(languagesService.retrieveAll());
     }
 }

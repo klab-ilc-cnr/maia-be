@@ -1,9 +1,7 @@
 package it.cnr.ilc.projectx.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.cnr.ilc.projectx.model.Role;
-import it.cnr.ilc.projectx.utils.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,8 +10,6 @@ import javax.validation.constraints.NotBlank;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +37,6 @@ public class CreateUserDto implements Serializable {
 
     private boolean active;
 
-    private List languages;
+    private List<LanguageDto> languages;
 
 }

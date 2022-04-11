@@ -1,5 +1,6 @@
 package it.cnr.ilc.projectx.handler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import it.cnr.ilc.projectx.dto.CreateUserDto;
 import it.cnr.ilc.projectx.mediator.RequestHandler;
 import it.cnr.ilc.projectx.model.User;
@@ -36,15 +37,15 @@ public class CreateUserHandler implements RequestHandler<CreateUserRequest, Crea
 
     @Transactional
     @Override
-    public XResult<CreateUserDto> handleXResult(CreateUserRequest request) {
+    public XResult<CreateUserDto> handleXResult(CreateUserRequest request) throws JsonProcessingException {
         try {
             CreateUserDto responseUserDto = userService.add(request.getUser());
 
-            List mockLanguagesForUser = List.of("it","de","fr"); //FIXME prendere quelle passate dal frontend
+            List selectedLanguagesForUser = request.getUser().getLanguages();
 
             KeycloakAdminService.KeycloakAdminClient keycloakAdminClient = keycloakAdminService.getClient();
             User userEntity = userService.mapToEntity(request.getUser());
-            keycloakAdminClient.createUser(userEntity, null, mockLanguagesForUser);
+            keycloakAdminClient.createUser(userEntity, null, selectedLanguagesForUser);
 
             return new XResult<>(responseUserDto);
         } catch (Exception e) {

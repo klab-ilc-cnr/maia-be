@@ -26,26 +26,20 @@ ALTER TABLE user_roles
 
 
 -- -- LANGUAGES
--- CREATE TABLE public.languages
--- (
---     id         serial                not null,
---     name       character varying(30) not null,
---     created    timestamp,
---     created_by bigint,
---     updated    timestamp,
---     updated_by bigint,
---     CONSTRAINT languages_pkey PRIMARY KEY (id)
--- );
---
---
+CREATE TABLE public.users_languages
+(
+    id      serial                not null,
+    user_id bigint                not null,
+    code    character varying(50) not null,
+    name    character varying(50) not null,
+    CONSTRAINT languages_pkey PRIMARY KEY (id)
+);
+
+
 -- -- USER_LANGUAGES
--- CREATE TABLE public.user_languages
+-- CREATE TABLE public.users_languages
 -- (
 --     user_id      bigint not null,
---     languages_id bigint not null,
---     created      timestamp,
---     created_by   bigint,
---     updated      timestamp,
---     updated_by   bigint,
+--     language_id bigint not null,
 --     CONSTRAINT pkey_user_languages PRIMARY KEY (user_id, languages_id)
 -- );

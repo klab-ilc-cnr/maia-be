@@ -1,5 +1,7 @@
 package it.cnr.ilc.projectx.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.cnr.ilc.projectx.config.ApplicationConfig;
 import it.cnr.ilc.projectx.config.KeycloakConfig;
 import it.cnr.ilc.projectx.exception.keycloak.*;
@@ -20,7 +22,6 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +72,7 @@ public class KeycloakAdminService {
             this.defaultRolesName = defaultRolesName;
         }
 
-        public String createUser(User user, String password, List mockLanguagesForUser) {
+        public String createUser(User user, String password, List languagesAttributeForUser) throws JsonProcessingException {
             UsersResource users = realm.users();
 
             String email = user.getEmail();
@@ -84,7 +85,7 @@ public class KeycloakAdminService {
             userRepresentation.setLastName(lastName);
             userRepresentation.setEmailVerified(true);
 
-            addAttributesOnUser(userRepresentation, mockLanguagesForUser);
+            addAttributesOnUser(userRepresentation, languagesAttributeForUser);
 
             //questo campo deve essere sempre a true sennò le mail da keycloak non vengono inviate
             userRepresentation.setEnabled(user.isActive());
@@ -126,24 +127,27 @@ public class KeycloakAdminService {
             }
         }
 
-        private void addAttributesOnUser(UserRepresentation userRepresentation, List mockLanguagesForUser) {
-            if(mockLanguagesForUser == null)
+        private void addAttributesOnUser(UserRepresentation userRepresentation, List languagesAttributeForUser) throws JsonProcessingException {
+            if(languagesAttributeForUser == null)
             {
                 return;
             }
 
-            JSONArray jsonArray = new JSONArray(mockLanguagesForUser);
+//            JSONArray jsonArray = new JSONArray(mockLanguagesForUser);
+
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonArray = mapper.writeValueAsString(languagesAttributeForUser);
 
 //            jsonArray.put("it");
 //            jsonArray.put("de");
 //            jsonArray.put("fr");
 
             //            userRepresentation.singleAttribute("locale", user.getUserLang().name().toLowerCase());
-            userRepresentation.singleAttribute("lang", jsonArray.toString());
+            userRepresentation.singleAttribute("lang", jsonArray);
 //            userRepresentation.setAttributes(Collections.singletonMap("lang", Arrays.asList("it","de","fr")));
         }
 
-        public void updateUser(User user, String id) {
+        public void updateUser(User user, String id, List languagesAttributeForUser) throws JsonProcessingException {
             UsersResource users = realm.users();
 
             String email = user.getEmail();
@@ -155,6 +159,9 @@ public class KeycloakAdminService {
             userRepresentation.setFirstName(firstName);
             userRepresentation.setLastName(lastName);
             userRepresentation.setEmailVerified(true);
+
+            addAttributesOnUser(userRepresentation, languagesAttributeForUser);
+
             //questo campo deve essere sempre a true sennò le mail da keycloak non vengono inviate
             userRepresentation.setEnabled(user.isActive());
 

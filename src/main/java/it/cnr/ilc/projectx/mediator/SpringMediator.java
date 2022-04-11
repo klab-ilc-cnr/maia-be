@@ -1,5 +1,6 @@
 package it.cnr.ilc.projectx.mediator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class SpringMediator implements Mediator {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> XResult<T> sendXResult(Request<T> request) {
+    public <T> XResult<T> sendXResult(Request<T> request) throws JsonProcessingException {
         final RequestHandler<Request<T>, T> requestHandler = getRequestHandler(request);
         return requestHandler.handleXResult(request);
     }

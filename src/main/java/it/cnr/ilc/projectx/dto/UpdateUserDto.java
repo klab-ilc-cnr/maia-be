@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,4 +31,6 @@ public class UpdateUserDto implements Serializable {
     private Role role;
 
     private boolean active;
+
+    private List<LanguageDto> languages;
 }
