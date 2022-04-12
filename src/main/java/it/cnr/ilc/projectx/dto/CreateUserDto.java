@@ -1,6 +1,7 @@
 package it.cnr.ilc.projectx.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import it.cnr.ilc.projectx.model.Language;
 import it.cnr.ilc.projectx.model.Role;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,6 @@ import java.util.List;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-@XmlAccessorType(XmlAccessType.FIELD)
 public class CreateUserDto implements Serializable {
     @NotBlank
     private String name;
@@ -37,6 +37,6 @@ public class CreateUserDto implements Serializable {
 
     private boolean active;
 
-    private List<LanguageDto> languages;
+    private List<Language> languages;
 
 }

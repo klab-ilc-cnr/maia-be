@@ -1,9 +1,13 @@
 package it.cnr.ilc.projectx.model;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.*;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,6 +22,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "users")
+@TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+})
 public class User extends TracedEntity {
 
     public static final String TABLE_NAME = "users";
@@ -32,7 +38,7 @@ public class User extends TracedEntity {
     @NonNull
     private String name;
 
-//    @NonNull
+    //    @NonNull
     private String surname;
 
     @NonNull
@@ -48,8 +54,9 @@ public class User extends TracedEntity {
 
     private boolean active;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "userId")
-    private List<UserLanguage> languages;
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+    private Attribute attributes;
 
     @Override
     public String toString() {

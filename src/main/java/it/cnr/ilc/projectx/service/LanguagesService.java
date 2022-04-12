@@ -1,6 +1,6 @@
 package it.cnr.ilc.projectx.service;
 
-import it.cnr.ilc.projectx.dto.LanguageDto;
+import it.cnr.ilc.projectx.model.Language;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,10 +13,10 @@ import java.util.List;
 public class LanguagesService {
 
     //TODO recuperarle dal servizio o dalla fonte adeguata
-    public List<LanguageDto> retrieveAll() {
-        return List.of(new LanguageDto("Italiano", "it"),
-                new LanguageDto("Tedesco", "de"),
-                new LanguageDto("Francese", "fr"),
-                new LanguageDto("Ungherese", "hu"));
+    public List<Language> retrieveAll() {
+        return List.of(new Language("Italiano", "it"),
+                new Language("Tedesco", "de"),
+                new Language("Francese", "fr"),
+                new Language("Ungherese", "hu"));
     }
 }

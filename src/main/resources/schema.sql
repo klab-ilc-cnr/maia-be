@@ -11,6 +11,7 @@ CREATE TABLE public.users
     updated    timestamp without time zone,
     updated_by bigint,
     active     boolean default true,
+    attributes jsonb,
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
 
@@ -26,14 +27,14 @@ ALTER TABLE user_roles
 
 
 -- -- LANGUAGES
-CREATE TABLE public.users_languages
-(
-    id      serial                not null,
-    user_id bigint                not null,
-    code    character varying(50) not null,
-    name    character varying(50) not null,
-    CONSTRAINT languages_pkey PRIMARY KEY (id)
-);
+-- CREATE TABLE public.users_languages
+-- (
+--     id      serial                not null,
+--     user_id bigint                not null,
+--     code    character varying(50) not null,
+--     name    character varying(50) not null,
+--     CONSTRAINT languages_pkey PRIMARY KEY (id)
+-- );
 
 
 -- -- USER_LANGUAGES

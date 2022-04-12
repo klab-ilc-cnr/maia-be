@@ -1,6 +1,6 @@
 package it.cnr.ilc.projectx.controller;
 
-import it.cnr.ilc.projectx.dto.LanguageDto;
+import it.cnr.ilc.projectx.model.Language;
 import it.cnr.ilc.projectx.service.LanguagesService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,8 @@ public class LanguagesController {
     private final LanguagesService languagesService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<List<LanguageDto>> retrieveAll() {
+//    @PreAuthorize("hasAnyRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
+    public ResponseEntity<List<Language>> retrieveAll() {
         return ResponseEntity.ok(languagesService.retrieveAll());
     }
 }

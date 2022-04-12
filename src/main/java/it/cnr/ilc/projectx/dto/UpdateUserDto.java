@@ -2,9 +2,11 @@ package it.cnr.ilc.projectx.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import it.cnr.ilc.projectx.model.Language;
 import it.cnr.ilc.projectx.model.Role;
 import it.cnr.ilc.projectx.utils.DateUtils;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,14 +18,14 @@ import java.util.List;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-@XmlAccessorType(XmlAccessType.FIELD)
 public class UpdateUserDto implements Serializable {
+
+    @NonNull
+    private Long id;
 
     private String name;
 
     private String surname;
-
-    private String email;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtils.DATE_FORMAT_ISO_LOCAL_DATE_TIME)
     private LocalDateTime updated;
@@ -32,5 +34,5 @@ public class UpdateUserDto implements Serializable {
 
     private boolean active;
 
-    private List<LanguageDto> languages;
+    private List<Language> languages;
 }

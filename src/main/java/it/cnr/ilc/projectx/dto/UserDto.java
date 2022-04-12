@@ -2,6 +2,7 @@ package it.cnr.ilc.projectx.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import it.cnr.ilc.projectx.model.Language;
 import it.cnr.ilc.projectx.model.Role;
 import it.cnr.ilc.projectx.utils.DateUtils;
 import lombok.Getter;
@@ -42,6 +43,6 @@ public class UserDto implements Serializable {
 
     private boolean active;
 
-    private List<LanguageDto> languages;
+    private List<Language> languages;
 
 }

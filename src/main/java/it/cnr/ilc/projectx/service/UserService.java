@@ -3,6 +3,8 @@ package it.cnr.ilc.projectx.service;
 import it.cnr.ilc.projectx.dto.CreateUserDto;
 import it.cnr.ilc.projectx.dto.UpdateUserDto;
 import it.cnr.ilc.projectx.dto.UserDto;
+import it.cnr.ilc.projectx.model.Attribute;
+import it.cnr.ilc.projectx.model.Language;
 import it.cnr.ilc.projectx.model.User;
 import it.cnr.ilc.projectx.repository.UserRepository;
 import it.cnr.ilc.projectx.utils.UserUtils;
@@ -26,6 +28,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 /**
  * Description of UserService
  * <p>
@@ -43,7 +47,7 @@ public class UserService {
     @NonNull
     private final RestTemplate restTemplate;
 
-    public List<UserDto> call(){
+    public List<UserDto> call() {
         HttpServletRequest curRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
         HttpHeaders headers = new HttpHeaders();
@@ -52,7 +56,8 @@ public class UserService {
         HttpEntity<String> entity = new HttpEntity(headers);
         //Parse the string after getting the response
         ResponseEntity<List<UserDto>> users = restTemplate.exchange("http://localhost:9090/fnape/api/utenti",
-                HttpMethod.GET, entity, new ParameterizedTypeReference<List<UserDto>>() {});
+                HttpMethod.GET, entity, new ParameterizedTypeReference<List<UserDto>>() {
+                });
         return users.getBody();
     }
 
@@ -77,12 +82,15 @@ public class UserService {
 
     @Transactional
     public UserDto update(UpdateUserDto updateUserDto) {
+        checkArgument(updateUserDto != null);
+        checkArgument(updateUserDto.getId() != null);
+        checkArgument(updateUserDto.getId() > 0);
 
-        UserDto userDto = getUserByEmail(updateUserDto.getEmail());
+        UserDto userDto = findById(updateUserDto.getId());
 
         if (userDto == null) {
-            log.error("Cannot find user for email " + updateUserDto.getEmail());
-            throw new NotFoundException("Cannot find user for email " + updateUserDto.getEmail());
+            log.error("Cannot find user with ID " + updateUserDto.getId());
+            throw new NotFoundException("Cannot find user with ID " + updateUserDto.getId());
         }
 
         User userUpdatedDto = userRepository.save(mapToEntity(userDto, updateUserDto));
@@ -93,14 +101,21 @@ public class UserService {
     private User mapToEntity(UserDto userDto, UpdateUserDto updateUserDto) {
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
+        BeanUtils.copyProperties(updateUserDto, user);
 
         user.setRoles(EnumSet.of(updateUserDto.getRole()));
         user.setUpdated(LocalDateTime.now());
         user.setUpdatedBy(UserUtils.getLoggedUserId());
-        user.setActive(updateUserDto.isActive());
-        user.setName(updateUserDto.getName());
-        user.setSurname(updateUserDto.getSurname());
-
+//        user.setActive(updateUserDto.isActive());
+//        user.setName(updateUserDto.getName());
+//        user.setSurname(updateUserDto.getSurname());
+//        user.getAttributes().setLang(updateUserDto.getLanguages());
+        Optional.ofNullable(user.getAttributes())
+                .ifPresentOrElse(attribute -> attribute.setLang(updateUserDto.getLanguages()),
+                        () -> {
+                            user.setAttributes(new Attribute());
+                            user.getAttributes().setLang(updateUserDto.getLanguages());
+                        });
         return user;
     }
 
@@ -119,6 +134,9 @@ public class UserService {
         UserDto dto = new UserDto();
         BeanUtils.copyProperties(user, dto);
         dto.setRole(user.getRoles().stream().findFirst().get());
+//        dto.setLanguages(user.getAttributes().getLang());
+        Optional.ofNullable(user.getAttributes())
+                .ifPresent(attribute -> dto.setLanguages(attribute.getLang()));
         return dto;
     }
 
@@ -126,6 +144,9 @@ public class UserService {
         CreateUserDto dto = new CreateUserDto();
         BeanUtils.copyProperties(user, dto);
         dto.setRole(user.getRoles().stream().findFirst().get());
+//        dto.setLanguages(user.getAttributes().getLang());
+        Optional.ofNullable(user.getAttributes())
+                .ifPresent(attribute -> dto.setLanguages(attribute.getLang()));
         return dto;
     }
 
@@ -133,6 +154,13 @@ public class UserService {
         User user = new User();
         BeanUtils.copyProperties(dto, user);
         user.setRoles(EnumSet.of(dto.getRole()));
+//        user.getAttributes().setLang(dto.getLanguages());
+        Optional.ofNullable(user.getAttributes())
+                .ifPresentOrElse(attribute -> attribute.setLang(dto.getLanguages()),
+                        () -> {
+                            user.setAttributes(new Attribute());
+                            user.getAttributes().setLang(dto.getLanguages());
+                        });
         return user;
     }
 
@@ -142,12 +170,30 @@ public class UserService {
         user.setRoles(EnumSet.of(dto.getRole()));
         user.setCreated(LocalDateTime.now());
         user.setUpdated(LocalDateTime.now());
+//        user.getAttributes().setLang(dto.getLanguages());
+        Optional.ofNullable(user.getAttributes())
+                .ifPresentOrElse(attribute -> attribute.setLang(dto.getLanguages()),
+                        () -> {
+                            user.setAttributes(new Attribute());
+                            user.getAttributes().setLang(dto.getLanguages());
+                        });
+
         return user;
     }
 
     @Transactional(readOnly = true)
     public UserDto getUserByEmail(@NotBlank String email) {
         Optional<User> user = userRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            return null;
+        }
+
+        return mapToDto(user.get());
+    }
+
+    @Transactional(readOnly = true)
+    public UserDto findById(@NotBlank Long id) {
+        Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             return null;
         }
