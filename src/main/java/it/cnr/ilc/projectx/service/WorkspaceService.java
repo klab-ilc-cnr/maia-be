@@ -1,32 +1,13 @@
 package it.cnr.ilc.projectx.service;
 
-import it.cnr.ilc.projectx.dto.CreateUserDto;
-import it.cnr.ilc.projectx.dto.TextDto;
-import it.cnr.ilc.projectx.dto.UpdateUserDto;
-import it.cnr.ilc.projectx.dto.UserDto;
-import it.cnr.ilc.projectx.model.Attribute;
-import it.cnr.ilc.projectx.model.User;
-import it.cnr.ilc.projectx.repository.UserRepository;
-import it.cnr.ilc.projectx.utils.UserUtils;
-import lombok.NonNull;
+import it.cnr.ilc.projectx.dto.TextChoiceDto;
+import it.cnr.ilc.projectx.dto.TextTileDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.NotFoundException;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -57,12 +38,12 @@ public class WorkspaceService {
 
 
     @Transactional(readOnly = true)
-    public List<TextDto> getTexts() {
+    public List<TextChoiceDto> getTextChoiceList() {
         //TODO recuperare i dati correttamente
 
-        List<TextDto> result = new LinkedList<>();
+        List<TextChoiceDto> result = new LinkedList<>();
 
-        TextDto text1 = new TextDto();
+        TextChoiceDto text1 = new TextChoiceDto();
         text1.setId(1l);
         text1.setTitle("provaTitolo");
         text1.setCreatedBy("amministratore@gmail.com");
@@ -70,7 +51,7 @@ public class WorkspaceService {
         text1.setUpdatedOn("21/04/2022");
         result.add(text1);
 
-        TextDto text2 = new TextDto();
+        TextChoiceDto text2 = new TextChoiceDto();
         text2.setId(2l);
         text2.setTitle("provaTitolo2");
         text2.setCreatedBy("utente@gmail.com");
@@ -78,7 +59,7 @@ public class WorkspaceService {
         text2.setUpdatedOn("13/05/2022");
         result.add(text2);
 
-        TextDto text3 = new TextDto();
+        TextChoiceDto text3 = new TextChoiceDto();
         text3.setId(3l);
         text3.setTitle("provaTitolo3");
         text3.setCreatedBy("utente2@gmail.com");
@@ -86,6 +67,21 @@ public class WorkspaceService {
         text3.setUpdatedOn("16/03/2022");
         result.add(text3);
 
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public TextTileDto getText(Long textId) {
+        //TODO recuperare i dati correttamente
+
+        TextTileDto result = new TextTileDto();
+        if (textId == 1l) {
+            result.setContent("Testo 1 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        } else if (textId == 2l) {
+            result.setContent("Testo 2 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        } else if (textId == 3l) {
+            result.setContent("Testo 3 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        }
         return result;
     }
 }

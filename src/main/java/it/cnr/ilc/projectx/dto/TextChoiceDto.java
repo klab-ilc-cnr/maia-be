@@ -1,10 +1,6 @@
 package it.cnr.ilc.projectx.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import it.cnr.ilc.projectx.model.Language;
-import it.cnr.ilc.projectx.model.Role;
-import it.cnr.ilc.projectx.utils.DateUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,15 +8,13 @@ import lombok.Setter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
-public class TextDto implements Serializable {
+public class TextChoiceDto implements Serializable {
     private Long id;
 
     private String title;
