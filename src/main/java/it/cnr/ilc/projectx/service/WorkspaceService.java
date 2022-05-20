@@ -2,6 +2,7 @@ package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.TextChoiceDto;
 import it.cnr.ilc.projectx.dto.TextTileDto;
+import it.cnr.ilc.projectx.dto.WorkspaceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,33 @@ public class WorkspaceService {
 //        return users.getBody();
 //    }
 
+    @Transactional(readOnly = true)
+    public List<WorkspaceDto> retrieveAll() {
+        List<WorkspaceDto> result = new LinkedList<>();
+
+        WorkspaceDto ws1 = new WorkspaceDto();
+        ws1.setId(1l);
+        ws1.setLastAccess("25/12/2021");
+        ws1.setTextPreview("Testo 1 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
+        ws1.setTitle("Workspace1");
+        result.add(ws1);
+
+        WorkspaceDto ws2 = new WorkspaceDto();
+        ws2.setId(2l);
+        ws2.setLastAccess("13/03/2022");
+        ws2.setTextPreview("Testo 2 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
+        ws2.setTitle("Workspace2");
+        result.add(ws2);
+
+        WorkspaceDto ws3 = new WorkspaceDto();
+        ws3.setId(3l);
+        ws3.setLastAccess("07/04/2022");
+        ws3.setTextPreview("Testo 3 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
+        ws3.setTitle("Workspace3");
+        result.add(ws3);
+
+        return result;
+    }
 
     @Transactional(readOnly = true)
     public List<TextChoiceDto> getTextChoiceList() {

@@ -2,6 +2,7 @@ package it.cnr.ilc.projectx.controller;
 
 import it.cnr.ilc.projectx.dto.TextChoiceDto;
 import it.cnr.ilc.projectx.dto.TextTileDto;
+import it.cnr.ilc.projectx.dto.WorkspaceDto;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.service.WorkspaceService;
 import lombok.NonNull;
@@ -22,6 +23,11 @@ public class WorkspaceController {
 
     @NonNull
     private final WorkspaceService workspaceService;
+
+    @GetMapping
+    public ResponseEntity<List<WorkspaceDto>> retrieveAll() {
+        return ResponseEntity.ok(workspaceService.retrieveAll());
+    }
 
     @GetMapping("/textChoiceList")
     public ResponseEntity<List<TextChoiceDto>> getTextChoiceList() {
