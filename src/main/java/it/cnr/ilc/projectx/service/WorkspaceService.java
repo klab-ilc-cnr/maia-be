@@ -2,7 +2,8 @@ package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.TextChoiceDto;
 import it.cnr.ilc.projectx.dto.TextTileDto;
-import it.cnr.ilc.projectx.dto.WorkspaceDto;
+import it.cnr.ilc.projectx.dto.TileDto;
+import it.cnr.ilc.projectx.dto.WorkspaceChoiceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,24 +39,24 @@ public class WorkspaceService {
 //    }
 
     @Transactional(readOnly = true)
-    public List<WorkspaceDto> retrieveAll() {
-        List<WorkspaceDto> result = new LinkedList<>();
+    public List<WorkspaceChoiceDto> retrieveAll() {
+        List<WorkspaceChoiceDto> result = new LinkedList<>();
 
-        WorkspaceDto ws1 = new WorkspaceDto();
+        WorkspaceChoiceDto ws1 = new WorkspaceChoiceDto();
         ws1.setId(1l);
         ws1.setLastAccess("25/12/2021");
         ws1.setTextPreview("Testo 1 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
         ws1.setTitle("Workspace1");
         result.add(ws1);
 
-        WorkspaceDto ws2 = new WorkspaceDto();
+        WorkspaceChoiceDto ws2 = new WorkspaceChoiceDto();
         ws2.setId(2l);
         ws2.setLastAccess("13/03/2022");
         ws2.setTextPreview("Testo 2 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
         ws2.setTitle("Workspace2");
         result.add(ws2);
 
-        WorkspaceDto ws3 = new WorkspaceDto();
+        WorkspaceChoiceDto ws3 = new WorkspaceChoiceDto();
         ws3.setId(3l);
         ws3.setLastAccess("07/04/2022");
         ws3.setTextPreview("Testo 3 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
@@ -111,5 +112,10 @@ public class WorkspaceService {
             result.setContent("Testo 3 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
         }
         return result;
+    }
+
+    public List<TileDto> getTiles(Long workspaceId) {
+        //TODO
+        return null;
     }
 }

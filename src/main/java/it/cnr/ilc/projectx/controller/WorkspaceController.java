@@ -2,7 +2,8 @@ package it.cnr.ilc.projectx.controller;
 
 import it.cnr.ilc.projectx.dto.TextChoiceDto;
 import it.cnr.ilc.projectx.dto.TextTileDto;
-import it.cnr.ilc.projectx.dto.WorkspaceDto;
+import it.cnr.ilc.projectx.dto.TileDto;
+import it.cnr.ilc.projectx.dto.WorkspaceChoiceDto;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.service.WorkspaceService;
 import lombok.NonNull;
@@ -24,8 +25,8 @@ public class WorkspaceController {
     @NonNull
     private final WorkspaceService workspaceService;
 
-    @GetMapping
-    public ResponseEntity<List<WorkspaceDto>> retrieveAll() {
+    @GetMapping("/workspaceChoiceList")
+    public ResponseEntity<List<WorkspaceChoiceDto>> getWorkspaceChoiceList() {
         return ResponseEntity.ok(workspaceService.retrieveAll());
     }
 
@@ -39,5 +40,10 @@ public class WorkspaceController {
     public ResponseEntity<TextTileDto> getText(@PathVariable @NotNull Long id) {
         return ResponseEntity.ok(workspaceService.getText(id));
         //return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/tiles/{id}")
+    public ResponseEntity<List<TileDto>> getTiles(@PathVariable @NotNull Long workspaceId) {
+        return ResponseEntity.ok(workspaceService.getTiles(workspaceId));
     }
 }

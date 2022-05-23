@@ -14,7 +14,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
-public class WorkspaceDto implements Serializable {
+public class WorkspaceChoiceDto implements Serializable {
     private Long id;
 
     private String title;
