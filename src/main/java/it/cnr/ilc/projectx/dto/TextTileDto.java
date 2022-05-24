@@ -15,5 +15,5 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
 public class TextTileDto implements Serializable {
-    private String content;
+    private String text;
 }
