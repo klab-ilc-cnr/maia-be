@@ -42,7 +42,7 @@ public class WorkspaceController {
         //return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/tiles/{id}")
+    @GetMapping("/tiles/{workspaceId}")
     public ResponseEntity<List<TileDto>> getTiles(@PathVariable @NotNull Long workspaceId) {
         return ResponseEntity.ok(workspaceService.getTiles(workspaceId));
     }
