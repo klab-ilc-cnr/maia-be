@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -28,7 +30,7 @@ import java.time.LocalDateTime;
 public abstract class TracedEntity implements Serializable, ITracedEntity {
 
     @Column
-    @CreatedDate
+    @CreationTimestamp
     private LocalDateTime created;
 
     @Column
@@ -36,7 +38,7 @@ public abstract class TracedEntity implements Serializable, ITracedEntity {
     private Long createdBy;
 
     @Column
-    @LastModifiedDate
+    @UpdateTimestamp
     private LocalDateTime updated;
 
     @Column

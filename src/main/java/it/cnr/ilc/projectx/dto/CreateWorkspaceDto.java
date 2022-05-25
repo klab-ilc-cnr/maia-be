@@ -8,21 +8,16 @@ import lombok.Setter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
-public class WorkspaceChoiceDto implements Serializable {
-    private Long id;
+public class CreateWorkspaceDto implements Serializable {
 
     private String name;
 
     private String note;
-
-    private LocalDateTime updated;
 
 }

@@ -1,15 +1,19 @@
 package it.cnr.ilc.projectx.service;
 
-import it.cnr.ilc.projectx.dto.TextChoiceDto;
-import it.cnr.ilc.projectx.dto.TextTileDto;
-import it.cnr.ilc.projectx.dto.TileDto;
-import it.cnr.ilc.projectx.dto.WorkspaceChoiceDto;
+import it.cnr.ilc.projectx.dto.*;
+import it.cnr.ilc.projectx.model.Workspace;
+import it.cnr.ilc.projectx.repository.WorkspaceRepository;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -18,8 +22,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 @RequiredArgsConstructor
 public class WorkspaceService {
 
-//    @NonNull
-//    private final WorkspaceRepository workspaceRepository;
+    @NonNull
+    private final WorkspaceRepository workspaceRepository;
 
 //    @NonNull
 //    private final RestTemplate restTemplate;
@@ -40,30 +44,46 @@ public class WorkspaceService {
 
     @Transactional(readOnly = true)
     public List<WorkspaceChoiceDto> retrieveAll() {
-        List<WorkspaceChoiceDto> result = new LinkedList<>();
+/*        List<WorkspaceChoiceDto> result = new LinkedList<>();
 
         WorkspaceChoiceDto ws1 = new WorkspaceChoiceDto();
         ws1.setId(1l);
-        ws1.setLastAccess("25/12/2021");
-        ws1.setTextPreview("Testo 1 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
-        ws1.setTitle("Workspace1");
+        ws1.setUpdated(convertToTimestamp("2021-12-25 00:00:00.000"));
+        ws1.setNote("Testo 1 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
+        ws1.setName("Workspace1");
         result.add(ws1);
 
         WorkspaceChoiceDto ws2 = new WorkspaceChoiceDto();
         ws2.setId(2l);
-        ws2.setLastAccess("13/03/2022");
-        ws2.setTextPreview("Testo 2 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
-        ws2.setTitle("Workspace2");
+        ws2.setUpdated(convertToTimestamp("2022-03-13 00:00:00.000"));
+        ws2.setNote("Testo 2 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
+        ws2.setName("Workspace2");
         result.add(ws2);
 
         WorkspaceChoiceDto ws3 = new WorkspaceChoiceDto();
         ws3.setId(3l);
-        ws3.setLastAccess("07/04/2022");
-        ws3.setTextPreview("Testo 3 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
-        ws3.setTitle("Workspace3");
+        ws3.setUpdated(convertToTimestamp("2022-04-07 00:00:00.000"));
+        ws3.setNote("Testo 3 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
+        ws3.setName("Workspace3");
         result.add(ws3);
 
-        return result;
+        return result;*/
+
+        List<Workspace> result = workspaceRepository.findAll();
+        return result.stream()
+                .map(workspace -> mapToWorkspaceChoiceDto(workspace))
+                .collect(Collectors.toList());
+    }
+
+    private Timestamp convertToTimestamp(String stringDate) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+            Date parsedDate = dateFormat.parse(stringDate);
+            return new Timestamp(parsedDate.getTime());
+        } catch (Exception e) { //this generic but you can control another types of exception
+            // look the origin of excption
+        }
+        return null;
     }
 
     @Transactional(readOnly = true)
@@ -117,5 +137,31 @@ public class WorkspaceService {
     public List<TileDto> getTiles(Long workspaceId) {
         //TODO
         return null;
+    }
+
+    public WorkspaceChoiceDto add(CreateWorkspaceDto workspaceChoiceDto) {
+        Workspace workspace = workspaceRepository.save(mapToEntity(workspaceChoiceDto));
+        return mapToWorkspaceChoiceDto(workspace);
+    }
+
+    private Workspace mapToEntity(CreateWorkspaceDto createWorkspaceDto) {
+        Workspace workspace = new Workspace();
+        BeanUtils.copyProperties(createWorkspaceDto, workspace);
+        return workspace;
+    }
+
+    private WorkspaceChoiceDto mapToWorkspaceChoiceDto(Workspace workspace) {
+        WorkspaceChoiceDto workspaceChoiceDto = new WorkspaceChoiceDto();
+        BeanUtils.copyProperties(workspace, workspaceChoiceDto);
+        return workspaceChoiceDto;
+    }
+
+    public void delete(Workspace workspace) {
+        workspaceRepository.delete(workspace);
+    }
+
+    public Workspace retrieveWorkspace(Long workspaceId) {
+        Optional<Workspace> maybe = workspaceRepository.findById(workspaceId);
+        return maybe.get();
     }
 }

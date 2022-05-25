@@ -29,14 +29,15 @@ CREATE TABLE public.workspaces
 (
     id         serial       NOT NULL,
     name       varchar(100) NOT NULL,
-    created    timestamp without time zone,
-    created_by bigint,
-    updated    timestamp without time zone,
-    updated_by bigint,
+    note       varchar(500),
+    created    timestamp without time zone NOT NULL,
+    created_by bigint       NOT NULL,
+    updated    timestamp without time zone NOT NULL,
+    updated_by bigint       NOT NULL,
     CONSTRAINT workspaces_pk PRIMARY KEY (id)
 );
 
---- WORKSPACE TILES;
+/*--- WORKSPACE TILES;
 CREATE TABLE public.workspaces_tiles
 (
     id           serial NOT NULL,
@@ -89,4 +90,4 @@ CREATE TABLE public.annotations
     layer_id         bigint  NOT NULL,
     external_node_id bigint  NOT NULL,
     CONSTRAINT annotations_pk PRIMARY KEY (id)
-);
+);*/
