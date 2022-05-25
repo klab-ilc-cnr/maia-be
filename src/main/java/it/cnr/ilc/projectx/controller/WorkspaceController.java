@@ -4,11 +4,14 @@ import it.cnr.ilc.projectx.dto.*;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.CreateWorkspaceRequest;
 import it.cnr.ilc.projectx.request.DeleteWorkspaceRequest;
+import it.cnr.ilc.projectx.request.UpdateUserRequest;
+import it.cnr.ilc.projectx.request.UpdateWorkspaceRequest;
 import it.cnr.ilc.projectx.service.WorkspaceService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,6 +36,16 @@ public class WorkspaceController {
             ResponseEntity.badRequest();
         }
         return ResponseEntity.ok(response.getPayload());
+    }
+
+    @PutMapping
+    public ResponseEntity<WorkspaceChoiceDto> updateWorkspace(@Valid @RequestBody UpdateWorkspaceDto updateWorkspaceDto) throws Exception {
+        XResult<WorkspaceChoiceDto> response = mediator.sendXResult(new UpdateWorkspaceRequest(updateWorkspaceDto));
+        if (response.IsFailed()) {
+            ResponseEntity.badRequest();
+        }
+        WorkspaceChoiceDto responseWorkspaceDto = response.getPayload();
+        return ResponseEntity.ok(responseWorkspaceDto);
     }
 
     @PostMapping

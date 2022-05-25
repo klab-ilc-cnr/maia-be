@@ -1,6 +1,7 @@
 package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.*;
+import it.cnr.ilc.projectx.model.User;
 import it.cnr.ilc.projectx.model.Workspace;
 import it.cnr.ilc.projectx.repository.WorkspaceRepository;
 import lombok.NonNull;
@@ -10,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.ws.rs.NotFoundException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -144,18 +146,6 @@ public class WorkspaceService {
         return mapToWorkspaceChoiceDto(workspace);
     }
 
-    private Workspace mapToEntity(CreateWorkspaceDto createWorkspaceDto) {
-        Workspace workspace = new Workspace();
-        BeanUtils.copyProperties(createWorkspaceDto, workspace);
-        return workspace;
-    }
-
-    private WorkspaceChoiceDto mapToWorkspaceChoiceDto(Workspace workspace) {
-        WorkspaceChoiceDto workspaceChoiceDto = new WorkspaceChoiceDto();
-        BeanUtils.copyProperties(workspace, workspaceChoiceDto);
-        return workspaceChoiceDto;
-    }
-
     public void delete(Workspace workspace) {
         workspaceRepository.delete(workspace);
     }
@@ -163,5 +153,43 @@ public class WorkspaceService {
     public Workspace retrieveWorkspace(Long workspaceId) {
         Optional<Workspace> maybe = workspaceRepository.findById(workspaceId);
         return maybe.get();
+    }
+
+    public WorkspaceChoiceDto update(UpdateWorkspaceDto updateWorkspaceDto) {
+        checkArgument(updateWorkspaceDto != null);
+        checkArgument(updateWorkspaceDto.getId() != null);
+        checkArgument(updateWorkspaceDto.getName() != null);
+
+        Workspace tobeUpdated = retrieveWorkspace(updateWorkspaceDto.getId());
+
+        if (tobeUpdated == null) {
+            log.error("Cannot find workspace with ID " + updateWorkspaceDto.getId());
+            throw new NotFoundException("Cannot find workspace with ID " + updateWorkspaceDto.getId());
+        }
+
+        workspaceRepository.save(mapToEntity(tobeUpdated, updateWorkspaceDto));
+
+        Workspace workspace = retrieveWorkspace(updateWorkspaceDto.getId());
+
+        return mapToWorkspaceChoiceDto(workspace);
+    }
+
+    private Workspace mapToEntity(CreateWorkspaceDto createWorkspaceDto) {
+        Workspace workspace = new Workspace();
+        BeanUtils.copyProperties(createWorkspaceDto, workspace);
+        return workspace;
+    }
+
+    private Workspace mapToEntity(Workspace tobeUpdated, UpdateWorkspaceDto updateWorkspaceDto) {
+        Workspace workspace = new Workspace();
+        BeanUtils.copyProperties(tobeUpdated, workspace);
+        BeanUtils.copyProperties(updateWorkspaceDto, workspace);
+        return workspace;
+    }
+
+    private WorkspaceChoiceDto mapToWorkspaceChoiceDto(Workspace workspace) {
+        WorkspaceChoiceDto workspaceChoiceDto = new WorkspaceChoiceDto();
+        BeanUtils.copyProperties(workspace, workspaceChoiceDto);
+        return workspaceChoiceDto;
     }
 }
