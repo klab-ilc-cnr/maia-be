@@ -8,20 +8,13 @@ import it.cnr.ilc.projectx.repository.WorkspaceRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.jdbc.Work;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.ws.rs.NotFoundException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -64,22 +57,25 @@ public class TileService {
         return tile;
     }
 
-    private WorkspaceChoiceDto mapToWorkspaceChoiceDto(Workspace workspace) {
-        WorkspaceChoiceDto workspaceChoiceDto = new WorkspaceChoiceDto();
-        BeanUtils.copyProperties(workspace, workspaceChoiceDto);
-        return workspaceChoiceDto;
+    public static TileDto mapToTileDto(Tile tile) {
+        TileDto tileDto = new TileDto();
+        BeanUtils.copyProperties(tile, tileDto);
+        tileDto.setWorkspaceId(tile.getWorkspace().getId());
+        return tileDto;
     }
 
     @Transactional
-    public void saveTiles(Long workspaceId, List<TileDto> tilesDto) {
-        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(EntityNotFoundException::new);
+    public void saveWorkspace(WorkspaceDto workspaceDto) {
+        Workspace workspace = workspaceRepository.findById(workspaceDto.getId()).orElseThrow(EntityNotFoundException::new);
 
         tileRepository.deleteAll(workspace.getTiles());
         workspace.setTiles(null);//cacelliamo la relazione altrimenti spring non cancella le tiles
 
-        List<Tile> newTiles = mapToEntity(tilesDto, workspace);
+        List<Tile> newTiles = mapToEntity(workspaceDto.getTiles(), workspace);
 
         workspace.setTiles(newTiles);
+
+        workspace.setLayout(workspaceDto.getLayout());
 
         workspaceRepository.save(workspace);
     }

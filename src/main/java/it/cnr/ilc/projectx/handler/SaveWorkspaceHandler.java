@@ -1,7 +1,7 @@
 package it.cnr.ilc.projectx.handler;
 
 import it.cnr.ilc.projectx.mediator.RequestHandler;
-import it.cnr.ilc.projectx.request.SaveTilesRequest;
+import it.cnr.ilc.projectx.request.SaveWorkspaceRequest;
 import it.cnr.ilc.projectx.service.TileService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
@@ -14,20 +14,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SaveTilesHandler implements RequestHandler<SaveTilesRequest, Void> {
+public class SaveWorkspaceHandler implements RequestHandler<SaveWorkspaceRequest, Void> {
     @NonNull
     private final TileService tileService;
 
     @Override
-    public Void handle(SaveTilesRequest request) {
+    public Void handle(SaveWorkspaceRequest request) {
         throw new NotImplementedYetException();
     }
 
     @Transactional
     @Override
-    public XResult<Void> handleXResult(SaveTilesRequest request) {
+    public XResult<Void> handleXResult(SaveWorkspaceRequest request) {
         try {
-            tileService.saveTiles(request.getWorkspaceId(), request.getTiles());
+            tileService.saveWorkspace(request.getWorkspace());
 
             return new XResult<>();
         } catch (Exception e) {

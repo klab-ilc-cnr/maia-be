@@ -1,7 +1,6 @@
 package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.*;
-import it.cnr.ilc.projectx.model.Tile;
 import it.cnr.ilc.projectx.model.Workspace;
 import it.cnr.ilc.projectx.repository.WorkspaceRepository;
 import lombok.NonNull;
@@ -136,9 +135,34 @@ public class WorkspaceService {
         return result;
     }
 
-    public List<TileDto> getTiles(Long workspaceId) {
-        //TODO
-        return null;
+    public WorkspaceDto getWorkspace(Long workspaceId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(NotFoundException::new);
+
+        WorkspaceDto workspaceDto = mapToWorkspaceDto(workspace);
+
+        int index = 1;
+        for (TileDto tile : workspaceDto.getTiles()) {
+            TextTileDto textTileDto = new TextTileDto();
+            //FIXME CARICARE I DATI CORRETTI PRENDENDOLI DALLE API
+            switch (index) {
+                case 1:
+                    textTileDto.setId(1l);
+                    tile.setContent(textTileDto);
+                    break;
+                case 2:
+                    textTileDto.setId(2l);
+                    tile.setContent(textTileDto);
+                    break;
+                case 3:
+                    textTileDto.setId(3l);
+                    tile.setContent(textTileDto);
+                    break;
+            }
+            index++;
+        }
+        ;
+
+        return workspaceDto;
     }
 
     public WorkspaceChoiceDto add(CreateWorkspaceDto workspaceChoiceDto) {
@@ -193,10 +217,18 @@ public class WorkspaceService {
         return workspaceChoiceDto;
     }
 
+    private WorkspaceDto mapToWorkspaceDto(Workspace workspace) {
+        WorkspaceDto workspaceDto = new WorkspaceDto();
+        workspaceDto.setId(workspace.getId());
+        workspaceDto.setLayout(workspace.getLayout());
+        List<TileDto> tilesDto = workspace.getTiles().stream().map(tile -> TileService.mapToTileDto(tile)).collect(Collectors.toList());
+        workspaceDto.setTiles(tilesDto);
+        return workspaceDto;
+    }
+
     @Transactional
     public void savePanelLayout(Long workspaceId, String layout) {
-        Optional<Workspace> maybe = workspaceRepository.findById(workspaceId);
-        Workspace workspace = maybe.get();
+        Workspace workspace = retrieveWorkspace(workspaceId);
         workspace.setLayout(layout);
         workspaceRepository.save(workspace);
     }

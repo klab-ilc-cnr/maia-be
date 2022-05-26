@@ -1,6 +1,5 @@
 package it.cnr.ilc.projectx.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import it.cnr.ilc.projectx.dto.*;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.*;
@@ -8,7 +7,6 @@ import it.cnr.ilc.projectx.service.WorkspaceService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +36,7 @@ public class WorkspaceController {
 
     @PutMapping
     public ResponseEntity<WorkspaceChoiceDto> updateWorkspace(@Valid @RequestBody UpdateWorkspaceDto updateWorkspaceDto) throws Exception {
-        XResult<WorkspaceChoiceDto> response = mediator.sendXResult(new UpdateWorkspaceRequest(updateWorkspaceDto));
+        XResult<WorkspaceChoiceDto> response = mediator.sendXResult(new UpdateWorkspaceChoiceRequest(updateWorkspaceDto));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }
@@ -73,12 +71,12 @@ public class WorkspaceController {
         //return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/tiles/{workspaceId}")
-    public ResponseEntity<List<TileDto>> getTiles(@PathVariable @NotNull Long workspaceId) {
-        return ResponseEntity.ok(workspaceService.getTiles(workspaceId));
+    @GetMapping("/status/{workspaceId}")
+    public ResponseEntity<WorkspaceDto> getWorkspaceStatus(@PathVariable @NotNull Long workspaceId) {
+        return ResponseEntity.ok(workspaceService.getWorkspace(workspaceId));
     }
 
-    @RequestMapping(
+/*    @RequestMapping(
             value = "/tiles/layout/{workspaceId}",
             method = RequestMethod.POST,
             consumes = {MediaType.TEXT_PLAIN_VALUE})
@@ -86,12 +84,12 @@ public class WorkspaceController {
         mediator.sendXResult(new SavePanelLayoutRequest(workspaceId, jsPanelLayout));
 
         return ResponseEntity.ok(true);
-    }
+    }*/
 
 
-    @PostMapping("/tiles/{workspaceId}")
-    public ResponseEntity<Boolean> saveTiles(@PathVariable @NotNull Long workspaceId, @Valid @RequestBody @NotNull List<TileDto> tilesDto) throws Exception {
-        mediator.sendXResult(new SaveTilesRequest(workspaceId, tilesDto));
+    @PutMapping("/layout")
+    public ResponseEntity<Boolean> saveWorkspace(@Valid @RequestBody @NotNull WorkspaceDto workspaceDto) throws Exception {
+        mediator.sendXResult(new SaveWorkspaceRequest(workspaceDto));
 
         return ResponseEntity.ok(true);
     }
