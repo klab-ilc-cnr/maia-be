@@ -34,7 +34,23 @@ CREATE TABLE public.workspaces
     created_by bigint       NOT NULL,
     updated    timestamp without time zone NOT NULL,
     updated_by bigint       NOT NULL,
+    layout     text,
     CONSTRAINT workspaces_pk PRIMARY KEY (id)
+);
+
+--- TILE
+CREATE TABLE public.tiles
+(
+    id           serial      NOT NULL,
+    workspace_id bigint      NOT NULL,
+    tile_config  TEXT,
+    content_id   bigint      NOT NULL,
+    type         varchar(50) NOT NULL,
+    created      timestamp without time zone NOT NULL,
+    created_by   bigint      NOT NULL,
+    updated      timestamp without time zone NOT NULL,
+    updated_by   bigint      NOT NULL,
+    CONSTRAINT tile_pk PRIMARY KEY (id)
 );
 
 /*--- WORKSPACE TILES;
@@ -47,19 +63,6 @@ CREATE TABLE public.workspaces_tiles
     CONSTRAINT workspace_tiles_pk PRIMARY KEY (id),
     CONSTRAINT workspace_tiles_un UNIQUE (workspace_id, tile_id, "rank"),
     CONSTRAINT workspace_tiles_fk FOREIGN KEY (workspace_id) REFERENCES public.workspaces (id)
-);
-
---- TILE
-CREATE TABLE public.tiles
-(
-    id           serial4      NOT NULL,
-    content_type varchar(100) NOT NULL,
-    content_id   bigint       NOT NULL,
-    x_position   decimal      NOT NULL DEFAULT 0,
-    y_position   decimal      NOT NULL DEFAULT 0,
-    x_size       decimal      NOT NULL DEFAULT 10,
-    y_size       decimal      NOT NULL DEFAULT 10
-        CONSTRAINT tile_pk PRIMARY KEY (id)
 );
 
 --- TEXT

@@ -1,7 +1,7 @@
 package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.*;
-import it.cnr.ilc.projectx.model.User;
+import it.cnr.ilc.projectx.model.Tile;
 import it.cnr.ilc.projectx.model.Workspace;
 import it.cnr.ilc.projectx.repository.WorkspaceRepository;
 import lombok.NonNull;
@@ -191,5 +191,13 @@ public class WorkspaceService {
         WorkspaceChoiceDto workspaceChoiceDto = new WorkspaceChoiceDto();
         BeanUtils.copyProperties(workspace, workspaceChoiceDto);
         return workspaceChoiceDto;
+    }
+
+    @Transactional
+    public void savePanelLayout(Long workspaceId, String layout) {
+        Optional<Workspace> maybe = workspaceRepository.findById(workspaceId);
+        Workspace workspace = maybe.get();
+        workspace.setLayout(layout);
+        workspaceRepository.save(workspace);
     }
 }

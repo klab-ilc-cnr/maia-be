@@ -1,17 +1,15 @@
 package it.cnr.ilc.projectx.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import it.cnr.ilc.projectx.dto.*;
 import it.cnr.ilc.projectx.mediator.Mediator;
-import it.cnr.ilc.projectx.request.CreateWorkspaceRequest;
-import it.cnr.ilc.projectx.request.DeleteWorkspaceRequest;
-import it.cnr.ilc.projectx.request.UpdateUserRequest;
-import it.cnr.ilc.projectx.request.UpdateWorkspaceRequest;
+import it.cnr.ilc.projectx.request.*;
 import it.cnr.ilc.projectx.service.WorkspaceService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -78,5 +76,23 @@ public class WorkspaceController {
     @GetMapping("/tiles/{workspaceId}")
     public ResponseEntity<List<TileDto>> getTiles(@PathVariable @NotNull Long workspaceId) {
         return ResponseEntity.ok(workspaceService.getTiles(workspaceId));
+    }
+
+    @RequestMapping(
+            value = "/tiles/layout/{workspaceId}",
+            method = RequestMethod.POST,
+            consumes = {MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<Boolean> saveTilesLayout(@PathVariable @NotNull Long workspaceId, @RequestBody String jsPanelLayout) throws JsonProcessingException {
+        mediator.sendXResult(new SavePanelLayoutRequest(workspaceId, jsPanelLayout));
+
+        return ResponseEntity.ok(true);
+    }
+
+
+    @PostMapping("/tiles/{workspaceId}")
+    public ResponseEntity<Boolean> saveTiles(@PathVariable @NotNull Long workspaceId, @Valid @RequestBody @NotNull List<TileDto> tilesDto) throws Exception {
+        mediator.sendXResult(new SaveTilesRequest(workspaceId, tilesDto));
+
+        return ResponseEntity.ok(true);
     }
 }

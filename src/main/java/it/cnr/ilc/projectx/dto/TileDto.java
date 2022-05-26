@@ -20,4 +20,5 @@ public class TileDto<T> implements Serializable {
     Long workspaceId;
     TileType type;
     T content;
+    String tileConfig;
 }

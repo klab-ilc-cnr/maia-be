@@ -2,26 +2,22 @@ package it.cnr.ilc.projectx.model;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.*;
-import org.hibernate.annotations.*;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Entity
-@Table(name = "workspaces")
-public class Workspace extends TracedEntity {
+@Table(name = "tiles")
+@TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+})
+public class Tile extends TracedEntity {
 
-    public static final String TABLE_NAME = "workspaces";
+    public static final String TABLE_NAME = "tiles";
     public static final String GENERATOR_NAME = TABLE_NAME + "_generator";
     public static final String SEQUENCE_NAME = TABLE_NAME + "_id_seq";
 
@@ -30,23 +26,26 @@ public class Workspace extends TracedEntity {
     @SequenceGenerator(name = GENERATOR_NAME, sequenceName = SEQUENCE_NAME, allocationSize = 1)
     private Long id;
 
+    String tileConfig;
+
+    Long contentId;
+
     @NonNull
-    private String name;
+    @Enumerated(EnumType.STRING)
+    TileType type;
 
-    private String note;
-
-    private String layout;
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "workspace")
-    private List<Tile> tiles;
+    @NonNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workspace_id")
+    Workspace workspace;
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", note='" + note + '\'' +
-                ", layout='" + layout + '\'' +
+                ", name='" + tileConfig + '\'' +
+                ", note='" + contentId + '\'' +
+                ", layout='" + type + '\'' +
                 ", created=" + super.getCreated() +
                 ", updated=" + super.getUpdated() +
                 ", createdBy=" + super.getCreatedBy() +

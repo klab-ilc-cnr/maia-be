@@ -1,9 +1,7 @@
 package it.cnr.ilc.projectx.handler;
 
-import it.cnr.ilc.projectx.dto.WorkspaceChoiceDto;
 import it.cnr.ilc.projectx.mediator.RequestHandler;
-import it.cnr.ilc.projectx.request.CreateWorkspaceRequest;
-import it.cnr.ilc.projectx.service.KeycloakAdminService;
+import it.cnr.ilc.projectx.request.SavePanelLayoutRequest;
 import it.cnr.ilc.projectx.service.WorkspaceService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
@@ -16,22 +14,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CreateWorkspaceHandler implements RequestHandler<CreateWorkspaceRequest, WorkspaceChoiceDto> {
+public class SavePanelLayoutHandler implements RequestHandler<SavePanelLayoutRequest, Void> {
     @NonNull
     private final WorkspaceService workspaceService;
 
     @Override
-    public WorkspaceChoiceDto handle(CreateWorkspaceRequest request) {
+    public Void handle(SavePanelLayoutRequest request) {
         throw new NotImplementedYetException();
     }
 
     @Transactional
     @Override
-    public XResult<WorkspaceChoiceDto> handleXResult(CreateWorkspaceRequest request) {
+    public XResult<Void> handleXResult(SavePanelLayoutRequest request) {
         try {
-            WorkspaceChoiceDto responseWorkspaceChoiceDto = workspaceService.add(request.getCreateWorkspaceDto());
+            workspaceService.savePanelLayout(request.getWorkspaceId(), request.getLayout());
 
-            return new XResult<>(responseWorkspaceChoiceDto);
+            return new XResult<>();
         } catch (Exception e) {
             log.error(e.getMessage());
             throw e;
