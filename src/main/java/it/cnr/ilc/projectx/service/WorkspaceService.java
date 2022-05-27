@@ -1,7 +1,9 @@
 package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.*;
+import it.cnr.ilc.projectx.model.Layer;
 import it.cnr.ilc.projectx.model.Workspace;
+import it.cnr.ilc.projectx.repository.LayerRepository;
 import it.cnr.ilc.projectx.repository.WorkspaceRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -97,7 +99,7 @@ public class WorkspaceService {
         text1.setId(1l);
         text1.setTitle("provaTitolo");
         text1.setCreatedBy("amministratore@gmail.com");
-        text1.setStatus("Aperto");
+        text1.setStatus("");
         text1.setUpdatedOn("21/04/2022");
         result.add(text1);
 
@@ -113,7 +115,7 @@ public class WorkspaceService {
         text3.setId(3l);
         text3.setTitle("provaTitolo3");
         text3.setCreatedBy("utente2@gmail.com");
-        text3.setStatus("Aperto");
+        text3.setStatus("");
         text3.setUpdatedOn("16/03/2022");
         result.add(text3);
 
@@ -224,12 +226,5 @@ public class WorkspaceService {
         List<TileDto> tilesDto = workspace.getTiles().stream().map(tile -> TileService.mapToTileDto(tile)).collect(Collectors.toList());
         workspaceDto.setTiles(tilesDto);
         return workspaceDto;
-    }
-
-    @Transactional
-    public void savePanelLayout(Long workspaceId, String layout) {
-        Workspace workspace = retrieveWorkspace(workspaceId);
-        workspace.setLayout(layout);
-        workspaceRepository.save(workspace);
     }
 }

@@ -3,6 +3,7 @@ package it.cnr.ilc.projectx.controller;
 import it.cnr.ilc.projectx.dto.*;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.*;
+import it.cnr.ilc.projectx.service.LayerService;
 import it.cnr.ilc.projectx.service.WorkspaceService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
@@ -75,17 +76,6 @@ public class WorkspaceController {
     public ResponseEntity<WorkspaceDto> getWorkspaceStatus(@PathVariable @NotNull Long workspaceId) {
         return ResponseEntity.ok(workspaceService.getWorkspace(workspaceId));
     }
-
-/*    @RequestMapping(
-            value = "/tiles/layout/{workspaceId}",
-            method = RequestMethod.POST,
-            consumes = {MediaType.TEXT_PLAIN_VALUE})
-    public ResponseEntity<Boolean> saveTilesLayout(@PathVariable @NotNull Long workspaceId, @RequestBody String jsPanelLayout) throws JsonProcessingException {
-        mediator.sendXResult(new SavePanelLayoutRequest(workspaceId, jsPanelLayout));
-
-        return ResponseEntity.ok(true);
-    }*/
-
 
     @PutMapping("/layout")
     public ResponseEntity<Boolean> saveWorkspace(@Valid @RequestBody @NotNull WorkspaceDto workspaceDto) throws Exception {

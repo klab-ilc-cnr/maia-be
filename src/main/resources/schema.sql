@@ -50,20 +50,20 @@ CREATE TABLE public.tiles
     created_by   bigint      NOT NULL,
     updated      timestamp without time zone NOT NULL,
     updated_by   bigint      NOT NULL,
-    CONSTRAINT tile_pk PRIMARY KEY (id)
-);
-
-/*--- WORKSPACE TILES;
-CREATE TABLE public.workspaces_tiles
-(
-    id           serial NOT NULL,
-    workspace_id bigint NOT NULL,
-    tile_id      bigint NOT NULL,
-    "rank"       bigint NOT NULL DEFAULT 0,
-    CONSTRAINT workspace_tiles_pk PRIMARY KEY (id),
-    CONSTRAINT workspace_tiles_un UNIQUE (workspace_id, tile_id, "rank"),
+    CONSTRAINT tile_pk PRIMARY KEY (id),
     CONSTRAINT workspace_tiles_fk FOREIGN KEY (workspace_id) REFERENCES public.workspaces (id)
 );
+
+--- LAYER
+CREATE TABLE public.layers
+(
+    id          serial      NOT NULL,
+    color       varchar(50) NOT NULL,
+    description varchar(500),
+    CONSTRAINT layers_pk PRIMARY KEY (id)
+);
+
+/*
 
 --- TEXT
 CREATE TABLE public.texts
@@ -76,14 +76,6 @@ CREATE TABLE public.texts
     updated_by       bigint,
     external_node_id bigint  NOT NULL,
     CONSTRAINT texts_pk PRIMARY KEY (id)
-);
-
---- LAYER
-CREATE TABLE public.layers
-(
-    id      serial4 NOT NULL,
-    text_id bigint  NOT NULL,
-    CONSTRAINT layers_pk PRIMARY KEY (id)
 );
 
 --- ANNOTATION
