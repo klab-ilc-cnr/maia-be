@@ -3,7 +3,6 @@ package it.cnr.ilc.projectx.controller;
 import it.cnr.ilc.projectx.dto.*;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.*;
-import it.cnr.ilc.projectx.service.LayerService;
 import it.cnr.ilc.projectx.service.WorkspaceService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
@@ -36,8 +35,8 @@ public class WorkspaceController {
     }
 
     @PutMapping
-    public ResponseEntity<WorkspaceChoiceDto> updateWorkspace(@Valid @RequestBody UpdateWorkspaceDto updateWorkspaceDto) throws Exception {
-        XResult<WorkspaceChoiceDto> response = mediator.sendXResult(new UpdateWorkspaceChoiceRequest(updateWorkspaceDto));
+    public ResponseEntity<WorkspaceChoiceDto> updateWorkspace(@Valid @RequestBody UpdateWorkspaceChoiceDto updateWorkspaceChoiceDto) throws Exception {
+        XResult<WorkspaceChoiceDto> response = mediator.sendXResult(new UpdateWorkspaceChoiceRequest(updateWorkspaceChoiceDto));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }

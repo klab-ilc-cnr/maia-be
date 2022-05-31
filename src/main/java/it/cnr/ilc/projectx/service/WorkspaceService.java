@@ -1,9 +1,7 @@
 package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.*;
-import it.cnr.ilc.projectx.model.Layer;
 import it.cnr.ilc.projectx.model.Workspace;
-import it.cnr.ilc.projectx.repository.LayerRepository;
 import it.cnr.ilc.projectx.repository.WorkspaceRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -181,21 +179,21 @@ public class WorkspaceService {
         return maybe.get();
     }
 
-    public WorkspaceChoiceDto update(UpdateWorkspaceDto updateWorkspaceDto) {
-        checkArgument(updateWorkspaceDto != null);
-        checkArgument(updateWorkspaceDto.getId() != null);
-        checkArgument(updateWorkspaceDto.getName() != null);
+    public WorkspaceChoiceDto update(UpdateWorkspaceChoiceDto updateWorkspaceChoiceDto) {
+        checkArgument(updateWorkspaceChoiceDto != null);
+        checkArgument(updateWorkspaceChoiceDto.getId() != null);
+        checkArgument(updateWorkspaceChoiceDto.getName() != null);
 
-        Workspace tobeUpdated = retrieveWorkspace(updateWorkspaceDto.getId());
+        Workspace tobeUpdated = retrieveWorkspace(updateWorkspaceChoiceDto.getId());
 
         if (tobeUpdated == null) {
-            log.error("Cannot find workspace with ID " + updateWorkspaceDto.getId());
-            throw new NotFoundException("Cannot find workspace with ID " + updateWorkspaceDto.getId());
+            log.error("Cannot find workspace with ID " + updateWorkspaceChoiceDto.getId());
+            throw new NotFoundException("Cannot find workspace with ID " + updateWorkspaceChoiceDto.getId());
         }
 
-        workspaceRepository.save(mapToEntity(tobeUpdated, updateWorkspaceDto));
+        workspaceRepository.save(mapToEntity(tobeUpdated, updateWorkspaceChoiceDto));
 
-        Workspace workspace = retrieveWorkspace(updateWorkspaceDto.getId());
+        Workspace workspace = retrieveWorkspace(updateWorkspaceChoiceDto.getId());
 
         return mapToWorkspaceChoiceDto(workspace);
     }
@@ -206,10 +204,10 @@ public class WorkspaceService {
         return workspace;
     }
 
-    private Workspace mapToEntity(Workspace tobeUpdated, UpdateWorkspaceDto updateWorkspaceDto) {
+    private Workspace mapToEntity(Workspace tobeUpdated, UpdateWorkspaceChoiceDto updateWorkspaceChoiceDto) {
         Workspace workspace = new Workspace();
         BeanUtils.copyProperties(tobeUpdated, workspace);
-        BeanUtils.copyProperties(updateWorkspaceDto, workspace);
+        BeanUtils.copyProperties(updateWorkspaceChoiceDto, workspace);
         return workspace;
     }
 

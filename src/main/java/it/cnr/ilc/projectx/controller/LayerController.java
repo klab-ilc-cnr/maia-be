@@ -40,4 +40,23 @@ public class LayerController {
         LayerDto responseDto = response.getPayload();
         return ResponseEntity.ok(responseDto);
     }
+
+    @DeleteMapping("{layerId}")
+    public ResponseEntity<Long> deleteLayer(@PathVariable @NotNull Long layerId) throws Exception {
+        XResult<Long> response = mediator.sendXResult(new DeleteLayerRequest(layerId));
+        if (response.IsFailed()) {
+            ResponseEntity.badRequest();
+        }
+        return ResponseEntity.ok(response.getPayload());
+    }
+
+    @PutMapping
+    public ResponseEntity<LayerChoiceDto> updateLayer(@Valid @RequestBody UpdateLayerChoiceDto updateLayerChoiceDto) throws Exception {
+        XResult<LayerChoiceDto> response = mediator.sendXResult(new UpdateLayerChoiceRequest(updateLayerChoiceDto));
+        if (response.IsFailed()) {
+            ResponseEntity.badRequest();
+        }
+        LayerChoiceDto responsePayload = response.getPayload();
+        return ResponseEntity.ok(responsePayload);
+    }
 }
