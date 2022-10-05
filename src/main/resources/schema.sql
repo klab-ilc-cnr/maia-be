@@ -58,9 +58,32 @@ CREATE TABLE public.tiles
 CREATE TABLE public.layers
 (
     id          serial      NOT NULL,
+    name        varchar(50) NOT NULL,
     color       varchar(50) NOT NULL,
     description varchar(500),
-    CONSTRAINT layers_pk PRIMARY KEY (id)
+    CONSTRAINT layers_pk PRIMARY KEY (id),
+    CONSTRAINT layers_un UNIQUE ("name")
+);
+
+--- TAGSET
+CREATE TABLE public.tagsets
+(
+    id          serial      NOT NULL,
+    name        varchar(50) NOT NULL,
+    description varchar(500),
+    CONSTRAINT tagsets_pk PRIMARY KEY (id),
+    CONSTRAINT tagsets_un UNIQUE ("name")
+);
+
+--- TAGSET VALUES
+CREATE TABLE public.tagset_values
+(
+    id          serial      NOT NULL,
+    name        varchar(50) NOT NULL,
+    description varchar(500),
+    tagset_id   bigint      NOT NULL,
+    CONSTRAINT tagset_values_pk PRIMARY KEY (id),
+    CONSTRAINT tagsets_tagsets_value_fk FOREIGN KEY (tagset_id) REFERENCES public.tagsets (id)
 );
 
 /*

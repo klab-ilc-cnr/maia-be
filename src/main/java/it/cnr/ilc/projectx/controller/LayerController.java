@@ -9,6 +9,7 @@ import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,6 +33,7 @@ public class LayerController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<LayerDto> createLayer(@Valid @RequestBody @NotNull LayerDto layerDto) throws Exception {
         XResult<LayerDto> response = mediator.sendXResult(new CreateLayerRequest(layerDto));
         if (response.IsFailed()) {
@@ -42,6 +44,7 @@ public class LayerController {
     }
 
     @DeleteMapping("{layerId}")
+    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<Long> deleteLayer(@PathVariable @NotNull Long layerId) throws Exception {
         XResult<Long> response = mediator.sendXResult(new DeleteLayerRequest(layerId));
         if (response.IsFailed()) {
@@ -51,6 +54,7 @@ public class LayerController {
     }
 
     @PutMapping
+    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<LayerChoiceDto> updateLayer(@Valid @RequestBody UpdateLayerChoiceDto updateLayerChoiceDto) throws Exception {
         XResult<LayerChoiceDto> response = mediator.sendXResult(new UpdateLayerChoiceRequest(updateLayerChoiceDto));
         if (response.IsFailed()) {
