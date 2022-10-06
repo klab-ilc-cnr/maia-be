@@ -1,36 +1,32 @@
 package it.cnr.ilc.projectx.controller;
 
-import it.cnr.ilc.projectx.dto.*;
+import it.cnr.ilc.projectx.dto.FeatureDto;
 import it.cnr.ilc.projectx.mediator.Mediator;
-import it.cnr.ilc.projectx.request.*;
-import it.cnr.ilc.projectx.service.TagsetService;
-import it.cnr.ilc.projectx.xresults.XResult;
+import it.cnr.ilc.projectx.service.FeatureService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping(value = "/api/tagsets")
-public class TagsetController {
+@RequestMapping(value = "/api/features")
+public class FeatureController {
     @NonNull
     private final Mediator mediator;
 
     @NonNull
-    private final TagsetService tagsetService;
+    private final FeatureService featureService;
 
-    @GetMapping
-    public ResponseEntity<List<TagsetDto>> getTagsets() {
-        return ResponseEntity.ok(tagsetService.retrieveAll());
+    @GetMapping("/{layerId}")
+    public ResponseEntity<List<FeatureDto>> getFeatures(@PathVariable @NotNull Long layerId) {
+        return ResponseEntity.ok(featureService.retrieveAllByLayerId(layerId));
     }
-
+/*
     @GetMapping("/{id}")
     public ResponseEntity<TagsetDto> retrieveById(@PathVariable @NotNull Long id) {
         return ResponseEntity.ok(tagsetService.retrieveById(id));
@@ -71,5 +67,5 @@ public class TagsetController {
             ResponseEntity.badRequest();
         }
         return ResponseEntity.ok(response.getPayload());
-    }
+    }*/
 }

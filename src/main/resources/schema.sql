@@ -65,6 +65,21 @@ CREATE TABLE public.layers
     CONSTRAINT layers_un UNIQUE ("name")
 );
 
+--- FEATURE
+CREATE TABLE public.features
+(
+    id          serial      NOT NULL,
+    name        varchar(50) NOT NULL,
+    description varchar(500),
+    type        varchar(50) NOT NULL,
+    tagset_id   bigint,
+    layer_id    bigint      NOT NULL,
+    CONSTRAINT features_pk PRIMARY KEY (id),
+    CONSTRAINT features_un UNIQUE ("name"),
+    CONSTRAINT features_tagset_fk FOREIGN KEY (tagset_id) REFERENCES public.tagsets (id),
+    CONSTRAINT layer_tagset_fk FOREIGN KEY (layer_id) REFERENCES public.layers (id)
+);
+
 --- TAGSET
 CREATE TABLE public.tagsets
 (
