@@ -60,14 +60,18 @@ public class TagsetController {
         return ResponseEntity.ok(responsePayload);
     }
 
-    /*
-    @DeleteMapping("{layerId}")
+    @GetMapping("canbedeleted/{id}")
+    public ResponseEntity<Boolean> canBeDeleted(@PathVariable @NotNull Long id) {
+        return ResponseEntity.ok(tagsetService.canBeDeleted(id));
+    }
+
+    @DeleteMapping("{id}")
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<Long> deleteLayer(@PathVariable @NotNull Long layerId) throws Exception {
-        XResult<Long> response = mediator.sendXResult(new DeleteLayerRequest(layerId));
+    public ResponseEntity<Long> deleteTagset(@PathVariable @NotNull Long tagsetId) throws Exception {
+        XResult<Long> response = mediator.sendXResult(new DeleteTagsetRequest(tagsetId));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }
         return ResponseEntity.ok(response.getPayload());
-    }*/
+    }
 }

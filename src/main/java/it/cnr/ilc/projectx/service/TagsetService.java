@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.NotFoundException;
@@ -41,11 +42,13 @@ public class TagsetService {
                 .orElseThrow(EntityNotFoundException::new));
     }
 
+    @Transactional
     public CreateTagsetDto saveTagset(CreateTagsetDto tagsetDto) {
         Tagset tagset = tagsetRepository.save(mapToEntity(tagsetDto));
         return mapToCreateTagsetDto(tagset);
     }
 
+    @Transactional
     public UpdateTagsetDto updateTagset(UpdateTagsetDto tagsetDto) {
         checkArgument(tagsetDto != null);
         checkArgument(tagsetDto.getId() != null);
@@ -58,17 +61,37 @@ public class TagsetService {
             throw new NotFoundException("Cannot find tagset with ID " + tagsetDto.getId());
         }
 
-        tagsetValueRepository.deleteAllById(tobeUpdated.get()
-                .getValues()
-                .stream()
-                .map(tagsetValue -> tagsetValue.getId())
-                .collect(Collectors.toList()));
+        deleteAllTagsetValuesFromTagset(tobeUpdated.get());
 
         tagsetRepository.save(mapToEntity(tobeUpdated.get(), tagsetDto));
 
         Tagset tagset = tagsetRepository.findById(tagsetDto.getId()).orElseThrow(EntityNotFoundException::new);
 
         return mapToUpdateTagsetDto(tagset);
+    }
+
+    public Boolean canBeDeleted(Long tagsetId) {
+        //TODO controllare se esite una Feature che sta usando il mio tagset
+        return false;
+    }
+
+    @Transactional
+    public Boolean deleteTagset(Long tagsetId) {
+        if (canBeDeleted(tagsetId)) {
+            tagsetRepository.deleteById(tagsetId);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private void deleteAllTagsetValuesFromTagset(Tagset tagset) {
+        tagsetValueRepository.deleteAllById(tagset
+                .getValues()
+                .stream()
+                .map(tagsetValue -> tagsetValue.getId())
+                .collect(Collectors.toList()));
     }
 
     private Tagset mapToEntity(TagsetDto tagsetDto) {
