@@ -1,13 +1,18 @@
 package it.cnr.ilc.projectx.controller;
 
+import it.cnr.ilc.projectx.dto.CreateFeatureDto;
 import it.cnr.ilc.projectx.dto.FeatureDto;
 import it.cnr.ilc.projectx.mediator.Mediator;
+import it.cnr.ilc.projectx.request.CreateFeatureRequest;
 import it.cnr.ilc.projectx.service.FeatureService;
+import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -23,26 +28,21 @@ public class FeatureController {
     private final FeatureService featureService;
 
     @GetMapping("/{layerId}")
-    public ResponseEntity<List<FeatureDto>> getFeatures(@PathVariable @NotNull Long layerId) {
+    public ResponseEntity<List<FeatureDto>> retrieveFeaturesByLayerId(@PathVariable @NotNull Long layerId) {
         return ResponseEntity.ok(featureService.retrieveAllByLayerId(layerId));
-    }
-/*
-    @GetMapping("/{id}")
-    public ResponseEntity<TagsetDto> retrieveById(@PathVariable @NotNull Long id) {
-        return ResponseEntity.ok(tagsetService.retrieveById(id));
     }
 
     @PostMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<CreateTagsetDto> createTagset(@Valid @RequestBody @NotNull CreateTagsetDto tagsetDto) throws Exception {
-        XResult<CreateTagsetDto> response = mediator.sendXResult(new CreateTagsetRequest(tagsetDto));
+    public ResponseEntity<CreateFeatureDto> createFeature(@Valid @RequestBody @NotNull CreateFeatureDto featureDto) throws Exception {
+        XResult<CreateFeatureDto> response = mediator.sendXResult(new CreateFeatureRequest(featureDto));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }
-        CreateTagsetDto responseDto = response.getPayload();
+        CreateFeatureDto responseDto = response.getPayload();
         return ResponseEntity.ok(responseDto);
     }
-
+/*
     @PutMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<UpdateTagsetDto> updateTagset(@Valid @RequestBody UpdateTagsetDto updateTagsetDto) throws Exception {

@@ -1,17 +1,17 @@
 package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.*;
-import it.cnr.ilc.projectx.model.Feature;
-import it.cnr.ilc.projectx.model.Tagset;
-import it.cnr.ilc.projectx.model.TagsetValue;
+import it.cnr.ilc.projectx.model.*;
 import it.cnr.ilc.projectx.repository.FeatureRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -24,8 +24,27 @@ public class FeatureService {
     @NonNull
     private final FeatureRepository featureRepository;
 
+    @NonNull
+    private final LayerService layerService;
+
+    @NonNull
+    private final TagsetService tagsetService;
+
     public List<FeatureDto> retrieveAllByLayerId(Long layerId) {
         return mapToFeatureDto(featureRepository.findByLayer_Id(layerId));
+    }
+
+    @Transactional
+    public CreateFeatureDto saveFeature(CreateFeatureDto featureDto) {
+        Layer layer = layerService.retrieveLayer(featureDto.getLayerId());
+        Tagset tagset = null;
+        if (featureDto.getType() == FeatureType.TAGSET) {
+            tagset = tagsetService.retrieveEntityById(Objects.requireNonNull(featureDto.getTagsetId()));
+        }
+
+        Feature feature = featureRepository.save(mapToEntity(featureDto, layer, tagset));
+
+        return mapToCreateFeatureDto(feature);
     }
 
 /*    public TagsetDto retrieveById(Long id) {
@@ -85,10 +104,10 @@ public class FeatureService {
                 .collect(Collectors.toList()));
     }*/
 
-    private Tagset mapToEntity(TagsetDto tagsetDto) {
-        Tagset tagset = new Tagset();
-        BeanUtils.copyProperties(tagsetDto, tagset);
-        return tagset;
+    private Feature mapToEntity(FeatureDto featureDto) {
+        Feature feature = new Feature();
+        BeanUtils.copyProperties(featureDto, feature);
+        return feature;
     }
 
     private Tagset mapToEntity(Tagset existingTagset, UpdateTagsetDto updateTagsetDto) {
@@ -107,20 +126,16 @@ public class FeatureService {
         return existingTagset;
     }
 
-    private Tagset mapToEntity(CreateTagsetDto tagsetDto) {
-        Tagset tagset = new Tagset();
-        BeanUtils.copyProperties(tagsetDto, tagset);
+    private Feature mapToEntity(CreateFeatureDto featureDto, Layer layer, Tagset tagset) {
+        Feature feature = new Feature();
+        BeanUtils.copyProperties(featureDto, feature);
+        feature.setLayer(layer);
 
-        tagset.setValues(
-                tagsetDto.getValues().stream().map(createTagsetValuesDto -> {
-                    TagsetValue tagsetValue = new TagsetValue();
-                    tagsetValue.setTagset(tagset);
-                    tagsetValue.setName(createTagsetValuesDto.getName());
-                    tagsetValue.setDescription(createTagsetValuesDto.getDescription());
+        if (tagset != null) {
+            feature.setTagset(tagset);
+        }
 
-                    return tagsetValue;
-                }).collect(Collectors.toList()));
-        return tagset;
+        return feature;
     }
 
     private List<FeatureDto> mapToFeatureDto(List<Feature> features) {
@@ -130,23 +145,20 @@ public class FeatureService {
     private FeatureDto mapToFeatureDto(Feature feature) {
         FeatureDto featureDto = new FeatureDto();
         BeanUtils.copyProperties(feature, featureDto);
+        featureDto.setLayerId(feature.getLayer().getId());
+
+        if (feature.getType() == FeatureType.TAGSET) {
+            featureDto.setTagsetId(Objects.requireNonNull(feature.getTagset().getId()));
+        }
 
         return featureDto;
     }
 
-    private CreateTagsetDto mapToCreateTagsetDto(Tagset tagset) {
-        CreateTagsetDto tagsetDto = new CreateTagsetDto();
-        BeanUtils.copyProperties(tagset, tagsetDto);
-        tagsetDto.setValues(
-                tagset.getValues().stream().map(tagsetValue -> {
-                    CreateTagsetValuesDto toBeAdded = new CreateTagsetValuesDto();
-                    toBeAdded.setName(tagsetValue.getName());
-                    toBeAdded.setDescription(tagsetValue.getDescription());
+    private CreateFeatureDto mapToCreateFeatureDto(Feature feature) {
+        CreateFeatureDto createFeatureDto = new CreateFeatureDto();
+        BeanUtils.copyProperties(feature, createFeatureDto);
 
-                    return toBeAdded;
-                }).collect(Collectors.toList()));
-
-        return tagsetDto;
+        return createFeatureDto;
     }
 
     private UpdateTagsetDto mapToUpdateTagsetDto(Tagset tagset) {

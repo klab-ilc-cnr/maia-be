@@ -42,6 +42,11 @@ public class TagsetService {
                 .orElseThrow(EntityNotFoundException::new));
     }
 
+    public Tagset retrieveEntityById(Long id) {
+        return tagsetRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
     @Transactional
     public CreateTagsetDto saveTagset(CreateTagsetDto tagsetDto) {
         Tagset tagset = tagsetRepository.save(mapToEntity(tagsetDto));
