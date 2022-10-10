@@ -2,14 +2,21 @@ package it.cnr.ilc.projectx.request;
 
 import it.cnr.ilc.projectx.mediator.Request;
 
-public class DeleteTagsetRequest implements Request<Long> {
-    private final Long tagsetId;
+public class DeleteFeatureRequest implements Request<Boolean> {
 
-    public DeleteTagsetRequest(final Long tagsetId) {
-        this.tagsetId = tagsetId;
+    private final Long layerId;
+    private final Long featureId;
+
+    public DeleteFeatureRequest(final Long layerId, final Long featureId) {
+        this.layerId = layerId;
+        this.featureId = featureId;
     }
 
-    public Long getTagsetId() {
-        return this.tagsetId;
+    public Long getLayerId() {
+        return this.layerId;
+    }
+
+    public Long getFeatureId() {
+        return this.featureId;
     }
 }

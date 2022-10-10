@@ -10,8 +10,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -47,48 +50,40 @@ public class FeatureService {
         return mapToCreateFeatureDto(feature);
     }
 
-/*    public TagsetDto retrieveById(Long id) {
-        return mapToTagsetDto(tagsetRepository.findById(id)
-                .orElseThrow(EntityNotFoundException::new));
-    }
+    public FeatureDto updateFeature(FeatureDto featureDto) {
+        checkArgument(featureDto != null);
+        checkArgument(featureDto.getId() != null);
+        checkArgument(featureDto.getName() != null);
+        checkArgument(featureDto.getLayerId() != null);
 
-    @Transactional
-    public CreateTagsetDto saveTagset(CreateTagsetDto tagsetDto) {
-        Tagset tagset = tagsetRepository.save(mapToEntity(tagsetDto));
-        return mapToCreateTagsetDto(tagset);
-    }
-
-    @Transactional
-    public UpdateTagsetDto updateTagset(UpdateTagsetDto tagsetDto) {
-        checkArgument(tagsetDto != null);
-        checkArgument(tagsetDto.getId() != null);
-        checkArgument(tagsetDto.getName() != null);
-
-        Optional<Tagset> tobeUpdated = tagsetRepository.findById(tagsetDto.getId());
+        Optional<Feature> tobeUpdated = featureRepository.findById(featureDto.getId());
 
         if (tobeUpdated.isEmpty()) {
-            log.error("Cannot find tagset with ID " + tagsetDto.getId());
-            throw new NotFoundException("Cannot find tagset with ID " + tagsetDto.getId());
+            log.error("Cannot find feature with ID " + featureDto.getId());
+            throw new NotFoundException("Cannot find feature with ID " + featureDto.getId());
         }
 
-        deleteAllTagsetValuesFromTagset(tobeUpdated.get());
+        featureRepository.save(mapToEntity(tobeUpdated.get(), featureDto));
 
-        tagsetRepository.save(mapToEntity(tobeUpdated.get(), tagsetDto));
+        Feature feature = featureRepository.findById(featureDto.getId()).orElseThrow(EntityNotFoundException::new);
 
-        Tagset tagset = tagsetRepository.findById(tagsetDto.getId()).orElseThrow(EntityNotFoundException::new);
-
-        return mapToUpdateTagsetDto(tagset);
+        return mapToFeatureDto(feature);
     }
 
-    public Boolean canBeDeleted(Long tagsetId) {
-        //TODO controllare se esite una Feature che sta usando il mio tagset
-        return false;
+    public Boolean canBeDeleted(Long layerId, Long featureId) {
+        FeatureDto featureDto = retrieveById(featureId);
+
+        if (featureDto.getLayerId() != layerId) {
+            return false;
+        }
+
+        return true;
     }
 
     @Transactional
-    public Boolean deleteTagset(Long tagsetId) {
-        if (canBeDeleted(tagsetId)) {
-            tagsetRepository.deleteById(tagsetId);
+    public Boolean deleteFeature(Long layerId, Long featureId) {
+        if (canBeDeleted(layerId, featureId)) {
+            featureRepository.deleteById(featureId);
 
             return true;
         }
@@ -96,13 +91,10 @@ public class FeatureService {
         return false;
     }
 
-    private void deleteAllTagsetValuesFromTagset(Tagset tagset) {
-        tagsetValueRepository.deleteAllById(tagset
-                .getValues()
-                .stream()
-                .map(tagsetValue -> tagsetValue.getId())
-                .collect(Collectors.toList()));
-    }*/
+   public FeatureDto retrieveById(Long id) {
+        return mapToFeatureDto(featureRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new));
+    }
 
     private Feature mapToEntity(FeatureDto featureDto) {
         Feature feature = new Feature();
@@ -110,20 +102,19 @@ public class FeatureService {
         return feature;
     }
 
-    private Tagset mapToEntity(Tagset existingTagset, UpdateTagsetDto updateTagsetDto) {
-        existingTagset.setName(updateTagsetDto.getName());
-        existingTagset.setDescription(updateTagsetDto.getDescription());
+    private Feature mapToEntity(Feature existingFeature, FeatureDto updateFeatureDto) {
+        existingFeature.setName(updateFeatureDto.getName());
+        existingFeature.setDescription(updateFeatureDto.getDescription());
+        existingFeature.setType(updateFeatureDto.getType());
+        Tagset tagset = null;
 
-        existingTagset.setValues(
-                updateTagsetDto.getValues().stream().map(createTagsetValuesDto -> {
-                    TagsetValue tagsetValue = new TagsetValue();
-                    tagsetValue.setTagset(existingTagset);
-                    tagsetValue.setName(createTagsetValuesDto.getName());
-                    tagsetValue.setDescription(createTagsetValuesDto.getDescription());
+        if (updateFeatureDto.getType() == FeatureType.TAGSET) {
+            tagset = tagsetService.retrieveEntityById(updateFeatureDto.getTagsetId());
+        }
 
-                    return tagsetValue;
-                }).collect(Collectors.toList()));
-        return existingTagset;
+        existingFeature.setTagset(tagset);
+
+        return existingFeature;
     }
 
     private Feature mapToEntity(CreateFeatureDto featureDto, Layer layer, Tagset tagset) {
@@ -159,20 +150,5 @@ public class FeatureService {
         BeanUtils.copyProperties(feature, createFeatureDto);
 
         return createFeatureDto;
-    }
-
-    private UpdateTagsetDto mapToUpdateTagsetDto(Tagset tagset) {
-        UpdateTagsetDto tagsetDto = new UpdateTagsetDto();
-        BeanUtils.copyProperties(tagset, tagsetDto);
-        tagsetDto.setValues(
-                tagset.getValues().stream().map(tagsetValue -> {
-                    UpdateTagsetValuesDto toBeAdded = new UpdateTagsetValuesDto();
-                    toBeAdded.setName(tagsetValue.getName());
-                    toBeAdded.setDescription(tagsetValue.getDescription());
-
-                    return toBeAdded;
-                }).collect(Collectors.toList()));
-
-        return tagsetDto;
     }
 }

@@ -1,16 +1,16 @@
 package it.cnr.ilc.projectx.request;
 
-import it.cnr.ilc.projectx.dto.UpdateTagsetDto;
+import it.cnr.ilc.projectx.dto.FeatureDto;
 import it.cnr.ilc.projectx.mediator.Request;
 
-public class UpdateTagsetRequest implements Request<UpdateTagsetDto> {
-    private final UpdateTagsetDto updateTagsetDto;
+public class UpdateFeatureRequest implements Request<FeatureDto> {
+    private final FeatureDto featureDto;
 
-    public UpdateTagsetRequest(final UpdateTagsetDto updateTagsetDto) {
-        this.updateTagsetDto = updateTagsetDto;
+    public UpdateFeatureRequest(final FeatureDto featureDto) {
+        this.featureDto = featureDto;
     }
 
-    public UpdateTagsetDto getTagsetDto() {
-        return this.updateTagsetDto;
+    public FeatureDto getFeatureDto() {
+        return this.featureDto;
     }
 }

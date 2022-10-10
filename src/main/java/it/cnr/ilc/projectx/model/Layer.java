@@ -29,9 +29,6 @@ public class Layer extends TracedEntity {
 
     private String color;
 
-    @OneToOne
-    private Feature feature;
-
     @Override
     public String toString() {
         return "User{" +

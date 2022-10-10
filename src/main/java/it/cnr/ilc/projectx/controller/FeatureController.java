@@ -4,6 +4,8 @@ import it.cnr.ilc.projectx.dto.CreateFeatureDto;
 import it.cnr.ilc.projectx.dto.FeatureDto;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.CreateFeatureRequest;
+import it.cnr.ilc.projectx.request.DeleteFeatureRequest;
+import it.cnr.ilc.projectx.request.UpdateFeatureRequest;
 import it.cnr.ilc.projectx.service.FeatureService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
@@ -42,30 +44,33 @@ public class FeatureController {
         CreateFeatureDto responseDto = response.getPayload();
         return ResponseEntity.ok(responseDto);
     }
-/*
+
     @PutMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<UpdateTagsetDto> updateTagset(@Valid @RequestBody UpdateTagsetDto updateTagsetDto) throws Exception {
-        XResult<UpdateTagsetDto> response = mediator.sendXResult(new UpdateTagsetRequest(updateTagsetDto));
+    public ResponseEntity<FeatureDto> updateFeature(@Valid @RequestBody FeatureDto updateFeaturetDto) throws Exception {
+        XResult<FeatureDto> response = mediator.sendXResult(new UpdateFeatureRequest(updateFeaturetDto));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }
-        UpdateTagsetDto responsePayload = response.getPayload();
+        FeatureDto responsePayload = response.getPayload();
         return ResponseEntity.ok(responsePayload);
     }
 
-    @GetMapping("canbedeleted/{id}")
-    public ResponseEntity<Boolean> canBeDeleted(@PathVariable @NotNull Long id) {
-        return ResponseEntity.ok(tagsetService.canBeDeleted(id));
+    @GetMapping("canbedeleted/{layerId}/{featureId}")
+    public ResponseEntity<Boolean> canBeDeleted(@PathVariable @NotNull Long layerId,
+                                                @PathVariable @NotNull Long featureId) {
+        return ResponseEntity.ok(featureService.canBeDeleted(layerId, featureId));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("{layerId}/{featureId}")
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<Long> deleteTagset(@PathVariable @NotNull Long tagsetId) throws Exception {
-        XResult<Long> response = mediator.sendXResult(new DeleteTagsetRequest(tagsetId));
+    public ResponseEntity<Boolean> deleteFeature(@PathVariable @NotNull Long layerId,
+                                              @PathVariable @NotNull Long featureId) throws Exception {
+
+        XResult<Boolean> response = mediator.sendXResult(new DeleteFeatureRequest(layerId, featureId));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }
         return ResponseEntity.ok(response.getPayload());
-    }*/
+    }
 }

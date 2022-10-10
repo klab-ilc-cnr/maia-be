@@ -1,11 +1,9 @@
 package it.cnr.ilc.projectx.handler;
 
-import it.cnr.ilc.projectx.dto.CreateTagsetDto;
-import it.cnr.ilc.projectx.dto.UpdateTagsetDto;
+import it.cnr.ilc.projectx.dto.FeatureDto;
 import it.cnr.ilc.projectx.mediator.RequestHandler;
-import it.cnr.ilc.projectx.request.CreateTagsetRequest;
-import it.cnr.ilc.projectx.request.UpdateTagsetRequest;
-import it.cnr.ilc.projectx.service.TagsetService;
+import it.cnr.ilc.projectx.request.UpdateFeatureRequest;
+import it.cnr.ilc.projectx.service.FeatureService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -17,20 +15,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class UpdateTagsetHandler implements RequestHandler<UpdateTagsetRequest, UpdateTagsetDto> {
+public class UpdateFeatureHandler implements RequestHandler<UpdateFeatureRequest, FeatureDto> {
     @NonNull
-    private final TagsetService tagsetService;
+    private final FeatureService featureService;
 
     @Override
-    public UpdateTagsetDto handle(UpdateTagsetRequest request) {
+    public FeatureDto handle(UpdateFeatureRequest request) {
         throw new NotImplementedYetException();
     }
 
     @Transactional
     @Override
-    public XResult<UpdateTagsetDto> handleXResult(UpdateTagsetRequest request) {
+    public XResult<FeatureDto> handleXResult(UpdateFeatureRequest request) {
         try {
-            UpdateTagsetDto responseDto = tagsetService.updateTagset(request.getTagsetDto());
+            FeatureDto responseDto = featureService.updateFeature(request.getFeatureDto());
 
             return new XResult<>(responseDto);
         } catch (Exception e) {

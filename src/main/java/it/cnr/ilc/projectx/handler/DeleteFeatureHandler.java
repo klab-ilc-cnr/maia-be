@@ -1,12 +1,9 @@
 package it.cnr.ilc.projectx.handler;
 
+import it.cnr.ilc.projectx.dto.FeatureDto;
 import it.cnr.ilc.projectx.mediator.RequestHandler;
-import it.cnr.ilc.projectx.model.Layer;
-import it.cnr.ilc.projectx.model.Tagset;
-import it.cnr.ilc.projectx.request.DeleteLayerRequest;
-import it.cnr.ilc.projectx.request.DeleteTagsetRequest;
-import it.cnr.ilc.projectx.service.LayerService;
-import it.cnr.ilc.projectx.service.TagsetService;
+import it.cnr.ilc.projectx.request.DeleteFeatureRequest;
+import it.cnr.ilc.projectx.service.FeatureService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,22 +15,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DeleteTagsetHandler implements RequestHandler<DeleteTagsetRequest, Long> {
+public class DeleteFeatureHandler implements RequestHandler<DeleteFeatureRequest, Boolean> {
     @NonNull
-    private final TagsetService tagsetService;
+    private final FeatureService featureService;
 
     @Override
-    public Long handle(DeleteTagsetRequest request) {
+    public Boolean handle(DeleteFeatureRequest request) {
         throw new NotImplementedYetException();
     }
 
     @Transactional
     @Override
-    public XResult<Long> handleXResult(DeleteTagsetRequest request) {
+    public XResult<Boolean> handleXResult(DeleteFeatureRequest request) {
         try {
-            tagsetService.deleteTagset(request.getTagsetId());
+            boolean resutl = featureService.deleteFeature(request.getLayerId(), request.getFeatureId());
 
-            return new XResult<>(request.getTagsetId());
+            return new XResult<>(resutl);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw e;

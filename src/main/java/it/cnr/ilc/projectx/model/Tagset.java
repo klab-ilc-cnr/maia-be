@@ -32,9 +32,6 @@ public class Tagset extends TracedEntity {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "tagset")
     private List<TagsetValue> values;
 
-    @OneToOne
-    private Feature feature;
-
     @Override
     public String toString() {
         return "User{" +
