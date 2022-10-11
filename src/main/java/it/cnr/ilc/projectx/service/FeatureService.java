@@ -33,6 +33,9 @@ public class FeatureService {
     @NonNull
     private final TagsetService tagsetService;
 
+    @NonNull
+    private final AnnotationFeatureService annotationFeatureService;
+
     public List<FeatureDto> retrieveAllByLayerId(Long layerId) {
         return mapToFeatureDto(featureRepository.findByLayer_Id(layerId));
     }
@@ -71,6 +74,10 @@ public class FeatureService {
     }
 
     public Boolean canBeDeleted(Long layerId, Long featureId) {
+        if (annotationFeatureService.isPresentFeature(featureId)) {
+            return false;
+        }
+
         FeatureDto featureDto = retrieveById(featureId);
 
         if (featureDto.getLayerId() != layerId) {
@@ -91,7 +98,7 @@ public class FeatureService {
         return false;
     }
 
-   public FeatureDto retrieveById(Long id) {
+    public FeatureDto retrieveById(Long id) {
         return mapToFeatureDto(featureRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new));
     }

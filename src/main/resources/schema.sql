@@ -101,6 +101,15 @@ CREATE TABLE public.tagset_values
     CONSTRAINT tagsets_tagsets_value_fk FOREIGN KEY (tagset_id) REFERENCES public.tagsets (id)
 );
 
+--- ANNOTATION FEATURE
+CREATE TABLE public.annotation_feature
+(
+    annotation_id bigint NOT NULL,
+    feature_id    bigint NOT NULL,
+    CONSTRAINT FK_annotation_feature_feature_id FOREIGN KEY (feature_id) REFERENCES public.features (id),
+    CONSTRAINT annotation_feature_un UNIQUE (annotation_id,feature_id)
+);
+
 /*
 
 --- TEXT
