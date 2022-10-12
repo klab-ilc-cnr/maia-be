@@ -1,9 +1,9 @@
 package it.cnr.ilc.projectx.handler;
 
-import it.cnr.ilc.projectx.dto.FeatureDto;
 import it.cnr.ilc.projectx.mediator.RequestHandler;
 import it.cnr.ilc.projectx.request.DeleteFeatureRequest;
 import it.cnr.ilc.projectx.service.FeatureService;
+import it.cnr.ilc.projectx.service.eventHandler.DeleteHandler;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class DeleteFeatureHandler implements RequestHandler<DeleteFeatureRequest
     @Override
     public XResult<Boolean> handleXResult(DeleteFeatureRequest request) {
         try {
-            boolean resutl = featureService.deleteFeature(request.getLayerId(), request.getFeatureId());
+            boolean resutl = featureService.delete(request.getLayerId(), request.getFeatureId());
 
             return new XResult<>(resutl);
         } catch (Exception e) {

@@ -2,24 +2,16 @@ package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.*;
 import it.cnr.ilc.projectx.model.Layer;
-import it.cnr.ilc.projectx.model.Workspace;
 import it.cnr.ilc.projectx.repository.LayerRepository;
-import it.cnr.ilc.projectx.repository.WorkspaceRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.NotFoundException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -31,6 +23,9 @@ public class LayerService {
 
     @NonNull
     private final LayerRepository layerRepository;
+
+    @NonNull
+    private final LayerFeatureConnectorService layerFeatureConnectorService;
 
     public List<LayerDto> retrieveAllLayers() {
         return mapToLayerDto(layerRepository.findAll());
@@ -80,9 +75,48 @@ public class LayerService {
                 .orElseThrow(EntityNotFoundException::new);
     }
 
-    public void delete(Layer layer) {
-        layerRepository.delete(layer);
+    public Boolean canBeDeleted(Long layerId) {
+        //TODO aggiungere check se è usato in una Relation
+        Layer layer = retrieveLayer(layerId);
+        if (layerFeatureConnectorService.canAllFeaturesBeDeletedByLayerId(layer)) {
+            return true;
+        }
+
+        return false;
     }
+
+    public Boolean delete(Layer layer) {
+        if (canBeDeleted(layer.getId())) {
+            //TODO aggiungere eliminazione a cascata di tutte le feature che fanno parte del layer
+            layerFeatureConnectorService.deleteAllFeaturesAssociatedToLayer(layer);
+            layerRepository.delete(layer);
+
+            return true;
+        }
+
+        return false;
+    }
+
+/*    public Boolean canBeDeleted(Long layerId) {
+        //TODO aggiungere check se è usato in una Relation
+        if (featureService.canAllFeaturesBeDeletedByLayerId(layerId)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public Boolean delete(Layer layer) {
+        if (canBeDeleted(layer.getId())) {
+            //TODO aggiungere eliminazione a cascata di tutte le feature che fanno parte del layer
+            featureService.deleteAllFeaturesByLayerId(layer.getId());
+            layerRepository.delete(layer);
+
+            return true;
+        }
+
+        return false;
+    }*/
 
     public LayerChoiceDto update(UpdateLayerChoiceDto updateLayerChoiceDto) {
         checkArgument(updateLayerChoiceDto != null);

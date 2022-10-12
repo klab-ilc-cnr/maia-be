@@ -36,6 +36,9 @@ public class FeatureService {
     @NonNull
     private final AnnotationFeatureService annotationFeatureService;
 
+    @NonNull
+    private final LayerFeatureConnectorService layerFeatureConnectorService;
+
     public List<FeatureDto> retrieveAllByLayerId(Long layerId) {
         return mapToFeatureDto(featureRepository.findByLayer_Id(layerId));
     }
@@ -73,8 +76,8 @@ public class FeatureService {
         return mapToFeatureDto(feature);
     }
 
-    public Boolean canBeDeleted(Long layerId, Long featureId) {
-        if (annotationFeatureService.isPresentFeature(featureId)) {
+/*    public Boolean canBeDeleted(Long layerId, Long featureId) {
+        if (annotationFeatureService.existsByFeatureId(featureId)) {
             return false;
         }
 
@@ -96,17 +99,87 @@ public class FeatureService {
         }
 
         return false;
-    }
+    }*/
 
     public FeatureDto retrieveById(Long id) {
         return mapToFeatureDto(featureRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new));
     }
 
-    private Feature mapToEntity(FeatureDto featureDto) {
-        Feature feature = new Feature();
-        BeanUtils.copyProperties(featureDto, feature);
-        return feature;
+//    public boolean canAllFeaturesBeDeletedByLayerId(Long layerId) {
+//        for (FeatureDto featureDto : retrieveAllByLayerId(layerId)) {
+//            if (!canBeDeleted(layerId, featureDto.getId())) {
+//                return false;
+//            }
+//        }
+//
+//        return true;
+//    }
+//
+//    public Boolean deleteAllFeaturesByLayerId(Long layerId) {
+//        for (FeatureDto featureDto : retrieveAllByLayerId(layerId)) {
+//            if (!deleteFeature(layerId, featureDto.getId())) {
+//                return false;
+//            }
+//        }
+//
+//        return true;
+//    }
+
+//    @Transactional
+//    public Boolean deleteTagset(Long tagsetId) {
+//        if (canTagsetBeDeleted(tagsetId)) {
+//            tagsetService.uncheckedDelete(tagsetId);
+//
+//            return true;
+//        }
+//
+//        return false;
+//    }
+
+//    public boolean existsByTagset_Id(Long tagsetId) {
+//        return featureRepository.existsByTagset_Id(tagsetId);
+//    }
+
+//    public Boolean canTagsetBeDeleted(Long tagsetId) {
+//        if (existsByTagset_Id(tagsetId)) {
+//            return false;
+//        }
+//
+//        return true;
+//    }
+
+/*    public boolean canAllFeaturesBeDeletedByLayerId(Long layerId) {
+        for (FeatureDto featureDto : retrieveAllByLayerId(layerId)) {
+            if (!canBeDeleted(layerId, featureDto.getId())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public Boolean deleteAllByLayerId(Long layerId) {
+        for (FeatureDto featureDto : retrieveAllByLayerId(layerId)) {
+            if (!delete(layerId, featureDto.getId())) {
+                return false;
+            }
+        }
+
+        return true;
+    }*/
+
+    public Boolean canBeDeleted(Long layerId, Long featureId) {
+        Layer layer = layerService.retrieveLayer(layerId);
+
+        return layerFeatureConnectorService.canFeatureBeDeleted(layer, featureId);
+    }
+
+    @Transactional
+    public Boolean delete(Long layerId, Long featureId) {
+        Layer layer = layerService.retrieveLayer(layerId);
+
+        return layerFeatureConnectorService.deleteFeature(layer, featureId);
     }
 
     private Feature mapToEntity(Feature existingFeature, FeatureDto updateFeatureDto) {

@@ -29,6 +29,9 @@ public class Layer extends TracedEntity {
 
     private String color;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Feature> features;
+
     @Override
     public String toString() {
         return "User{" +

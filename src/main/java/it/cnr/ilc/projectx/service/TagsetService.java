@@ -1,20 +1,21 @@
 package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.*;
-import it.cnr.ilc.projectx.model.Layer;
 import it.cnr.ilc.projectx.model.Tagset;
 import it.cnr.ilc.projectx.model.TagsetValue;
-import it.cnr.ilc.projectx.model.Workspace;
 import it.cnr.ilc.projectx.repository.TagsetRepository;
 import it.cnr.ilc.projectx.repository.TagsetValueRepository;
+import it.cnr.ilc.projectx.service.event.DeleteTagsetEvent;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,12 @@ public class TagsetService {
 
     @NonNull
     private final TagsetValueRepository tagsetValueRepository;
+
+    @NotNull
+    private final ApplicationEventPublisher applicationEventPublisher;
+
+    @NonNull
+    private final FeatureTagsetConnectorService featureTagsetConnectorService;
 
     public List<TagsetDto> retrieveAll() {
         return mapToTagsetDto(tagsetRepository.findAll());
@@ -75,13 +82,8 @@ public class TagsetService {
         return mapToUpdateTagsetDto(tagset);
     }
 
-    public Boolean canBeDeleted(Long tagsetId) {
-        //TODO controllare se esite una Feature che sta usando il mio tagset
-        return false;
-    }
-
     @Transactional
-    public Boolean deleteTagset(Long tagsetId) {
+    public Boolean delete(Long tagsetId) {
         if (canBeDeleted(tagsetId)) {
             tagsetRepository.deleteById(tagsetId);
 
@@ -89,6 +91,14 @@ public class TagsetService {
         }
 
         return false;
+    }
+
+    public Boolean canBeDeleted(Long tagsetId) {
+        if (featureTagsetConnectorService.existsAnyFeatureAssociatedToTagset(tagsetId)) {
+            return false;
+        }
+
+        return true;
     }
 
     private void deleteAllTagsetValuesFromTagset(Tagset tagset) {

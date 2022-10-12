@@ -3,6 +3,7 @@ package it.cnr.ilc.projectx.controller;
 import it.cnr.ilc.projectx.dto.*;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.*;
+import it.cnr.ilc.projectx.service.eventHandler.DeleteHandler;
 import it.cnr.ilc.projectx.service.TagsetService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
@@ -65,8 +66,8 @@ public class TagsetController {
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<Long> deleteTagset(@PathVariable @NotNull Long tagsetId) throws Exception {
-        XResult<Long> response = mediator.sendXResult(new DeleteTagsetRequest(tagsetId));
+    public ResponseEntity<Long> deleteTagset(@PathVariable @NotNull Long id) throws Exception {
+        XResult<Long> response = mediator.sendXResult(new DeleteTagsetRequest(id));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }

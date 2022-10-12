@@ -3,6 +3,7 @@ package it.cnr.ilc.projectx.handler;
 import it.cnr.ilc.projectx.mediator.RequestHandler;
 import it.cnr.ilc.projectx.model.Layer;
 import it.cnr.ilc.projectx.request.DeleteLayerRequest;
+import it.cnr.ilc.projectx.service.eventHandler.DeleteHandler;
 import it.cnr.ilc.projectx.service.LayerService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;

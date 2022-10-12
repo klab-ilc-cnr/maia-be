@@ -6,6 +6,7 @@ import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.CreateFeatureRequest;
 import it.cnr.ilc.projectx.request.DeleteFeatureRequest;
 import it.cnr.ilc.projectx.request.UpdateFeatureRequest;
+import it.cnr.ilc.projectx.service.eventHandler.DeleteHandler;
 import it.cnr.ilc.projectx.service.FeatureService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
