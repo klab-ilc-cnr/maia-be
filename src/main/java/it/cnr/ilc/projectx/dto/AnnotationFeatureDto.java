@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,5 +21,5 @@ public class AnnotationFeatureDto implements Serializable {
     private Long annotationId;
 
     @NonNull
-    private Long featureId;
+    private List<Long> features;
 }

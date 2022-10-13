@@ -87,7 +87,6 @@ public class LayerService {
 
     public Boolean delete(Layer layer) {
         if (canBeDeleted(layer.getId())) {
-            //TODO aggiungere eliminazione a cascata di tutte le feature che fanno parte del layer
             layerFeatureConnectorService.deleteAllFeaturesAssociatedToLayer(layer);
             layerRepository.delete(layer);
 

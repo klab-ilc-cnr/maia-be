@@ -45,8 +45,8 @@ public class LayerController {
 
     @DeleteMapping("{layerId}")
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<Long> deleteLayer(@PathVariable @NotNull Long layerId) throws Exception {
-        XResult<Long> response = mediator.sendXResult(new DeleteLayerRequest(layerId));
+    public ResponseEntity<Boolean> deleteLayer(@PathVariable @NotNull Long layerId) throws Exception {
+        XResult<Boolean> response = mediator.sendXResult(new DeleteLayerRequest(layerId));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }

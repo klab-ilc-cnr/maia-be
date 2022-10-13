@@ -8,6 +8,8 @@ import it.cnr.ilc.projectx.service.TagsetService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -40,12 +42,16 @@ public class TagsetController {
     @PostMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<CreateTagsetDto> createTagset(@Valid @RequestBody @NotNull CreateTagsetDto tagsetDto) throws Exception {
-        XResult<CreateTagsetDto> response = mediator.sendXResult(new CreateTagsetRequest(tagsetDto));
-        if (response.IsFailed()) {
-            ResponseEntity.badRequest();
+        try {
+            XResult<CreateTagsetDto> response = mediator.sendXResult(new CreateTagsetRequest(tagsetDto));
+            if (response.IsFailed()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+            CreateTagsetDto responseDto = response.getPayload();
+            return ResponseEntity.ok(responseDto);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(418).body(null);
         }
-        CreateTagsetDto responseDto = response.getPayload();
-        return ResponseEntity.ok(responseDto);
     }
 
     @PutMapping
@@ -66,8 +72,8 @@ public class TagsetController {
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<Long> deleteTagset(@PathVariable @NotNull Long id) throws Exception {
-        XResult<Long> response = mediator.sendXResult(new DeleteTagsetRequest(id));
+    public ResponseEntity<Boolean> deleteTagset(@PathVariable @NotNull Long id) throws Exception {
+        XResult<Boolean> response = mediator.sendXResult(new DeleteTagsetRequest(id));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
         }

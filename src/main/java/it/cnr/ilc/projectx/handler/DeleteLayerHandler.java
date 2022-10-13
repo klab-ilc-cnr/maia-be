@@ -3,7 +3,6 @@ package it.cnr.ilc.projectx.handler;
 import it.cnr.ilc.projectx.mediator.RequestHandler;
 import it.cnr.ilc.projectx.model.Layer;
 import it.cnr.ilc.projectx.request.DeleteLayerRequest;
-import it.cnr.ilc.projectx.service.eventHandler.DeleteHandler;
 import it.cnr.ilc.projectx.service.LayerService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
@@ -16,24 +15,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DeleteLayerHandler implements RequestHandler<DeleteLayerRequest, Long> {
+public class DeleteLayerHandler implements RequestHandler<DeleteLayerRequest, Boolean> {
     @NonNull
     private final LayerService layerService;
 
     @Override
-    public Long handle(DeleteLayerRequest request) {
+    public Boolean handle(DeleteLayerRequest request) {
         throw new NotImplementedYetException();
     }
 
     @Transactional
     @Override
-    public XResult<Long> handleXResult(DeleteLayerRequest request) {
+    public XResult<Boolean> handleXResult(DeleteLayerRequest request) {
         try {
             Layer layer = layerService.retrieveLayer(request.getLayerId());
 
-            layerService.delete(layer);
+            Boolean resutl = layerService.delete(layer);
 
-            return new XResult<>(request.getLayerId());
+            return new XResult<>(resutl);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw e;

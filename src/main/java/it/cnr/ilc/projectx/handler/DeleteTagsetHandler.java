@@ -14,22 +14,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DeleteTagsetHandler implements RequestHandler<DeleteTagsetRequest, Long> {
-        @NonNull
-        private final TagsetService tagsetService;
+public class DeleteTagsetHandler implements RequestHandler<DeleteTagsetRequest, Boolean> {
+    @NonNull
+    private final TagsetService tagsetService;
 
     @Override
-    public Long handle(DeleteTagsetRequest request) {
+    public Boolean handle(DeleteTagsetRequest request) {
         throw new NotImplementedYetException();
     }
 
     @Transactional
     @Override
-    public XResult<Long> handleXResult(DeleteTagsetRequest request) {
+    public XResult<Boolean> handleXResult(DeleteTagsetRequest request) {
         try {
-            tagsetService.delete(request.getTagsetId());
+            boolean resutl = tagsetService.delete(request.getTagsetId());
 
-            return new XResult<>(request.getTagsetId());
+            return new XResult<>(resutl);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw e;
