@@ -34,9 +34,6 @@ public class FeatureService {
     private final TagsetService tagsetService;
 
     @NonNull
-    private final AnnotationFeatureService annotationFeatureService;
-
-    @NonNull
     private final LayerFeatureConnectorService layerFeatureConnectorService;
 
     public List<FeatureDto> retrieveAllByLayerId(Long layerId) {
@@ -189,7 +186,7 @@ public class FeatureService {
         Tagset tagset = null;
 
         if (updateFeatureDto.getType() == FeatureType.TAGSET) {
-            tagset = tagsetService.retrieveEntityById(updateFeatureDto.getTagsetId());
+            tagset = tagsetService.retrieveEntityById(updateFeatureDto.getTagset().getId());
         }
 
         existingFeature.setTagset(tagset);
@@ -219,7 +216,7 @@ public class FeatureService {
         featureDto.setLayerId(feature.getLayer().getId());
 
         if (feature.getType() == FeatureType.TAGSET) {
-            featureDto.setTagsetId(Objects.requireNonNull(feature.getTagset().getId()));
+            featureDto.setTagset(tagsetService.mapToTagsetDto(Objects.requireNonNull(feature.getTagset())));
         }
 
         return featureDto;

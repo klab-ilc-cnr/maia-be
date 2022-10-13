@@ -151,7 +151,7 @@ public class TagsetService {
         return tagsets.stream().map(tagset -> mapToTagsetDto(tagset)).collect(Collectors.toList());
     }
 
-    private TagsetDto mapToTagsetDto(Tagset tagset) {
+    protected TagsetDto mapToTagsetDto(Tagset tagset) {
         TagsetDto tagsetDto = new TagsetDto();
         BeanUtils.copyProperties(tagset, tagsetDto);
 

@@ -11,7 +11,6 @@ import javax.validation.constraints.NotBlank;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
-import java.util.List;
 
 @Getter
 @Setter
@@ -31,7 +30,7 @@ public class FeatureDto implements Serializable {
     @NonNull
     private FeatureType type;
 
-    private Long tagsetId;
+    private TagsetDto tagset;
 
     private String description;
 }
