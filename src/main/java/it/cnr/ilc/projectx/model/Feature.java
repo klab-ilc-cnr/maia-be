@@ -33,8 +33,7 @@ public class Feature extends TracedEntity {
     private Tagset tagset;
 
     @NonNull
-    @OneToOne
-    @JoinColumn(name = "layer_id", referencedColumnName = "id")
+    @ManyToOne
     private Layer layer;
 
     private String description;

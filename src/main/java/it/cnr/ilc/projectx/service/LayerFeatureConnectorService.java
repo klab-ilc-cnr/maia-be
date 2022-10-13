@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -19,6 +21,9 @@ public class LayerFeatureConnectorService {
 
     @NonNull
     private final FeatureRepository featureRepository;
+
+    @NonNull
+    private final LayerRepository layerRepository;
     @NonNull
     private final AnnotationFeatureService annotationFeatureService;
 
@@ -60,8 +65,14 @@ public class LayerFeatureConnectorService {
 
     @Transactional
     public Boolean deleteFeature(Layer layer, Long featureId) {
+        List<Feature> featuresCopy = new ArrayList<>(layer.getFeatures());
+
         if (canFeatureBeDeleted(layer, featureId)) {
+            featuresCopy.removeIf(t -> t.getId() == featureId);
             featureRepository.deleteById(featureId);
+
+            layer.setFeatures(featuresCopy);
+            layerRepository.save(layer);
 
             return true;
         }

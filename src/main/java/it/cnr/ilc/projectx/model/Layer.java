@@ -29,7 +29,7 @@ public class Layer extends TracedEntity {
 
     private String color;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "layer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Feature> features;
 
     @Override
