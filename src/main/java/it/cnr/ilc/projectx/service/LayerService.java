@@ -27,6 +27,9 @@ public class LayerService {
     @NonNull
     private final LayerFeatureConnectorService layerFeatureConnectorService;
 
+    @NonNull
+    private final AnnotationRelationService annotationRelationService;
+
     public List<LayerDto> retrieveAllLayers() {
         return mapToLayerDto(layerRepository.findAll());
     }
@@ -76,7 +79,11 @@ public class LayerService {
     }
 
     public Boolean canBeDeleted(Long layerId) {
-        //TODO aggiungere check se è usato in una Relation
+        if(annotationRelationService.existsAnyLayerInRelation(layerId))
+        {
+            return false;
+        }
+
         Layer layer = retrieveLayer(layerId);
         if (layerFeatureConnectorService.canAllFeaturesBeDeletedByLayerId(layer)) {
             return true;

@@ -107,7 +107,22 @@ CREATE TABLE public.annotation_feature
     annotation_id bigint NOT NULL,
     feature_id    bigint NOT NULL,
     CONSTRAINT FK_annotation_feature_feature_id FOREIGN KEY (feature_id) REFERENCES public.features (id),
-    CONSTRAINT annotation_feature_un UNIQUE (annotation_id,feature_id)
+    CONSTRAINT annotation_feature_un UNIQUE (annotation_id, feature_id)
+);
+
+--- RELATIONS
+CREATE TABLE public.relations
+(
+    id               serial      NOT NULL,
+    name             varchar(50) NOT NULL,
+    description      varchar(500),
+    src_layer_id    bigint      NOT NULL,
+    target_layer_id bigint      NOT NULL,
+    src_annotation_id       bigint      NOT NULL,
+    target_annotation_id    bigint      NOT NULL,
+    CONSTRAINT relations_pk PRIMARY KEY (id),
+    CONSTRAINT realtions_src_layer_fk FOREIGN KEY (src_tagset_id) REFERENCES public.tagsets (id),
+    CONSTRAINT realtions_target_layer_fk FOREIGN KEY (target_tagset_id) REFERENCES public.tagsets (id)
 );
 
 /*
