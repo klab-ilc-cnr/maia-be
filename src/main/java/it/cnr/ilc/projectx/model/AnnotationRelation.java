@@ -30,10 +30,12 @@ public class AnnotationRelation extends TracedEntity {
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "src_layer_id")
     private Layer srcLayer;
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "target_layer_id")
     private Layer targetLayer;
 
     @NonNull

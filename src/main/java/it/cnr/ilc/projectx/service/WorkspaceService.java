@@ -165,11 +165,13 @@ public class WorkspaceService {
         return workspaceDto;
     }
 
+    @Transactional
     public WorkspaceChoiceDto add(CreateWorkspaceDto workspaceChoiceDto) {
         Workspace workspace = workspaceRepository.save(mapToEntity(workspaceChoiceDto));
         return mapToWorkspaceChoiceDto(workspace);
     }
 
+    @Transactional
     public void delete(Workspace workspace) {
         workspaceRepository.delete(workspace);
     }
@@ -179,6 +181,7 @@ public class WorkspaceService {
         return maybe.get();
     }
 
+    @Transactional
     public WorkspaceChoiceDto update(UpdateWorkspaceChoiceDto updateWorkspaceChoiceDto) {
         checkArgument(updateWorkspaceChoiceDto != null);
         checkArgument(updateWorkspaceChoiceDto.getId() != null);

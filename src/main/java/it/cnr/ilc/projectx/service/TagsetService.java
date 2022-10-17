@@ -101,6 +101,7 @@ public class TagsetService {
         return true;
     }
 
+    @Transactional
     private void deleteAllTagsetValuesFromTagset(Tagset tagset) {
         tagsetValueRepository.deleteAllById(tagset
                 .getValues()

@@ -1,8 +1,9 @@
 package it.cnr.ilc.projectx.controller;
 
 import it.cnr.ilc.projectx.dto.AnnotationFeatureDto;
+import it.cnr.ilc.projectx.dto.AnnotationRelationDto;
 import it.cnr.ilc.projectx.mediator.Mediator;
-import it.cnr.ilc.projectx.request.CreateAnnotationFeatureRequest;
+import it.cnr.ilc.projectx.request.*;
 import it.cnr.ilc.projectx.service.AnnotationFeatureService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
@@ -22,9 +23,6 @@ public class AnnotationController {
     @NonNull
     private final Mediator mediator;
 
-    @NonNull
-    private final AnnotationFeatureService annotationFeatureService;
-
     @PostMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<AnnotationFeatureDto> create(@Valid @RequestBody @NotNull AnnotationFeatureDto annotationDto) throws Exception {
@@ -34,5 +32,26 @@ public class AnnotationController {
         }
         AnnotationFeatureDto responseDto = response.getPayload();
         return ResponseEntity.ok(responseDto);
+    }
+
+    @PutMapping
+    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
+    public ResponseEntity<AnnotationFeatureDto> updateAnnotation(@Valid @RequestBody AnnotationFeatureDto annotationFeatureDto) throws Exception {
+        XResult<AnnotationFeatureDto> response = mediator.sendXResult(new UpdateAnnotationFeatureRequest(annotationFeatureDto));
+        if (response.IsFailed()) {
+            ResponseEntity.badRequest();
+        }
+        AnnotationFeatureDto responsePayload = response.getPayload();
+        return ResponseEntity.ok(responsePayload);
+    }
+
+    @DeleteMapping("{annotationId}")
+    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
+    public ResponseEntity<Boolean> deleteAnnotation(@PathVariable @NotNull Long annotationId) throws Exception {
+        XResult<Boolean> response = mediator.sendXResult(new DeleteAnnotationFeatureRequest(annotationId));
+        if (response.IsFailed()) {
+            ResponseEntity.badRequest();
+        }
+        return ResponseEntity.ok(response.getPayload());
     }
 }

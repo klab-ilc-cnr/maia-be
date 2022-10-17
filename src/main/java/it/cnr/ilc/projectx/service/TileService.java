@@ -38,6 +38,7 @@ public class TileService {
                 .collect(Collectors.toList());
     }*/
 
+    @Transactional
     public void delete(Tile tile) {
         tileRepository.delete(tile);
     }

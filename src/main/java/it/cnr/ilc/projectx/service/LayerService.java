@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.NotFoundException;
@@ -34,6 +35,7 @@ public class LayerService {
         return mapToLayerDto(layerRepository.findAll());
     }
 
+    @Transactional
     public LayerDto saveLayer(LayerDto layerDto) {
         Layer layer = layerRepository.save(mapToEntity(layerDto));
         return mapToLayerDto(layer);
@@ -92,6 +94,7 @@ public class LayerService {
         return false;
     }
 
+    @Transactional
     public Boolean delete(Layer layer) {
         if (canBeDeleted(layer.getId())) {
             layerFeatureConnectorService.deleteAllFeaturesAssociatedToLayer(layer);
@@ -124,6 +127,7 @@ public class LayerService {
         return false;
     }*/
 
+    @Transactional
     public LayerChoiceDto update(UpdateLayerChoiceDto updateLayerChoiceDto) {
         checkArgument(updateLayerChoiceDto != null);
         checkArgument(updateLayerChoiceDto.getId() != null);
