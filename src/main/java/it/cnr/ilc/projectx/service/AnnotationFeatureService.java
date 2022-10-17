@@ -62,6 +62,7 @@ public class AnnotationFeatureService {
         return mapToAnnotationFeatureDto(annotationFeature);
     }
 
+    @Transactional
     public boolean delete(Long annotationId) {
         try {
             annotationFeatureRepository.deleteByAnnotationId(annotationId);
