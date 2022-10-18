@@ -1,9 +1,7 @@
 package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.*;
-import it.cnr.ilc.projectx.model.AnnotationFeature;
 import it.cnr.ilc.projectx.model.AnnotationRelation;
-import it.cnr.ilc.projectx.model.Feature;
 import it.cnr.ilc.projectx.model.Layer;
 import it.cnr.ilc.projectx.repository.AnnotationRelationRepository;
 import it.cnr.ilc.projectx.repository.LayerRepository;
@@ -35,9 +33,14 @@ public class AnnotationRelationService {
     private final LayerRepository layerRepository;
 
 
-    public AnnotationRelationDto retrieveById(Long id) {
-        return mapToAnnotationRelationDto(annotationRelationRepository.findById(id)
-                .orElseThrow(EntityNotFoundException::new));
+    public List<AnnotationRelationDto> retrieveByTextId(Long textId) {
+        Optional<List<AnnotationRelation>> entity = annotationRelationRepository.findByTextId(textId);
+
+        if (!entity.isPresent()) {
+            return new ArrayList<AnnotationRelationDto>();
+        }
+
+        return mapToAnnotationRelationDto(entity.get());
     }
 
     public Boolean existsAnyLayerInRelation(Long layerId) {
@@ -75,7 +78,7 @@ public class AnnotationRelationService {
         return mapToAnnotationRelationDto(annotationRelation);
     }
 
-    @Transactional(rollbackFor = { Exception.class })
+    @Transactional(rollbackFor = {Exception.class})
     public Boolean delete(Long relationId) {
         try {
             annotationRelationRepository.deleteById(relationId);
@@ -83,6 +86,11 @@ public class AnnotationRelationService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private List<AnnotationRelationDto> mapToAnnotationRelationDto(List<AnnotationRelation> annotationRelations) {
+        return annotationRelations.stream().map(annotationRelation -> mapToAnnotationRelationDto(annotationRelation))
+                .collect(Collectors.toList());
     }
 
     private AnnotationRelationDto mapToAnnotationRelationDto(AnnotationRelation annotationRelation) {
@@ -95,6 +103,7 @@ public class AnnotationRelationService {
         annotationRelationDto.setTargetAnnId(annotationRelation.getTargetAnnotationId());
         annotationRelationDto.setSrcLayerId(annotationRelation.getSrcLayer().getId());
         annotationRelationDto.setTargetLayerId(annotationRelation.getTargetLayer().getId());
+        annotationRelationDto.setTextId(annotationRelation.getTextId());
 
         return annotationRelationDto;
     }
@@ -108,6 +117,7 @@ public class AnnotationRelationService {
         annotationRelation.setSrcLayer(srcLayer);
         Layer targetLayer = layerRepository.getById(annotationRelationDto.getTargetLayerId());
         annotationRelation.setTargetLayer(targetLayer);
+        annotationRelation.setTextId(annotationRelationDto.getTextId());
 
         return annotationRelation;
     }
@@ -118,6 +128,7 @@ public class AnnotationRelationService {
         tobeUpdatedEntity.setTargetAnnotationId(updateDto.getTargetAnnId());
         tobeUpdatedEntity.setSrcLayer(layerRepository.getById(updateDto.getSrcLayerId()));
         tobeUpdatedEntity.setTargetLayer(layerRepository.getById(updateDto.getTargetLayerId()));
+        tobeUpdatedEntity.setTextId(updateDto.getTextId());
 
         return tobeUpdatedEntity;
     }

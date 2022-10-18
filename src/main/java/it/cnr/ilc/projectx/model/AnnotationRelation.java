@@ -43,5 +43,8 @@ public class AnnotationRelation extends TracedEntity {
 
     @NonNull
     private Long targetAnnotationId;
+
+    @NonNull
+    private Long textId;
 }
 

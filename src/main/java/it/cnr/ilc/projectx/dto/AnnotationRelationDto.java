@@ -35,4 +35,7 @@ public class AnnotationRelationDto implements Serializable {
     private Long targetAnnId;
 
     private String description;
+
+    @NotNull
+    private Long textId;
 }

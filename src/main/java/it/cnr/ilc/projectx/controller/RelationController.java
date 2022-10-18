@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,9 +29,9 @@ public class RelationController {
     @NonNull
     private final AnnotationRelationService annotationRelationService;
 
-    @GetMapping("{id}")
-    public ResponseEntity<AnnotationRelationDto> retrieveById(@PathVariable @NotNull Long id) {
-        return ResponseEntity.ok(annotationRelationService.retrieveById(id));
+    @GetMapping("{textId}")
+    public ResponseEntity<List<AnnotationRelationDto>> retrieveByTextId(@PathVariable @NotNull Long textId) {
+        return ResponseEntity.ok(annotationRelationService.retrieveByTextId(textId));
     }
 
     @PostMapping
