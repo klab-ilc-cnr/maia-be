@@ -55,14 +55,10 @@ public class AnnotationRelationService {
     }
 
     @Transactional
-    public AnnotationRelationDto update(AnnotationRelationDto annotationRelationDto) {
+    public AnnotationRelationDto update(UpdateAnnotationRelationDto annotationRelationDto) {
         checkArgument(annotationRelationDto != null);
         checkArgument(annotationRelationDto.getId() != null);
         checkArgument(annotationRelationDto.getName() != null);
-        checkArgument(annotationRelationDto.getSrcLayerId() != null);
-        checkArgument(annotationRelationDto.getTargetLayerId() != null);
-        checkArgument(annotationRelationDto.getSrcAnnId() != null);
-        checkArgument(annotationRelationDto.getTargetAnnId() != null);
 
         Optional<AnnotationRelation> tobeUpdated = annotationRelationRepository.findById(annotationRelationDto.getId());
 
@@ -99,8 +95,8 @@ public class AnnotationRelationService {
         annotationRelationDto.setId(annotationRelation.getId());
         annotationRelationDto.setDescription(annotationRelation.getDescription());
         annotationRelationDto.setName(annotationRelation.getName());
-        annotationRelationDto.setSrcAnnId(annotationRelation.getSrcAnnotationId());
-        annotationRelationDto.setTargetAnnId(annotationRelation.getTargetAnnotationId());
+        annotationRelationDto.setSrcAnnotationId(annotationRelation.getSrcAnnotationId());
+        annotationRelationDto.setTargetAnnotationId(annotationRelation.getTargetAnnotationId());
         annotationRelationDto.setSrcLayerId(annotationRelation.getSrcLayer().getId());
         annotationRelationDto.setTargetLayerId(annotationRelation.getTargetLayer().getId());
         annotationRelationDto.setTextId(annotationRelation.getTextId());
@@ -111,8 +107,8 @@ public class AnnotationRelationService {
     private AnnotationRelation mapToEntity(CreateAnnotationRelationDto annotationRelationDto) {
         AnnotationRelation annotationRelation = new AnnotationRelation();
         BeanUtils.copyProperties(annotationRelationDto, annotationRelation);
-        annotationRelation.setSrcAnnotationId(annotationRelationDto.getSrcAnnId());
-        annotationRelation.setTargetAnnotationId(annotationRelationDto.getTargetAnnId());
+        annotationRelation.setSrcAnnotationId(annotationRelationDto.getSrcAnnotationId());
+        annotationRelation.setTargetAnnotationId(annotationRelationDto.getTargetAnnotationId());
         Layer srcLayer = layerRepository.getById(annotationRelationDto.getSrcLayerId());
         annotationRelation.setSrcLayer(srcLayer);
         Layer targetLayer = layerRepository.getById(annotationRelationDto.getTargetLayerId());
@@ -122,13 +118,13 @@ public class AnnotationRelationService {
         return annotationRelation;
     }
 
-    private AnnotationRelation mapToEntity(AnnotationRelation tobeUpdatedEntity, AnnotationRelationDto updateDto) {
+    private AnnotationRelation mapToEntity(AnnotationRelation tobeUpdatedEntity, UpdateAnnotationRelationDto updateDto) {
         BeanUtils.copyProperties(updateDto, tobeUpdatedEntity);
-        tobeUpdatedEntity.setSrcAnnotationId(updateDto.getSrcAnnId());
-        tobeUpdatedEntity.setTargetAnnotationId(updateDto.getTargetAnnId());
-        tobeUpdatedEntity.setSrcLayer(layerRepository.getById(updateDto.getSrcLayerId()));
-        tobeUpdatedEntity.setTargetLayer(layerRepository.getById(updateDto.getTargetLayerId()));
-        tobeUpdatedEntity.setTextId(updateDto.getTextId());
+//        tobeUpdatedEntity.setSrcAnnotationId(updateDto.getSrcAnnotationId());
+//        tobeUpdatedEntity.setTargetAnnotationId(updateDto.getTargetAnnotationId());
+//        tobeUpdatedEntity.setSrcLayer(layerRepository.getById(updateDto.getSrcLayerId()));
+//        tobeUpdatedEntity.setTargetLayer(layerRepository.getById(updateDto.getTargetLayerId()));
+//        tobeUpdatedEntity.setTextId(updateDto.getTextId());
 
         return tobeUpdatedEntity;
     }

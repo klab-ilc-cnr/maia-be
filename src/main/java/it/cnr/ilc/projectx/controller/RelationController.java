@@ -2,6 +2,7 @@ package it.cnr.ilc.projectx.controller;
 
 import it.cnr.ilc.projectx.dto.AnnotationRelationDto;
 import it.cnr.ilc.projectx.dto.CreateAnnotationRelationDto;
+import it.cnr.ilc.projectx.dto.UpdateAnnotationRelationDto;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.CreateAnnotationRelationRequest;
 import it.cnr.ilc.projectx.request.DeleteAnnotationRelationRequest;
@@ -47,7 +48,7 @@ public class RelationController {
 
     @PutMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
-    public ResponseEntity<AnnotationRelationDto> updateRelation(@Valid @RequestBody AnnotationRelationDto annotationRelationDto) throws Exception {
+    public ResponseEntity<AnnotationRelationDto> updateRelation(@Valid @RequestBody UpdateAnnotationRelationDto annotationRelationDto) throws Exception {
         XResult<AnnotationRelationDto> response = mediator.sendXResult(new UpdateAnnotationRelationRequest(annotationRelationDto));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();

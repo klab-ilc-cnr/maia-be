@@ -15,25 +15,12 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
-public class CreateAnnotationRelationDto implements Serializable {
+public class UpdateAnnotationRelationDto implements Serializable {
+    @NotNull
+    private Long id;
 
     @NotNull
     private String name;
 
-    @NotNull
-    private Long srcLayerId;
-
-    @NotNull
-    private Long targetLayerId;
-
-    @NotNull
-    private Long srcAnnotationId;
-
-    @NotNull
-    private Long targetAnnotationId;
-
     private String description;
-
-    @NotNull
-    private Long textId;
 }

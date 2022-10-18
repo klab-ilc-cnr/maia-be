@@ -29,10 +29,10 @@ public class AnnotationRelationDto implements Serializable {
     private Long targetLayerId;
 
     @NotNull
-    private Long srcAnnId;
+    private Long srcAnnotationId;
 
     @NotNull
-    private Long targetAnnId;
+    private Long targetAnnotationId;
 
     private String description;
 
