@@ -50,6 +50,9 @@ public class FeatureService {
 
         Feature feature = featureRepository.save(mapToEntity(featureDto, layer, tagset));
 
+        //TODO aggiornare annotation_feature quando si aggiunge una nuova feature, aggiungere una nuova entry
+        // per la nuova feature, dove prendo annotation_id???
+
         return mapToCreateFeatureDto(feature);
     }
 

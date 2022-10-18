@@ -21,5 +21,5 @@ public class AnnotationFeatureDto implements Serializable {
     private Long annotationId;
 
     @NonNull
-    private List<Long> features;
+    private List<Long> featureIds;
 }

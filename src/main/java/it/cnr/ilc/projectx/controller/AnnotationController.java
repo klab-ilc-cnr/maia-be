@@ -34,6 +34,8 @@ public class AnnotationController {
         return ResponseEntity.ok(responseDto);
     }
 
+    //TODO Finchè non viene fatto il refactoring e portate le associazioni tra annotazione e feature sul nostro
+    // backend questo metodo non è utilizzato
     @PutMapping
     @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<AnnotationFeatureDto> updateAnnotation(@Valid @RequestBody AnnotationFeatureDto annotationFeatureDto) throws Exception {

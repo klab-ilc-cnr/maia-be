@@ -1,10 +1,7 @@
 package it.cnr.ilc.projectx.service;
 
 import it.cnr.ilc.projectx.dto.AnnotationFeatureDto;
-import it.cnr.ilc.projectx.dto.AnnotationRelationDto;
-import it.cnr.ilc.projectx.dto.FeatureDto;
 import it.cnr.ilc.projectx.model.AnnotationFeature;
-import it.cnr.ilc.projectx.model.AnnotationRelation;
 import it.cnr.ilc.projectx.repository.AnnotationFeatureRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -44,7 +39,7 @@ public class AnnotationFeatureService {
     public AnnotationFeatureDto update(AnnotationFeatureDto annotationFeatureDto) {
         checkArgument(annotationFeatureDto != null);
         checkArgument(annotationFeatureDto.getAnnotationId() != null);
-        checkArgument(annotationFeatureDto.getFeatures() != null);
+        checkArgument(annotationFeatureDto.getFeatureIds() != null);
 
 //        Optional<List<AnnotationFeature>> tobeUpdated = annotationFeatureRepository.findByAnnotationId(annotationFeatureDto.getAnnotationId());
 
@@ -80,7 +75,7 @@ public class AnnotationFeatureService {
         List<Long> featureList = annotationFeatures.stream().map(annotationFeature ->
                         annotationFeature.getFeatureId())
                 .collect(Collectors.toList());
-        annotationFeatureDto.setFeatures(featureList);
+        annotationFeatureDto.setFeatureIds(featureList);
 
         return annotationFeatureDto;
     }
@@ -88,7 +83,7 @@ public class AnnotationFeatureService {
     private List<AnnotationFeature> mapToEntity(AnnotationFeatureDto annotationFeatureDto) {
         List<AnnotationFeature> annotationFeatureList = new ArrayList<>();
 
-        for (Long featureId : annotationFeatureDto.getFeatures()) {
+        for (Long featureId : annotationFeatureDto.getFeatureIds()) {
             AnnotationFeature annotationFeature = new AnnotationFeature();
             annotationFeature.setAnnotationId(annotationFeatureDto.getAnnotationId());
             annotationFeature.setFeatureId(featureId);
