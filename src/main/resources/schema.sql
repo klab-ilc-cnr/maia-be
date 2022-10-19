@@ -106,7 +106,9 @@ CREATE TABLE public.annotation_feature
 (
     annotation_id bigint NOT NULL,
     feature_id    bigint NOT NULL,
+    layer_id      bigint NOT NULL,
     CONSTRAINT FK_annotation_feature_feature_id FOREIGN KEY (feature_id) REFERENCES public.features (id),
+    CONSTRAINT FK_annotation_feature_layer_id FOREIGN KEY (layer_id) REFERENCES public.layers (id),
     CONSTRAINT annotation_feature_un UNIQUE (annotation_id, feature_id)
 );
 

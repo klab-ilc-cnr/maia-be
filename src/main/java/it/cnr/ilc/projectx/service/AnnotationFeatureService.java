@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -71,6 +72,7 @@ public class AnnotationFeatureService {
         AnnotationFeatureDto annotationFeatureDto = new AnnotationFeatureDto();
 
         annotationFeatureDto.setAnnotationId(annotationFeatures.stream().findFirst().orElseThrow().getAnnotationId());
+        annotationFeatureDto.setLayerId(annotationFeatures.stream().findFirst().orElseThrow().getLayerId());
 
         List<Long> featureList = annotationFeatures.stream().map(annotationFeature ->
                         annotationFeature.getFeatureId())
@@ -86,10 +88,15 @@ public class AnnotationFeatureService {
         for (Long featureId : annotationFeatureDto.getFeatureIds()) {
             AnnotationFeature annotationFeature = new AnnotationFeature();
             annotationFeature.setAnnotationId(annotationFeatureDto.getAnnotationId());
+            annotationFeature.setLayerId(annotationFeatureDto.getLayerId());
             annotationFeature.setFeatureId(featureId);
             annotationFeatureList.add(annotationFeature);
         }
 
         return annotationFeatureList;
+    }
+
+    public Optional<AnnotationFeature> findAnyByLayerId(Long layerId) {
+        return annotationFeatureRepository.findByLayerId(layerId).stream().findAny();
     }
 }

@@ -15,7 +15,9 @@ public interface AnnotationFeatureRepository extends JpaRepository<AnnotationFea
 
     Boolean existsByFeatureId(@NotBlank Long featureId);
 
-    Optional<List<AnnotationFeature>> findByAnnotationId(Long annotationId);
+    Optional<List<AnnotationFeature>> findByAnnotationId(@NotBlank Long annotationId);
 
-    void deleteByAnnotationId(Long annotationId);
+    void deleteByAnnotationId(@NotBlank Long annotationId);
+
+    List<AnnotationFeature> findByLayerId(@NotBlank Long layerId);
 }

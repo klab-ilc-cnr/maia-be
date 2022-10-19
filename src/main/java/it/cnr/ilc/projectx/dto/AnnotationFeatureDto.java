@@ -21,5 +21,9 @@ public class AnnotationFeatureDto implements Serializable {
     private Long annotationId;
 
     @NonNull
+    private Long layerId;
+
+    @NonNull
     private List<Long> featureIds;
+
 }

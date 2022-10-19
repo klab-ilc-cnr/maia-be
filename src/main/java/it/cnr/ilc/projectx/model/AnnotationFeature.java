@@ -11,6 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Entity
+@ToString
 @Table(name = "annotation_feature")
 @IdClass(AnnotationFeatureId.class)
 public class AnnotationFeature implements Serializable {
@@ -22,12 +23,7 @@ public class AnnotationFeature implements Serializable {
     @NonNull
     private Long featureId;
 
-    @Override
-    public String toString() {
-        return "AnnotationFeature{" +
-                "annotation_id=" + annotationId +
-                ", feature_id='" + featureId + '\'' +
-                '}';
-    }
+    @NonNull
+    private Long layerId;
 }
 

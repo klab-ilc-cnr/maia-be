@@ -15,6 +15,7 @@ import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -36,6 +37,9 @@ public class FeatureService {
     @NonNull
     private final LayerFeatureConnectorService layerFeatureConnectorService;
 
+    @NonNull
+    private final AnnotationFeatureService annotationFeatureService;
+
     public List<FeatureDto> retrieveAllByLayerId(Long layerId) {
         return mapToFeatureDto(featureRepository.findByLayer_Id(layerId));
     }
@@ -49,9 +53,20 @@ public class FeatureService {
         }
 
         Feature feature = featureRepository.save(mapToEntity(featureDto, layer, tagset));
+        
+        //NOTA da specifiche ogni associazione tra annotazione e feature contiene una entry per ogni feature
+        //presente nel layer, perciò se si inserisce una nuova feature questa va aggiunta alla tabella associativa
+        //con valore vuoto
+        Optional<AnnotationFeature> anyExistentAnnotationFeature = annotationFeatureService.findAnyByLayerId(featureDto.getLayerId());
+        if (anyExistentAnnotationFeature.isPresent()) {
+            AnnotationFeatureDto annotationFeatureDto = new AnnotationFeatureDto();
+            Long annotationId = anyExistentAnnotationFeature.orElseThrow(EntityNotFoundException::new).getAnnotationId();
+            annotationFeatureDto.setAnnotationId(annotationId);
+            annotationFeatureDto.setLayerId(feature.getLayer().getId());
+            annotationFeatureDto.setFeatureIds(List.of(feature.getId()));
+            annotationFeatureService.save(annotationFeatureDto);
+        }
 
-        //TODO aggiornare annotation_feature quando si aggiunge una nuova feature, aggiungere una nuova entry
-        // per la nuova feature, dove prendo annotation_id???
 
         return mapToCreateFeatureDto(feature);
     }
