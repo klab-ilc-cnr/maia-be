@@ -65,11 +65,11 @@ public class WorkspaceController {
         //return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/texts/{id}")
+/*    @GetMapping("/texts/{id}")
     public ResponseEntity<TextTileDto> getText(@PathVariable @NotNull Long id) {
         return ResponseEntity.ok(workspaceService.getText(id));
         //return ResponseEntity.ok(result);
-    }
+    }*/
 
     @GetMapping("/status/{workspaceId}")
     public ResponseEntity<WorkspaceDto> getWorkspaceStatus(@PathVariable @NotNull Long workspaceId) {

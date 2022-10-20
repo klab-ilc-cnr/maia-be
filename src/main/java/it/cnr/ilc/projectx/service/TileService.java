@@ -1,7 +1,9 @@
 package it.cnr.ilc.projectx.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.cnr.ilc.projectx.dto.*;
 import it.cnr.ilc.projectx.model.Tile;
+import it.cnr.ilc.projectx.model.TileType;
 import it.cnr.ilc.projectx.model.Workspace;
 import it.cnr.ilc.projectx.repository.TileRepository;
 import it.cnr.ilc.projectx.repository.WorkspaceRepository;
@@ -54,13 +56,22 @@ public class TileService {
         Tile tile = new Tile();
         BeanUtils.copyProperties(tileDto, tile);
         tile.setWorkspace(workspace);
-        tile.setContentId(0l); //FIXME DA CAMBIARE Inserire gli id dei testi recuperati dalle api
+        if (tileDto.getType() == TileType.TEXT) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            TextTileDto textTileDto = objectMapper.convertValue(tileDto.getContent(), TextTileDto.class);
+            tile.setContentId(textTileDto.getContentId());
+        }
         return tile;
     }
 
     public static TileDto mapToTileDto(Tile tile) {
         TileDto tileDto = new TileDto();
         BeanUtils.copyProperties(tile, tileDto);
+        if (tile.getType() == TileType.TEXT) {
+            TextTileDto textTileDto = new TextTileDto();
+            textTileDto.setContentId(tile.getContentId());
+            tileDto.setContent(textTileDto);
+        }
         tileDto.setWorkspaceId(tile.getWorkspace().getId());
         return tileDto;
     }

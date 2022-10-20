@@ -120,7 +120,7 @@ public class WorkspaceService {
         return result;
     }
 
-    @Transactional(readOnly = true)
+/*    @Transactional(readOnly = true)
     public TextTileDto getText(Long textId) {
         //TODO recuperare i dati correttamente
 
@@ -133,14 +133,14 @@ public class WorkspaceService {
             result.setText("Testo 3 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
         }
         return result;
-    }
+    }*/
 
     public WorkspaceDto getWorkspace(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(NotFoundException::new);
 
         WorkspaceDto workspaceDto = mapToWorkspaceDto(workspace);
 
-        int index = 1;
+/*        int index = 1;
         for (TileDto tile : workspaceDto.getTiles()) {
             TextTileDto textTileDto = new TextTileDto();
             //FIXME CARICARE I DATI CORRETTI PRENDENDOLI DALLE API
@@ -160,7 +160,7 @@ public class WorkspaceService {
             }
             index++;
         }
-        ;
+        ;*/
 
         return workspaceDto;
     }

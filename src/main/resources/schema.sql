@@ -44,7 +44,7 @@ CREATE TABLE public.tiles
     id           serial      NOT NULL,
     workspace_id bigint      NOT NULL,
     tile_config  TEXT,
-    content_id   bigint      NOT NULL,
+    content_id   bigint,
     type         varchar(50) NOT NULL,
     created      timestamp without time zone NOT NULL,
     created_by   bigint      NOT NULL,

@@ -15,6 +15,5 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
 public class TextTileDto implements Serializable {
-    private Long id;
-    private String text;
+    private Long contentId;
 }
