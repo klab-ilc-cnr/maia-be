@@ -13,7 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Project X</name>
-    <description>demo application for user/roles </description>
+    <description>demo application for user/roles</description>
     <properties>
         <java.version>11</java.version>
         <start-class>it.cnr.ilc.projectx.Application</start-class>
@@ -30,11 +30,23 @@
                 <datasourcePwd>admin</datasourcePwd>
                 <serverPort>9000</serverPort>
                 <keycloakAuthServerUrl>http://localhost:8080/</keycloakAuthServerUrl>
-                <projectxUserManagerSecret>kfO8opxgurpFz7EuK13JIwdzOmlfxcXF</projectxUserManagerSecret>
+                <projectxAppSecret>DGF0i33s01GqzkMXHzeoNPrclvDtVGFs</projectxAppSecret>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+        </profile>
+        <profile>
+            <id>docker-collaudo</id>
+            <properties>
+                <activatedProperties>docker-collaudo</activatedProperties>
+                <datasourceUrl>jdbc:postgresql://localhost:5432/PROJECTX</datasourceUrl>
+                <datasourceUser>postgres</datasourceUser>
+                <datasourcePwd>admin</datasourcePwd>
+                <serverPort>9000</serverPort>
+                <keycloakAuthServerUrl>http://localhost:8080/</keycloakAuthServerUrl>
+                <projectxAppSecret>VUyBgll313Aq8VMNsyeVUdhDBAgPh8JS</projectxAppSecret>
+            </properties>
         </profile>
     </profiles>
 
