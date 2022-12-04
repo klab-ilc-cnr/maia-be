@@ -30,7 +30,8 @@
                 <datasourcePwd>admin</datasourcePwd>
                 <serverPort>9000</serverPort>
                 <keycloakAuthServerUrl>http://localhost:8080/</keycloakAuthServerUrl>
-                <projectxAppSecret>DGF0i33s01GqzkMXHzeoNPrclvDtVGFs</projectxAppSecret>
+                <projectxAppSecret>8dRTdcsJ4ryT1IPBgTLA11qTqFsWZUuR</projectxAppSecret>
+                <sslRequired>external</sslRequired>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -40,12 +41,13 @@
             <id>docker-collaudo</id>
             <properties>
                 <activatedProperties>docker-collaudo</activatedProperties>
-                <datasourceUrl>jdbc:postgresql://localhost:5432/PROJECTX</datasourceUrl>
+                <datasourceUrl>jdbc:postgresql://postgres:5432/PROJECTX</datasourceUrl>
                 <datasourceUser>postgres</datasourceUser>
-                <datasourcePwd>admin</datasourcePwd>
+                <datasourcePwd>p20b!0u6D#I6</datasourcePwd>
                 <serverPort>9000</serverPort>
-                <keycloakAuthServerUrl>http://localhost:8080/</keycloakAuthServerUrl>
-                <projectxAppSecret>VUyBgll313Aq8VMNsyeVUdhDBAgPh8JS</projectxAppSecret>
+                <keycloakAuthServerUrl>https://xeel.openskills.it/auth/</keycloakAuthServerUrl>
+                <projectxAppSecret>dGFFDoV8XkI2KbspyYwUCscnCRS90XMI</projectxAppSecret>
+                <sslRequired>none</sslRequired>
             </properties>
         </profile>
     </profiles>
