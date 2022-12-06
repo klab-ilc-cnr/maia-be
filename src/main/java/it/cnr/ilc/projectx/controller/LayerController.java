@@ -18,7 +18,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api/layers")
 public class LayerController {
     @NonNull
