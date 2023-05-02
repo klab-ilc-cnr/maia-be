@@ -74,6 +74,11 @@ public class WorkspaceController {
     public ResponseEntity<WorkspaceDto> getWorkspaceStatus(@PathVariable @NotNull Long workspaceId) {
         return ResponseEntity.ok(workspaceService.getWorkspace(workspaceId));
     }
+    
+    @GetMapping("/name/{workspaceId}")
+    public ResponseEntity<String> getWorkspaceName(@PathVariable @NotNull Long workspaceId) {
+        return ResponseEntity.ok(workspaceService.getWorkspaceName(workspaceId));
+    }
 
     @PutMapping("/layout")
     public ResponseEntity<Boolean> saveWorkspace(@Valid @RequestBody @NotNull WorkspaceDto workspaceDto) throws Exception {
