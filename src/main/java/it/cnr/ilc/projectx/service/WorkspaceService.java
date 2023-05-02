@@ -164,6 +164,12 @@ public class WorkspaceService {
 
         return workspaceDto;
     }
+    
+    public String getWorkspaceName(Long workspaceId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(NotFoundException::new);
+        String workspaceName = workspace.getName();
+        return workspaceName;
+    }
 
     @Transactional
     public WorkspaceChoiceDto add(CreateWorkspaceDto workspaceChoiceDto) {

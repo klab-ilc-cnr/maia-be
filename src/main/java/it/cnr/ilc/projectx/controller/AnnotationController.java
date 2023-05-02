@@ -17,7 +17,6 @@ import javax.validation.constraints.NotNull;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api/annotations")
 public class AnnotationController {
     @NonNull

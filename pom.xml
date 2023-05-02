@@ -13,7 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Project X</name>
-    <description>demo application for user/roles </description>
+    <description>demo application for user/roles</description>
     <properties>
         <java.version>11</java.version>
         <start-class>it.cnr.ilc.projectx.Application</start-class>
@@ -30,11 +30,27 @@
                 <datasourcePwd>admin</datasourcePwd>
                 <serverPort>9000</serverPort>
                 <keycloakAuthServerUrl>http://localhost:8080/</keycloakAuthServerUrl>
+                <projectxAppSecret>DGF0i33s01GqzkMXHzeoNPrclvDtVGFs</projectxAppSecret>
                 <projectxUserManagerSecret>kfO8opxgurpFz7EuK13JIwdzOmlfxcXF</projectxUserManagerSecret>
+                <sslRequired>external</sslRequired>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+        </profile>
+        <profile>
+            <id>docker-collaudo</id>
+            <properties>
+                <activatedProperties>docker-collaudo</activatedProperties>
+                <datasourceUrl>jdbc:postgresql://postgres:5432/PROJECTX</datasourceUrl>
+                <datasourceUser>postgres</datasourceUser>
+                <datasourcePwd>p20b!0u6D#I6</datasourcePwd>
+                <serverPort>9000</serverPort>
+                <keycloakAuthServerUrl>https://xeel.openskills.it/auth/</keycloakAuthServerUrl>
+                <projectxAppSecret>dGFFDoV8XkI2KbspyYwUCscnCRS90XMI</projectxAppSecret>
+                <projectxUserManagerSecret>JVl53gcGr1AIbuL15aHjPjHdGfkQcwmR</projectxUserManagerSecret>
+                <sslRequired>none</sslRequired>
+            </properties>
         </profile>
     </profiles>
 

@@ -20,7 +20,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api/tagsets")
 public class TagsetController {
     @NonNull

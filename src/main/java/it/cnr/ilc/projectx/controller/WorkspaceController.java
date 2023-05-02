@@ -16,7 +16,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api/workspaces")
 public class WorkspaceController {
     @NonNull
@@ -74,6 +73,11 @@ public class WorkspaceController {
     @GetMapping("/status/{workspaceId}")
     public ResponseEntity<WorkspaceDto> getWorkspaceStatus(@PathVariable @NotNull Long workspaceId) {
         return ResponseEntity.ok(workspaceService.getWorkspace(workspaceId));
+    }
+    
+    @GetMapping("/name/{workspaceId}")
+    public ResponseEntity<String> getWorkspaceName(@PathVariable @NotNull Long workspaceId) {
+        return ResponseEntity.ok(workspaceService.getWorkspaceName(workspaceId));
     }
 
     @PutMapping("/layout")
