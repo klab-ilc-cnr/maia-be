@@ -45,38 +45,21 @@
             <id>maia-deploy</id>
             <properties>
                 <!--activatedProperties>local-dev</activatedProperties-->
-                <datasourceUrl>jdbc:postgresql://146.48.93.223:5432/PROJECTX</datasourceUrl>
+                <datasourceUrl>jdbc:postgresql://${deploy.remote.ip}:5432/PROJECTX</datasourceUrl>
                 <datasourceUser>${deploy.postgresql.login}</datasourceUser>
                 <datasourcePwd>${deploy.postgresql.password}</datasourcePwd>
                 <!--serverPort>9000</serverPort-->
                 <serverPort>8080</serverPort>
-                <keycloakAuthServerUrl>https://146.48.93.223:8443/</keycloakAuthServerUrl>
+                <keycloakAuthServerUrl>${deploy.keycloakAuthServerUrl}</keycloakAuthServerUrl>
                 <projectxAppSecret>${deploy.projectxAppSecret}</projectxAppSecret>
                 <projectxUserManagerSecret>${deploy.projectxUserManagerSecret}</projectxUserManagerSecret>
-<!--                <projectxAppSecret>wHtBnHvlq6LlhNbg3XUTSvTGyE1OTUih</projectxAppSecret>
-                <projectxUserManagerSecret>dFgEVuYMDIGn4H0zpmpJ8wJ2F9aZtIyH</projectxUserManagerSecret>-->
                 <!--                <sslRequired>external</sslRequired>-->
                 <sslRequired>none</sslRequired> <!-- il certificato per java serve comunque (vedi doc installazione) -->
                 <maven.test.skip>true</maven.test.skip> <!-- disabilita SpringBootTest, altrimenti non crea il war per il deploy (problemi con le URL)-->
                 <packaging.type>war</packaging.type>
             </properties>
         </profile>
-        <profile>
-            <id>docker-collaudo</id>
-            <properties>
-                <activatedProperties>docker-collaudo</activatedProperties>
-                <datasourceUrl>jdbc:postgresql://postgres:5432/PROJECTX</datasourceUrl>
-                <datasourceUser>postgres</datasourceUser>
-                <datasourcePwd>p20b!0u6D#I6</datasourcePwd>
-                <serverPort>9000</serverPort>
-                <keycloakAuthServerUrl>https://xeel.openskills.it/auth/</keycloakAuthServerUrl>
-                <projectxAppSecret>xAsF6bXlM14jzp6inzLCdyhHqiRvF5n6</projectxAppSecret>
-                <projectxUserManagerSecret>6poN8hqIGmoIdH8XbES0EmiM9xaw6dAz</projectxUserManagerSecret>
-                <sslRequired>none</sslRequired>
-                <packaging.type>jar</packaging.type>
-            </properties>
-        </profile>
-    </profiles>
+     </profiles>
 
     <dependencies>
         <dependency>
