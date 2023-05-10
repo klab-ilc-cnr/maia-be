@@ -45,7 +45,7 @@
             <id>maia-deploy</id>
             <properties>
                 <!--activatedProperties>local-dev</activatedProperties-->
-                <datasourceUrl>jdbc:postgresql://${deploy.remote.ip}:5432/PROJECTX</datasourceUrl>
+                <datasourceUrl>${deploy.postgresql.url}</datasourceUrl>
                 <datasourceUser>${deploy.postgresql.login}</datasourceUser>
                 <datasourcePwd>${deploy.postgresql.password}</datasourcePwd>
                 <!--serverPort>9000</serverPort-->
