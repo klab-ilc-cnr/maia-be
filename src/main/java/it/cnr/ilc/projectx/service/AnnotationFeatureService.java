@@ -5,11 +5,9 @@ import it.cnr.ilc.projectx.model.AnnotationFeature;
 import it.cnr.ilc.projectx.repository.AnnotationFeatureRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +16,6 @@ import java.util.stream.Collectors;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class AnnotationFeatureService {
 
@@ -43,12 +40,9 @@ public class AnnotationFeatureService {
         checkArgument(annotationFeatureDto.getFeatureIds() != null);
 
 //        Optional<List<AnnotationFeature>> tobeUpdated = annotationFeatureRepository.findByAnnotationId(annotationFeatureDto.getAnnotationId());
-
 //        if (tobeUpdated.isEmpty()) {
-//            log.error("Cannot find annotation features with ID " + annotationFeatureDto.getAnnotationId());
 //            throw new NotFoundException("Cannot find annotation features with ID " + annotationFeatureDto.getAnnotationId());
 //        }
-
         annotationFeatureRepository.deleteByAnnotationId(annotationFeatureDto.getAnnotationId());
         annotationFeatureRepository.saveAll(mapToEntity(annotationFeatureDto));
 
@@ -74,8 +68,8 @@ public class AnnotationFeatureService {
         annotationFeatureDto.setAnnotationId(annotationFeatures.stream().findFirst().orElseThrow().getAnnotationId());
         annotationFeatureDto.setLayerId(annotationFeatures.stream().findFirst().orElseThrow().getLayerId());
 
-        List<Long> featureList = annotationFeatures.stream().map(annotationFeature ->
-                        annotationFeature.getFeatureId())
+        List<Long> featureList = annotationFeatures.stream().map(annotationFeature
+                -> annotationFeature.getFeatureId())
                 .collect(Collectors.toList());
         annotationFeatureDto.setFeatureIds(featureList);
 

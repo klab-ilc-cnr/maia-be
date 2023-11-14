@@ -1,10 +1,7 @@
 package it.cnr.ilc.projectx.model;
 
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 @Getter
@@ -34,16 +31,15 @@ public class Tagset extends TracedEntity {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", values='" + values + '\'' +
-                ", description='" + description + '\'' +
-                ", created=" + super.getCreated() +
-                ", updated=" + super.getUpdated() +
-                ", createdBy=" + super.getCreatedBy() +
-                ", updatedBy=" + super.getUpdatedBy() +
-                '}';
+        return "User{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", values='" + values + '\''
+                + ", description='" + description + '\''
+                + ", created=" + super.getCreated()
+                + ", updated=" + super.getUpdated()
+                + ", createdBy=" + super.getCreatedBy()
+                + ", updatedBy=" + super.getUpdatedBy()
+                + '}';
     }
 }
-

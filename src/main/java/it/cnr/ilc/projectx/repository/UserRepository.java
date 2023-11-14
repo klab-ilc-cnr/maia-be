@@ -1,19 +1,17 @@
 package it.cnr.ilc.projectx.repository;
 
 import it.cnr.ilc.projectx.model.User;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
-/**
- * Description of UserRepository
- * <p>
- * Created at 08/03/2022 15:25
- * Author Bianca Barattolo (BB) - <b.barattolo@xeel.tech>
- */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+
     Optional<User> findByEmail(@NotBlank String email);
+
+    Optional<User> findByUsername(@NotBlank String username);
+
+    Optional<User> findByUsernameAndPassword(@NotBlank String username, @NotBlank String password);
 }

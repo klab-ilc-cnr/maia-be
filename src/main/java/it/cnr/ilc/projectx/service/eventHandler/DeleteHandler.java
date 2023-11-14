@@ -1,20 +1,12 @@
 package it.cnr.ilc.projectx.service.eventHandler;
 
-import it.cnr.ilc.projectx.dto.FeatureDto;
-import it.cnr.ilc.projectx.model.Layer;
 import it.cnr.ilc.projectx.repository.FeatureRepository;
 import it.cnr.ilc.projectx.repository.LayerRepository;
-import it.cnr.ilc.projectx.repository.TagsetRepository;
 import it.cnr.ilc.projectx.service.AnnotationFeatureService;
 import it.cnr.ilc.projectx.service.FeatureService;
-import it.cnr.ilc.projectx.service.event.DeleteTagsetEvent;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 @Component
 @AllArgsConstructor
@@ -34,7 +26,7 @@ public class DeleteHandler {
 
     //LAYER
 
-/*    public Boolean canLayerBeDeleted(Long layerId) {
+    /*    public Boolean canLayerBeDeleted(Long layerId) {
         //TODO aggiungere check se è usato in una Relation
         if (canAllFeaturesBeDeletedByLayerId(layerId)) {
             return true;
@@ -54,10 +46,9 @@ public class DeleteHandler {
 
         return false;
     }*/
-
     // FEATURE
 
-/*    public boolean canAllFeaturesBeDeletedByLayerId(Long layerId) {
+    /*    public boolean canAllFeaturesBeDeletedByLayerId(Long layerId) {
         for (FeatureDto featureDto : featureService.retrieveAllByLayerId(layerId)) {
             if (!canFeatureBeDeleted(layerId, featureDto.getId())) {
                 return false;

@@ -3,7 +3,6 @@ package it.cnr.ilc.projectx.controller;
 import it.cnr.ilc.projectx.dto.*;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.*;
-import it.cnr.ilc.projectx.service.eventHandler.DeleteHandler;
 import it.cnr.ilc.projectx.service.TagsetService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
@@ -11,17 +10,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/tagsets")
 public class TagsetController {
+
     @NonNull
     private final Mediator mediator;
 
@@ -39,7 +37,6 @@ public class TagsetController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<CreateTagsetDto> createTagset(@Valid @RequestBody @NotNull CreateTagsetDto tagsetDto) throws Exception {
         try {
             XResult<CreateTagsetDto> response = mediator.sendXResult(new CreateTagsetRequest(tagsetDto));
@@ -54,7 +51,6 @@ public class TagsetController {
     }
 
     @PutMapping
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<UpdateTagsetDto> updateTagset(@Valid @RequestBody UpdateTagsetDto updateTagsetDto) throws Exception {
         XResult<UpdateTagsetDto> response = mediator.sendXResult(new UpdateTagsetRequest(updateTagsetDto));
         if (response.IsFailed()) {
@@ -70,7 +66,6 @@ public class TagsetController {
     }
 
     @DeleteMapping("{id}")
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<Boolean> deleteTagset(@PathVariable @NotNull Long id) throws Exception {
         XResult<Boolean> response = mediator.sendXResult(new DeleteTagsetRequest(id));
         if (response.IsFailed()) {

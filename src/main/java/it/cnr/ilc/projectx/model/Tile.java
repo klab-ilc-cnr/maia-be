@@ -1,11 +1,7 @@
 package it.cnr.ilc.projectx.model;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.*;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter
 @Setter
@@ -13,8 +9,6 @@ import javax.persistence.*;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "tiles")
-@TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-})
 public class Tile extends TracedEntity {
 
     public static final String TABLE_NAME = "tiles";
@@ -26,6 +20,7 @@ public class Tile extends TracedEntity {
     @SequenceGenerator(name = GENERATOR_NAME, sequenceName = SEQUENCE_NAME, allocationSize = 1)
     private Long id;
 
+    @Column(length = 2000)
     String tileConfig;
 
     Long contentId;
@@ -41,16 +36,15 @@ public class Tile extends TracedEntity {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + tileConfig + '\'' +
-                ", note='" + contentId + '\'' +
-                ", layout='" + type + '\'' +
-                ", created=" + super.getCreated() +
-                ", updated=" + super.getUpdated() +
-                ", createdBy=" + super.getCreatedBy() +
-                ", updatedBy=" + super.getUpdatedBy() +
-                '}';
+        return "User{"
+                + "id=" + id
+                + ", name='" + tileConfig + '\''
+                + ", note='" + contentId + '\''
+                + ", layout='" + type + '\''
+                + ", created=" + super.getCreated()
+                + ", updated=" + super.getUpdated()
+                + ", createdBy=" + super.getCreatedBy()
+                + ", updatedBy=" + super.getUpdatedBy()
+                + '}';
     }
 }
-

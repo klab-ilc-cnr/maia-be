@@ -7,25 +7,18 @@ import it.cnr.ilc.projectx.model.Role;
 import it.cnr.ilc.projectx.utils.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Description of UserDto
- * <p>
- * Created at 22/03/2022 10:34
- * Author Bianca Barattolo (BB) - <b.barattolo@xeel.tech>
- */
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-@XmlAccessorType(XmlAccessType.FIELD)
 public class UserDto implements Serializable {
+
     private long id;
+
+    private String username;
 
     private String name;
 

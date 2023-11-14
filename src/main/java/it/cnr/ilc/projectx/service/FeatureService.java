@@ -5,23 +5,18 @@ import it.cnr.ilc.projectx.model.*;
 import it.cnr.ilc.projectx.repository.FeatureRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
-
+import jakarta.persistence.EntityNotFoundException;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class FeatureService {
 
@@ -53,7 +48,7 @@ public class FeatureService {
         }
 
         Feature feature = featureRepository.save(mapToEntity(featureDto, layer, tagset));
-        
+
         //NOTA da specifiche ogni associazione tra annotazione e feature contiene una entry per ogni feature
         //presente nel layer, perciò se si inserisce una nuova feature questa va aggiunta alla tabella associativa
         //con valore vuoto
@@ -67,7 +62,6 @@ public class FeatureService {
             annotationFeatureService.save(annotationFeatureDto);
         }
 
-
         return mapToCreateFeatureDto(feature);
     }
 
@@ -80,7 +74,6 @@ public class FeatureService {
         Optional<Feature> tobeUpdated = featureRepository.findById(featureDto.getId());
 
         if (tobeUpdated.isEmpty()) {
-            log.error("Cannot find feature with ID " + featureDto.getId());
             throw new NotFoundException("Cannot find feature with ID " + featureDto.getId());
         }
 
@@ -91,7 +84,7 @@ public class FeatureService {
         return mapToFeatureDto(feature);
     }
 
-/*    public Boolean canBeDeleted(Long layerId, Long featureId) {
+    /*    public Boolean canBeDeleted(Long layerId, Long featureId) {
         if (annotationFeatureService.existsByFeatureId(featureId)) {
             return false;
         }
@@ -115,7 +108,6 @@ public class FeatureService {
 
         return false;
     }*/
-
     public FeatureDto retrieveById(Long id) {
         return mapToFeatureDto(featureRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new));
@@ -140,7 +132,6 @@ public class FeatureService {
 //
 //        return true;
 //    }
-
 //    @Transactional
 //    public Boolean deleteTagset(Long tagsetId) {
 //        if (canTagsetBeDeleted(tagsetId)) {
@@ -151,11 +142,9 @@ public class FeatureService {
 //
 //        return false;
 //    }
-
 //    public boolean existsByTagset_Id(Long tagsetId) {
 //        return featureRepository.existsByTagset_Id(tagsetId);
 //    }
-
 //    public Boolean canTagsetBeDeleted(Long tagsetId) {
 //        if (existsByTagset_Id(tagsetId)) {
 //            return false;
@@ -164,7 +153,7 @@ public class FeatureService {
 //        return true;
 //    }
 
-/*    public boolean canAllFeaturesBeDeletedByLayerId(Long layerId) {
+    /*    public boolean canAllFeaturesBeDeletedByLayerId(Long layerId) {
         for (FeatureDto featureDto : retrieveAllByLayerId(layerId)) {
             if (!canBeDeleted(layerId, featureDto.getId())) {
                 return false;
@@ -183,7 +172,6 @@ public class FeatureService {
 
         return true;
     }*/
-
     public Boolean canBeDeleted(Long layerId, Long featureId) {
         Layer layer = layerService.retrieveLayer(layerId);
 

@@ -1,10 +1,8 @@
 package it.cnr.ilc.projectx.model;
 
-import lombok.*;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
@@ -26,4 +24,3 @@ public class AnnotationFeature implements Serializable {
     @NonNull
     private Long layerId;
 }
-

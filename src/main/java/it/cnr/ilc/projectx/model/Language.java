@@ -13,14 +13,14 @@ import java.io.Serializable;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Language implements Serializable {
+
     @NonNull
     private String code;
 
     @NonNull
     private String name;
 
-    public Language(String name, String code)
-    {
+    public Language(String name, String code) {
         this.code = code;
         this.name = name;
     }

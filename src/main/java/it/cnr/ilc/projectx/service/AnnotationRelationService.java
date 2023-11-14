@@ -7,23 +7,18 @@ import it.cnr.ilc.projectx.repository.AnnotationRelationRepository;
 import it.cnr.ilc.projectx.repository.LayerRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.NotFoundException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import jakarta.persistence.EntityNotFoundException;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class AnnotationRelationService {
 
@@ -32,12 +27,11 @@ public class AnnotationRelationService {
     @NonNull
     private final LayerRepository layerRepository;
 
-
     public List<AnnotationRelationDto> retrieveByTextId(Long textId) {
         Optional<List<AnnotationRelation>> entity = annotationRelationRepository.findByTextId(textId);
 
         if (!entity.isPresent()) {
-            return new ArrayList<AnnotationRelationDto>();
+            return new ArrayList<>();
         }
 
         return mapToAnnotationRelationDto(entity.get());
@@ -63,7 +57,6 @@ public class AnnotationRelationService {
         Optional<AnnotationRelation> tobeUpdated = annotationRelationRepository.findById(annotationRelationDto.getId());
 
         if (tobeUpdated.isEmpty()) {
-            log.error("Cannot find relation with ID " + annotationRelationDto.getId());
             throw new NotFoundException("Cannot find relation with ID " + annotationRelationDto.getId());
         }
 

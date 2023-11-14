@@ -4,6 +4,7 @@ import it.cnr.ilc.projectx.dto.FeatureDto;
 import it.cnr.ilc.projectx.mediator.Request;
 
 public class UpdateFeatureRequest implements Request<FeatureDto> {
+
     private final FeatureDto featureDto;
 
     public UpdateFeatureRequest(final FeatureDto featureDto) {

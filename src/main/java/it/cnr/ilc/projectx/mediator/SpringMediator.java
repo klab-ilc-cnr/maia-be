@@ -11,8 +11,9 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.ParameterizedType;
 
 /**
- * Spring mediator makes use of springs IoC container in order to resolve given requests. Any RequestHandlers that
- * are registered as beans will be able to be found by using the ApplicationContext.
+ * Spring mediator makes use of springs IoC container in order to resolve given
+ * requests. Any RequestHandlers that are registered as beans will be able to be
+ * found by using the ApplicationContext.
  */
 @Component
 @RequiredArgsConstructor

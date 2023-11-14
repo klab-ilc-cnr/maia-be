@@ -5,6 +5,7 @@ import it.cnr.ilc.projectx.dto.CreateAnnotationRelationDto;
 import it.cnr.ilc.projectx.mediator.Request;
 
 public class CreateAnnotationRelationRequest implements Request<AnnotationRelationDto> {
+
     private final CreateAnnotationRelationDto annotationRelationDto;
 
     public CreateAnnotationRelationRequest(final CreateAnnotationRelationDto annotationRelationDto) {

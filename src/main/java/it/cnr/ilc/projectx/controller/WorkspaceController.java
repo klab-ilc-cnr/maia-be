@@ -9,15 +9,15 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/workspaces")
 public class WorkspaceController {
+
     @NonNull
     private final Mediator mediator;
 
@@ -64,17 +64,16 @@ public class WorkspaceController {
         //return ResponseEntity.ok(result);
     }
 
-/*    @GetMapping("/texts/{id}")
+    /*    @GetMapping("/texts/{id}")
     public ResponseEntity<TextTileDto> getText(@PathVariable @NotNull Long id) {
         return ResponseEntity.ok(workspaceService.getText(id));
         //return ResponseEntity.ok(result);
     }*/
-
     @GetMapping("/status/{workspaceId}")
     public ResponseEntity<WorkspaceDto> getWorkspaceStatus(@PathVariable @NotNull Long workspaceId) {
         return ResponseEntity.ok(workspaceService.getWorkspace(workspaceId));
     }
-    
+
     @GetMapping("/name/{workspaceId}")
     public ResponseEntity<String> getWorkspaceName(@PathVariable @NotNull Long workspaceId) {
         return ResponseEntity.ok(workspaceService.getWorkspaceName(workspaceId));
@@ -83,7 +82,6 @@ public class WorkspaceController {
     @PutMapping("/layout")
     public ResponseEntity<Boolean> saveWorkspace(@Valid @RequestBody @NotNull WorkspaceDto workspaceDto) throws Exception {
         mediator.sendXResult(new SaveWorkspaceRequest(workspaceDto));
-
         return ResponseEntity.ok(true);
     }
 }

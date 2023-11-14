@@ -1,16 +1,9 @@
 package it.cnr.ilc.projectx.model;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.*;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
-
-import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -35,6 +28,7 @@ public class Workspace extends TracedEntity {
 
     private String note;
 
+    @Column(length = 2000)
     private String layout;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "workspace")
@@ -42,16 +36,15 @@ public class Workspace extends TracedEntity {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", note='" + note + '\'' +
-                ", layout='" + layout + '\'' +
-                ", created=" + super.getCreated() +
-                ", updated=" + super.getUpdated() +
-                ", createdBy=" + super.getCreatedBy() +
-                ", updatedBy=" + super.getUpdatedBy() +
-                '}';
+        return "User{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", note='" + note + '\''
+                + ", layout='" + layout + '\''
+                + ", created=" + super.getCreated()
+                + ", updated=" + super.getUpdated()
+                + ", createdBy=" + super.getCreatedBy()
+                + ", updatedBy=" + super.getUpdatedBy()
+                + '}';
     }
 }
-

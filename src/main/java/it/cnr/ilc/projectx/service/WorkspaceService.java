@@ -3,13 +3,10 @@ package it.cnr.ilc.projectx.service;
 import it.cnr.ilc.projectx.dto.*;
 import it.cnr.ilc.projectx.model.Workspace;
 import it.cnr.ilc.projectx.repository.WorkspaceRepository;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.ws.rs.NotFoundException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -17,59 +14,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import lombok.NonNull;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class WorkspaceService {
 
     @NonNull
     private final WorkspaceRepository workspaceRepository;
 
-//    @NonNull
-//    private final RestTemplate restTemplate;
-
-//    public List<UserDto> call() {
-//        HttpServletRequest curRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-//        headers.add("authorization", curRequest.getHeader("Authorization"));
-//        HttpEntity<String> entity = new HttpEntity(headers);
-//        //Parse the string after getting the response
-//        ResponseEntity<List<UserDto>> users = restTemplate.exchange("http://localhost:9090/fnape/api/utenti",
-//                HttpMethod.GET, entity, new ParameterizedTypeReference<List<UserDto>>() {
-//                });
-//        return users.getBody();
-//    }
-
     @Transactional(readOnly = true)
     public List<WorkspaceChoiceDto> retrieveAll() {
-/*        List<WorkspaceChoiceDto> result = new LinkedList<>();
-
-        WorkspaceChoiceDto ws1 = new WorkspaceChoiceDto();
-        ws1.setId(1l);
-        ws1.setUpdated(convertToTimestamp("2021-12-25 00:00:00.000"));
-        ws1.setNote("Testo 1 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
-        ws1.setName("Workspace1");
-        result.add(ws1);
-
-        WorkspaceChoiceDto ws2 = new WorkspaceChoiceDto();
-        ws2.setId(2l);
-        ws2.setUpdated(convertToTimestamp("2022-03-13 00:00:00.000"));
-        ws2.setNote("Testo 2 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
-        ws2.setName("Workspace2");
-        result.add(ws2);
-
-        WorkspaceChoiceDto ws3 = new WorkspaceChoiceDto();
-        ws3.setId(3l);
-        ws3.setUpdated(convertToTimestamp("2022-04-07 00:00:00.000"));
-        ws3.setNote("Testo 3 \n Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.");
-        ws3.setName("Workspace3");
-        result.add(ws3);
-
-        return result;*/
-
         List<Workspace> result = workspaceRepository.findAll();
         return result.stream()
                 .map(workspace -> mapToWorkspaceChoiceDto(workspace))
@@ -81,7 +36,8 @@ public class WorkspaceService {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
             Date parsedDate = dateFormat.parse(stringDate);
             return new Timestamp(parsedDate.getTime());
-        } catch (Exception e) { //this generic but you can control another types of exception
+        } catch (Exception e) {
+            // this generic but you can control another types of exception
             // look the origin of excption
         }
         return null;
@@ -120,7 +76,7 @@ public class WorkspaceService {
         return result;
     }
 
-/*    @Transactional(readOnly = true)
+    /*    @Transactional(readOnly = true)
     public TextTileDto getText(Long textId) {
         //TODO recuperare i dati correttamente
 
@@ -134,13 +90,12 @@ public class WorkspaceService {
         }
         return result;
     }*/
-
     public WorkspaceDto getWorkspace(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(NotFoundException::new);
 
         WorkspaceDto workspaceDto = mapToWorkspaceDto(workspace);
 
-/*        int index = 1;
+        /*        int index = 1;
         for (TileDto tile : workspaceDto.getTiles()) {
             TextTileDto textTileDto = new TextTileDto();
             //FIXME CARICARE I DATI CORRETTI PRENDENDOLI DALLE API
@@ -161,10 +116,9 @@ public class WorkspaceService {
             index++;
         }
         ;*/
-
         return workspaceDto;
     }
-    
+
     public String getWorkspaceName(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId).orElseThrow(NotFoundException::new);
         String workspaceName = workspace.getName();
@@ -196,7 +150,6 @@ public class WorkspaceService {
         Workspace tobeUpdated = retrieveWorkspace(updateWorkspaceChoiceDto.getId());
 
         if (tobeUpdated == null) {
-            log.error("Cannot find workspace with ID " + updateWorkspaceChoiceDto.getId());
             throw new NotFoundException("Cannot find workspace with ID " + updateWorkspaceChoiceDto.getId());
         }
 

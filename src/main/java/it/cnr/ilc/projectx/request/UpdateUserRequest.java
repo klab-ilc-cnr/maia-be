@@ -5,6 +5,7 @@ import it.cnr.ilc.projectx.dto.UserDto;
 import it.cnr.ilc.projectx.mediator.Request;
 
 public class UpdateUserRequest implements Request<UserDto> {
+
     private final UpdateUserDto user;
 
     public UpdateUserRequest(final UpdateUserDto user) {

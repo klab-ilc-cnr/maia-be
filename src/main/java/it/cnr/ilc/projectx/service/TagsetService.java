@@ -5,26 +5,21 @@ import it.cnr.ilc.projectx.model.Tagset;
 import it.cnr.ilc.projectx.model.TagsetValue;
 import it.cnr.ilc.projectx.repository.TagsetRepository;
 import it.cnr.ilc.projectx.repository.TagsetValueRepository;
-import it.cnr.ilc.projectx.service.event.DeleteTagsetEvent;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import static com.google.common.base.Preconditions.checkArgument;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class TagsetService {
 
@@ -69,7 +64,6 @@ public class TagsetService {
         Optional<Tagset> tobeUpdated = tagsetRepository.findById(tagsetDto.getId());
 
         if (tobeUpdated.isEmpty()) {
-            log.error("Cannot find tagset with ID " + tagsetDto.getId());
             throw new NotFoundException("Cannot find tagset with ID " + tagsetDto.getId());
         }
 

@@ -1,21 +1,21 @@
 package it.cnr.ilc.projectx.utils;
 
-import it.cnr.ilc.projectx.model.User;
+import it.cnr.ilc.projectx.dto.UserDto;
 
 public final class LoggedUserHolder {
 
-    private static final ThreadLocal<User> CONTEXT = new ThreadLocal<>();
+    private static final ThreadLocal<UserDto> CONTEXT = new ThreadLocal<>();
 
-    public static void setUser(User user) {
+    public static void setUser(UserDto user) {
         CONTEXT.set(user);
     }
 
-    public static User getUser() {
+    public static UserDto getUser() {
         return CONTEXT.get();
     }
 
-    public static void clear() {
-        CONTEXT.remove();
+    public static void remove() {
+        CONTEXT.get();
     }
 
     private LoggedUserHolder() {

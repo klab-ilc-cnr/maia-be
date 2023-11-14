@@ -13,12 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 @Slf4j
@@ -32,14 +29,13 @@ public class TileService {
     private final WorkspaceRepository workspaceRepository;
 
 
-/*    @Transactional(readOnly = true)
+    /*    @Transactional(readOnly = true)
     public List<WorkspaceChoiceDto> retrieveAll() {
         List<Workspace> result = tileRepository.findAll();
         return result.stream()
                 .map(workspace -> mapToWorkspaceChoiceDto(workspace))
                 .collect(Collectors.toList());
     }*/
-
     @Transactional
     public void delete(Tile tile) {
         tileRepository.delete(tile);

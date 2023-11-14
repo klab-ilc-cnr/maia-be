@@ -12,17 +12,16 @@ import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/relations")
 public class RelationController {
+
     @NonNull
     private final Mediator mediator;
 
@@ -35,7 +34,6 @@ public class RelationController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<AnnotationRelationDto> createRelation(@Valid @RequestBody @NotNull CreateAnnotationRelationDto annotationRelationDto) throws Exception {
         XResult<AnnotationRelationDto> response = mediator.sendXResult(new CreateAnnotationRelationRequest(annotationRelationDto));
         if (response.IsFailed()) {
@@ -46,7 +44,6 @@ public class RelationController {
     }
 
     @PutMapping
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<AnnotationRelationDto> updateRelation(@Valid @RequestBody UpdateAnnotationRelationDto annotationRelationDto) throws Exception {
         XResult<AnnotationRelationDto> response = mediator.sendXResult(new UpdateAnnotationRelationRequest(annotationRelationDto));
         if (response.IsFailed()) {
@@ -57,7 +54,6 @@ public class RelationController {
     }
 
     @DeleteMapping("{relationId}")
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<Boolean> deleteRelation(@PathVariable @NotNull Long relationId) throws Exception {
         XResult<Boolean> response = mediator.sendXResult(new DeleteAnnotationRelationRequest(relationId));
         if (response.IsFailed()) {

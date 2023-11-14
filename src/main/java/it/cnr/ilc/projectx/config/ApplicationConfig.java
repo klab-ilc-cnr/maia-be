@@ -1,61 +1,45 @@
 package it.cnr.ilc.projectx.config;
 
+import it.cnr.ilc.projectx.SecurityInterceptor;
+import it.cnr.ilc.projectx.service.AuthenticationService;
 import it.cnr.ilc.projectx.utils.SecurityAuditorAware;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.time.Duration;
-
-/**
- * Description of ApplicationConfig
- * <p>
- * Created at 21/03/2022 14:20
- * Author Bianca Barattolo (BB) - <b.barattolo@xeel.tech>
- */
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 @Configuration
-@ConfigurationProperties(prefix = "spring.projectx-config")
-@Getter
-@Setter
 public class ApplicationConfig {
 
-    private Keycloak keycloak;
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
+                        .allowedOrigins("*"); // for /** means all mapping URL, and * for all domain
+            }
 
-        return builder
-                .setConnectTimeout(Duration.ofMillis(3000))
-                .setReadTimeout(Duration.ofMillis(3000))
-                .build();
+            @Override
+            public void addInterceptors(InterceptorRegistry registry) {
+                registry.addInterceptor(new SecurityInterceptor(authenticationService))
+                        .excludePathPatterns("/api/authentication/**", "/error/**");
+            }
+        };
     }
 
     @Bean
-    public AuditorAware<Long> auditorAware(){
+    public AuditorAware<Long> auditorAware() {
         return new SecurityAuditorAware();
     }
 
-    @Getter
-    @Setter
-    public static class Keycloak {
-
-        private UserManagerClient userManager;
-
-        @Getter
-        @Setter
-        public static class UserManagerClient {
-
-            private String clientId;
-            private String clientSecret;
-            private String defaultRoleName;
-
-        }
-    }
 }

@@ -1,29 +1,19 @@
 package it.cnr.ilc.projectx.model;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import com.vladmihalcea.hibernate.type.json.JsonStringType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
-import javax.persistence.*;
 import java.util.Set;
 
-/**
- * Description of User
- * <p>
- * Created at 08/03/2022 15:10
- * Author Bianca Barattolo (BB) - <b.barattolo@xeel.tech>
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Entity
 @Table(name = "users")
-@TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-})
 public class User extends TracedEntity {
 
     public static final String TABLE_NAME = "users";
@@ -36,15 +26,21 @@ public class User extends TracedEntity {
     private long id;
 
     @NonNull
+    @Column(unique = true)
+    @Pattern(regexp = "^[a-zA-Z0-9@._-]{4,20}$")
+    private String username;
+
+    @NonNull
+    private String password;
+
+    @NonNull
     private String name;
 
-    //    @NonNull
+    @NonNull
     private String surname;
 
     @NonNull
     private String email;
-
-//    private String username;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", schema = "public", joinColumns = @JoinColumn(name = "user_id"))
@@ -54,20 +50,44 @@ public class User extends TracedEntity {
 
     private boolean active;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "json")
+    @Convert(converter = UserAttributeConverter.class)
     private Attribute attributes;
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", email='" + email + '\'' +
-                ", roles=" + roles +
-                ", active=" + active +
-                '}';
+        return "User{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", surname='" + surname + '\''
+                + ", email='" + email + '\''
+                + ", roles=" + roles
+                + ", active=" + active
+                + '}';
+    }
+
+    @Converter
+    private static class UserAttributeConverter implements AttributeConverter<Attribute, String> {
+
+        private static final ObjectMapper MAPPER = new ObjectMapper();
+
+        @Override
+        public String convertToDatabaseColumn(Attribute x) {
+            try {
+                return MAPPER.writeValueAsString(x);
+            } catch (JsonProcessingException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        @Override
+        public Attribute convertToEntityAttribute(String y) {
+            try {
+                return MAPPER.readValue(y, Attribute.class);
+            } catch (JsonProcessingException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
     }
 }
-

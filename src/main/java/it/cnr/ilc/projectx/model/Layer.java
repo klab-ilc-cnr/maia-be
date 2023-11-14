@@ -1,8 +1,7 @@
 package it.cnr.ilc.projectx.model;
 
+import jakarta.persistence.*;
 import lombok.*;
-
-import javax.persistence.*;
 import java.util.List;
 
 @Getter
@@ -34,16 +33,15 @@ public class Layer extends TracedEntity {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", note='" + color + '\'' +
-                ", layout='" + description + '\'' +
-                ", created=" + super.getCreated() +
-                ", updated=" + super.getUpdated() +
-                ", createdBy=" + super.getCreatedBy() +
-                ", updatedBy=" + super.getUpdatedBy() +
-                '}';
+        return "User{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", note='" + color + '\''
+                + ", layout='" + description + '\''
+                + ", created=" + super.getCreated()
+                + ", updated=" + super.getUpdated()
+                + ", createdBy=" + super.getCreatedBy()
+                + ", updatedBy=" + super.getUpdatedBy()
+                + '}';
     }
 }
-

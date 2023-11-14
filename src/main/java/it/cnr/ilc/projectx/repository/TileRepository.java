@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface TileRepository extends JpaRepository<Tile, Long> {
+
     List<Tile> findAllByWorkspaceId(Long workspaceId);
 }

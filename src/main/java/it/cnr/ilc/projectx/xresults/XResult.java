@@ -3,6 +3,7 @@ package it.cnr.ilc.projectx.xresults;
 import it.cnr.ilc.projectx.xresults.fail.Fail;
 
 public class XResult<T> extends XResultVoid {
+
     private final T payload;
 
     public XResult() {
@@ -27,6 +28,4 @@ public class XResult<T> extends XResultVoid {
         payload = null;
     }
 
-//    public static implicit operator XResult<TPayload>(TPayload payload) => new XResult<TPayload>(payload);
-//    public static implicit operator XResult<TPayload>(Fail fail) => new XResult<TPayload>(fail);
 }

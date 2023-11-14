@@ -1,20 +1,18 @@
 package it.cnr.ilc.projectx.utils;
 
-import it.cnr.ilc.projectx.model.User;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import it.cnr.ilc.projectx.dto.UserDto;
 
 public final class UserUtils {
 
     public static Long getLoggedUserId() {
-        User user = getLoggedUser();
+        UserDto user = getLoggedUser();
         if (user == null) {
             return null;
         }
         return user.getId();
     }
 
-    public static User getLoggedUser() {
+    public static UserDto getLoggedUser() {
         return LoggedUserHolder.getUser();
     }
 }

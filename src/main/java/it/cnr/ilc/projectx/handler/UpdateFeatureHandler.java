@@ -7,33 +7,25 @@ import it.cnr.ilc.projectx.service.FeatureService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.jboss.resteasy.spi.NotImplementedYetException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class UpdateFeatureHandler implements RequestHandler<UpdateFeatureRequest, FeatureDto> {
+
     @NonNull
     private final FeatureService featureService;
 
     @Override
     public FeatureDto handle(UpdateFeatureRequest request) {
-        throw new NotImplementedYetException();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Transactional
     @Override
     public XResult<FeatureDto> handleXResult(UpdateFeatureRequest request) {
-        try {
-            FeatureDto responseDto = featureService.updateFeature(request.getFeatureDto());
-
-            return new XResult<>(responseDto);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw e;
-        }
+        FeatureDto responseDto = featureService.updateFeature(request.getFeatureDto());
+        return new XResult<>(responseDto);
     }
 }

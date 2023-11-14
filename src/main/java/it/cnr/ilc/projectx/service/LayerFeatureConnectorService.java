@@ -27,7 +27,6 @@ public class LayerFeatureConnectorService {
     @NonNull
     private final AnnotationFeatureService annotationFeatureService;
 
-
     public boolean canAllFeaturesBeDeletedByLayerId(Layer layer) {
         for (Feature feature : layer.getFeatures()) {
             if (!canFeatureBeDeleted(layer, feature.getId())) {

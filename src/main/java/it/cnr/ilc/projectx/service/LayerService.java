@@ -5,20 +5,16 @@ import it.cnr.ilc.projectx.model.Layer;
 import it.cnr.ilc.projectx.repository.LayerRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import jakarta.persistence.EntityNotFoundException;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class LayerService {
 
@@ -81,8 +77,7 @@ public class LayerService {
     }
 
     public Boolean canBeDeleted(Long layerId) {
-        if(annotationRelationService.existsAnyLayerInRelation(layerId))
-        {
+        if (annotationRelationService.existsAnyLayerInRelation(layerId)) {
             return false;
         }
 
@@ -106,7 +101,7 @@ public class LayerService {
         return false;
     }
 
-/*    public Boolean canBeDeleted(Long layerId) {
+    /*    public Boolean canBeDeleted(Long layerId) {
         //TODO aggiungere check se è usato in una Relation
         if (featureService.canAllFeaturesBeDeletedByLayerId(layerId)) {
             return true;
@@ -126,7 +121,6 @@ public class LayerService {
 
         return false;
     }*/
-
     @Transactional
     public LayerChoiceDto update(UpdateLayerChoiceDto updateLayerChoiceDto) {
         checkArgument(updateLayerChoiceDto != null);
@@ -136,7 +130,6 @@ public class LayerService {
         Layer tobeUpdated = retrieveLayer(updateLayerChoiceDto.getId());
 
         if (tobeUpdated == null) {
-            log.error("Cannot find layer with ID " + updateLayerChoiceDto.getId());
             throw new NotFoundException("Cannot find layer with ID " + updateLayerChoiceDto.getId());
         }
 

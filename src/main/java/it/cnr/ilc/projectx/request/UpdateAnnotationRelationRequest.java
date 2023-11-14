@@ -6,6 +6,7 @@ import it.cnr.ilc.projectx.dto.UpdateAnnotationRelationDto;
 import it.cnr.ilc.projectx.mediator.Request;
 
 public class UpdateAnnotationRelationRequest implements Request<AnnotationRelationDto> {
+
     private final UpdateAnnotationRelationDto annotationRelationDto;
 
     public UpdateAnnotationRelationRequest(final UpdateAnnotationRelationDto annotationRelationDto) {

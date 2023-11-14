@@ -1,8 +1,7 @@
 package it.cnr.ilc.projectx.model;
 
+import jakarta.persistence.*;
 import lombok.*;
-
-import javax.persistence.*;
 
 @Getter
 @Setter
@@ -33,15 +32,14 @@ public class TagsetValue extends TracedEntity {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", created=" + super.getCreated() +
-                ", updated=" + super.getUpdated() +
-                ", createdBy=" + super.getCreatedBy() +
-                ", updatedBy=" + super.getUpdatedBy() +
-                '}';
+        return "User{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", description='" + description + '\''
+                + ", created=" + super.getCreated()
+                + ", updated=" + super.getUpdated()
+                + ", createdBy=" + super.getCreatedBy()
+                + ", updatedBy=" + super.getUpdatedBy()
+                + '}';
     }
 }
-

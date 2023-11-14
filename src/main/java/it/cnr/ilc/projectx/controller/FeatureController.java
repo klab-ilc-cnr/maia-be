@@ -6,23 +6,21 @@ import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.CreateFeatureRequest;
 import it.cnr.ilc.projectx.request.DeleteFeatureRequest;
 import it.cnr.ilc.projectx.request.UpdateFeatureRequest;
-import it.cnr.ilc.projectx.service.eventHandler.DeleteHandler;
 import it.cnr.ilc.projectx.service.FeatureService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/features")
 public class FeatureController {
+
     @NonNull
     private final Mediator mediator;
 
@@ -35,7 +33,6 @@ public class FeatureController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<CreateFeatureDto> createFeature(@Valid @RequestBody @NotNull CreateFeatureDto featureDto) throws Exception {
         XResult<CreateFeatureDto> response = mediator.sendXResult(new CreateFeatureRequest(featureDto));
         if (response.IsFailed()) {
@@ -46,7 +43,6 @@ public class FeatureController {
     }
 
     @PutMapping
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<FeatureDto> updateFeature(@Valid @RequestBody FeatureDto updateFeaturetDto) throws Exception {
         XResult<FeatureDto> response = mediator.sendXResult(new UpdateFeatureRequest(updateFeaturetDto));
         if (response.IsFailed()) {
@@ -56,16 +52,14 @@ public class FeatureController {
         return ResponseEntity.ok(responsePayload);
     }
 
-    @GetMapping("canbedeleted/{layerId}/{featureId}")
     public ResponseEntity<Boolean> canBeDeleted(@PathVariable @NotNull Long layerId,
-                                                @PathVariable @NotNull Long featureId) {
+            @PathVariable @NotNull Long featureId) {
         return ResponseEntity.ok(featureService.canBeDeleted(layerId, featureId));
     }
 
     @DeleteMapping("{layerId}/{featureId}")
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<Boolean> deleteFeature(@PathVariable @NotNull Long layerId,
-                                              @PathVariable @NotNull Long featureId) throws Exception {
+            @PathVariable @NotNull Long featureId) throws Exception {
 
         XResult<Boolean> response = mediator.sendXResult(new DeleteFeatureRequest(layerId, featureId));
         if (response.IsFailed()) {

@@ -4,22 +4,20 @@ import it.cnr.ilc.projectx.dto.*;
 import it.cnr.ilc.projectx.mediator.Mediator;
 import it.cnr.ilc.projectx.request.*;
 import it.cnr.ilc.projectx.service.LayerService;
-import it.cnr.ilc.projectx.service.WorkspaceService;
 import it.cnr.ilc.projectx.xresults.XResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/layers")
 public class LayerController {
+
     @NonNull
     private final Mediator mediator;
 
@@ -32,7 +30,6 @@ public class LayerController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<LayerDto> createLayer(@Valid @RequestBody @NotNull LayerDto layerDto) throws Exception {
         XResult<LayerDto> response = mediator.sendXResult(new CreateLayerRequest(layerDto));
         if (response.IsFailed()) {
@@ -43,7 +40,6 @@ public class LayerController {
     }
 
     @DeleteMapping("{layerId}")
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<Boolean> deleteLayer(@PathVariable @NotNull Long layerId) throws Exception {
         XResult<Boolean> response = mediator.sendXResult(new DeleteLayerRequest(layerId));
         if (response.IsFailed()) {
@@ -53,7 +49,6 @@ public class LayerController {
     }
 
     @PutMapping
-    @PreAuthorize("hasRole(T(it.cnr.ilc.projectx.model.Role).AMMINISTRATORE)")
     public ResponseEntity<LayerChoiceDto> updateLayer(@Valid @RequestBody UpdateLayerChoiceDto updateLayerChoiceDto) throws Exception {
         XResult<LayerChoiceDto> response = mediator.sendXResult(new UpdateLayerChoiceRequest(updateLayerChoiceDto));
         if (response.IsFailed()) {

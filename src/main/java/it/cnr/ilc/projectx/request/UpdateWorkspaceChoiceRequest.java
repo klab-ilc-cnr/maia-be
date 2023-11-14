@@ -5,6 +5,7 @@ import it.cnr.ilc.projectx.dto.WorkspaceChoiceDto;
 import it.cnr.ilc.projectx.mediator.Request;
 
 public class UpdateWorkspaceChoiceRequest implements Request<WorkspaceChoiceDto> {
+
     private final UpdateWorkspaceChoiceDto updateWorkspaceChoiceDto;
 
     public UpdateWorkspaceChoiceRequest(final UpdateWorkspaceChoiceDto updateWorkspaceChoiceDto) {
