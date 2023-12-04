@@ -136,7 +136,7 @@ public class UserService {
 
     public User mapToEntity(CreateUserDto dto) {
         User user = new User();
-        BeanUtils.copyProperties(dto, user);
+        BeanUtils.copyProperties(dto, user, "id");
         user.setRoles(EnumSet.of(dto.getRole()));
         user.setCreated(LocalDateTime.now());
         user.setUpdated(LocalDateTime.now());

@@ -32,7 +32,7 @@ public class ApplicationConfig {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
                 registry.addInterceptor(new SecurityInterceptor(authenticationService))
-                        .excludePathPatterns("/api/authentication/**", "/error/**");
+                        .excludePathPatterns("/", "/api/authentication/**", "/error/**");
             }
         };
     }

@@ -15,6 +15,8 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateUserDto implements Serializable {
 
+    private Long id;
+    
     @NotBlank
     private String username;
 
