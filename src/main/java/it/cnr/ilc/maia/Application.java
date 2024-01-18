@@ -1,8 +1,10 @@
 package it.cnr.ilc.maia;
 
+import it.cnr.ilc.maia.model.Role;
 import it.cnr.ilc.maia.model.User;
 import it.cnr.ilc.maia.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
+import java.util.Collections;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.TimeZone;
@@ -29,6 +31,7 @@ public class Application {
             user.setUsername("admin");
             user.setPassword("password");
             user.setEmail("maia@ilc.cnr.it");
+            user.setRoles(Collections.singleton(Role.ADMINISTRATOR));
             user.setActive(true);
             userRepository.save(user);
         }
