@@ -91,7 +91,7 @@ abstract class ExternController {
     public ResponseEntity<byte[]> delete() throws Exception {
         HttpEntity<Void> entity = new HttpEntity<>(getHeaders(httpServletRequest));
         UrlAndParams urlAndParams = getUrlAndPArams(httpServletRequest);
-        ResponseEntity<byte[]> response = restTemplate().exchange(urlAndParams.url, HttpMethod.POST, entity, byte[].class, urlAndParams.params);
+        ResponseEntity<byte[]> response = restTemplate().exchange(urlAndParams.url, HttpMethod.DELETE, entity, byte[].class, urlAndParams.params);
         return ResponseEntity.status(response.getStatusCode()).headers(getHeaders(response)).body(response.getBody());
     }
 
