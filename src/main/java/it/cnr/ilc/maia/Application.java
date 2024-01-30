@@ -4,18 +4,34 @@ import it.cnr.ilc.maia.model.Role;
 import it.cnr.ilc.maia.model.User;
 import it.cnr.ilc.maia.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Collections;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.TimeZone;
 import static java.util.TimeZone.getTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class Application {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+    public static void main(String[] args) throws IOException {
+        try (ConfigurableApplicationContext context = SpringApplication.run(Application.class, args)) {
+            int port = context.getEnvironment().getRequiredProperty("server.port-shutdown", Number.class).intValue();
+            try (ServerSocket server = new ServerSocket(port)) {
+                boolean shutdown = false;
+                while (!shutdown) {
+                    try (Socket socket = server.accept()) {
+                        if (socket.getInetAddress().isAnyLocalAddress() || socket.getInetAddress().isLoopbackAddress()) {
+                            shutdown = true;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Autowired

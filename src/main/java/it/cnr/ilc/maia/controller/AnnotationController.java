@@ -14,8 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RestController
-@RequestMapping(value = "/api/annotations")
+//@RestController
+//@RequestMapping(value = "/api/annotations")
 public class AnnotationController {
 
     @NonNull

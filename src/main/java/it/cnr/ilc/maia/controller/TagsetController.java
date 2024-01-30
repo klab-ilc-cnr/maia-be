@@ -20,8 +20,8 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RestController
-@RequestMapping(value = "/api/tagsets")
+//@RestController
+//@RequestMapping(value = "/api/tagsets")
 public class TagsetController {
 
     @NonNull

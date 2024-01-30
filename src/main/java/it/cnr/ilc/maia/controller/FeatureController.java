@@ -17,8 +17,8 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RestController
-@RequestMapping(value = "/api/features")
+//@RestController
+//@RequestMapping(value = "/api/features")
 public class FeatureController {
 
     @NonNull
