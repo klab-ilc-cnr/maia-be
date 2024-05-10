@@ -23,7 +23,7 @@ public class Tile extends TracedEntity {
     @Column(length = 2000)
     String tileConfig;
 
-    Long contentId;
+    String contentId;
 
     @NonNull
     @Enumerated(EnumType.STRING)

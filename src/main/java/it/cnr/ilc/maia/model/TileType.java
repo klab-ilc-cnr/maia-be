@@ -5,5 +5,9 @@ public enum TileType {
     ONTOLOGY,
     LEXICON,
     CORPUS,
-    LAYERS_LIST
+    LAYERS_LIST,
+    SEARCH,
+    LEXICON_EDIT,
+    DICTIONARY,
+    DICTIONARY_EDIT,
 }

@@ -54,7 +54,7 @@ public class TileService {
         Tile tile = new Tile();
         BeanUtils.copyProperties(tileDto, tile);
         tile.setWorkspace(workspace);
-        if (tileDto.getType() == TileType.TEXT) {
+        if (tile.getType() == TileType.TEXT || tileDto.getType() == TileType.LEXICON_EDIT || tileDto.getType() == TileType.DICTIONARY_EDIT) {
             ObjectMapper objectMapper = new ObjectMapper();
             TextTileDto textTileDto = objectMapper.convertValue(tileDto.getContent(), TextTileDto.class);
             tile.setContentId(textTileDto.getContentId());
@@ -65,7 +65,7 @@ public class TileService {
     public static TileDto mapToTileDto(Tile tile) {
         TileDto tileDto = new TileDto();
         BeanUtils.copyProperties(tile, tileDto);
-        if (tile.getType() == TileType.TEXT) {
+        if (tile.getType() == TileType.TEXT || tileDto.getType() == TileType.LEXICON_EDIT || tileDto.getType() == TileType.DICTIONARY_EDIT) {
             TextTileDto textTileDto = new TextTileDto();
             textTileDto.setContentId(tile.getContentId());
             tileDto.setContent(textTileDto);

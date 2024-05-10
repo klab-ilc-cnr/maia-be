@@ -5,7 +5,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/")
+@RequestMapping("/")
 public class HomeController {
 
     @Autowired
