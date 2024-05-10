@@ -18,8 +18,8 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RestController
-@RequestMapping(value = "/api/relations")
+//@RestController
+//@RequestMapping(value = "/api/relations")
 public class RelationController {
 
     @NonNull

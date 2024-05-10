@@ -12,5 +12,5 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class TextTileDto implements Serializable {
 
-    private Long contentId;
+    private String contentId;
 }
