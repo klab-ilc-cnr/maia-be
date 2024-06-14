@@ -11,11 +11,16 @@ import it.cnr.ilc.maia.dto.lexo.DictionaryEntriesRequest;
 import it.cnr.ilc.maia.dto.lexo.DictionaryEntriesResponse;
 import it.cnr.ilc.maia.dto.lexo.DictionaryEntryCoreResponse;
 import it.cnr.ilc.maia.dto.lexo.DictionaryEntryCore;
+import it.cnr.ilc.maia.dto.lexo.UpdateDictionaryEntryLabelRequest;
+import it.cnr.ilc.maia.dto.lexo.GenericEntity;
 import it.cnr.ilc.maia.dto.lexo.LexiconCreateEntryRequest;
 import it.cnr.ilc.maia.dto.lexo.LexicalEntry;
 import it.cnr.ilc.maia.dto.lexo.LexicographicComponent;
 import it.cnr.ilc.maia.dto.lexo.LexicographicComponentResponse;
 import it.cnr.ilc.maia.dto.lexo.LexiconCreateAndAssociateEntryRequest;
+import it.cnr.ilc.maia.dto.lexo.UpdateDictionaryEntryStatusRequest;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -88,7 +93,7 @@ public class LexoController extends ExternController {
         lexoUpdateLexicalEntry(author, lexicalEntry.getLexicalEntry(), "http://www.w3.org/ns/lemon/lime#entry", request.getLang());
         lexoUpdateLexicalEntry(author, lexicalEntry.getLexicalEntry(), "http://www.w3.org/2000/01/rdf-schema#label", request.getLabel());
         lexoUpdateLexicalEntry(author, lexicalEntry.getLexicalEntry(), "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", request.getType());
-        lexoUpdateLinguisticRelation(author, lexicalEntry.getLexicalEntry(), "morphology", "http://www.lexinfo.net/ontology/3.0/lexinfo#partOfSpeech", request.getPos());
+        lexoUpdateLinguisticRelation(lexicalEntry.getLexicalEntry(), "morphology", "http://www.lexinfo.net/ontology/3.0/lexinfo#partOfSpeech", request.getPos());
         return lexoGetLexicalEntry(lexicalEntry.getLexicalEntry());
     }
 
@@ -117,13 +122,13 @@ public class LexoController extends ExternController {
 
     }
 
-    private void lexoUpdateLinguisticRelation(String author, String id, String type, String relation, Object value) throws Exception {
+    private void lexoUpdateLinguisticRelation(String id, String type, String relation, Object value) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.put("Content-Type", Arrays.asList("application/json"));
         headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
         HttpEntity<UpdateRelation> entity = new HttpEntity<>(new UpdateRelation(type, relation, value), headers);
-        String url = "/update/linguisticRelation?author={author}&id={id}";
-        Map<String, String> params = Map.of("author", author, "id", id);
+        String url = "/update/linguisticRelation?id={id}";
+        Map<String, String> params = Map.of("id", id);
         restTemplate().exchange(url, HttpMethod.POST, entity, String.class, params);
     }
 
@@ -141,7 +146,7 @@ public class LexoController extends ExternController {
     @PostMapping("dictionary/associate/entry")
     public Date dictionaryAssociateEntry(@RequestParam String author, @RequestParam(required = true) String prefix, @RequestParam(required = true) String baseIRI, @RequestBody DictionaryAssociateEntryRequest request) throws Exception {
         LexicographicComponent lexicographicComponent = lexoCreateLexicographicComponent(author, prefix, baseIRI);
-        lexoUpdateLinguisticRelation(author, lexicographicComponent.getComponent(), "lexicog", "http://www.w3.org/ns/lemon/lexicog#describes", request.getLexicalEntryId());
+        lexoUpdateLinguisticRelation(lexicographicComponent.getComponent(), "lexicog", "http://www.w3.org/ns/lemon/lexicog#describes", request.getLexicalEntryId());
         lexoUpdateLexicographicComponentPosition(request.getDictionaryEntryId(), "lexicog", "http://www.w3.org/1999/02/22-rdf-syntax-ns#_n", lexicographicComponent.getComponent(), request.getPosition());
         return new Date();
     }
@@ -177,9 +182,9 @@ public class LexoController extends ExternController {
         lexoUpdateLexicalEntry(author, lexicalEntry.getLexicalEntry(), "http://www.w3.org/ns/lemon/lime#entry", request.getLang());
         lexoUpdateLexicalEntry(author, lexicalEntry.getLexicalEntry(), "http://www.w3.org/2000/01/rdf-schema#label", request.getLabel());
         lexoUpdateLexicalEntry(author, lexicalEntry.getLexicalEntry(), "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", request.getType());
-        lexoUpdateLinguisticRelation(author, lexicalEntry.getLexicalEntry(), "morphology", "http://www.lexinfo.net/ontology/3.0/lexinfo#partOfSpeech", request.getPos());
+        lexoUpdateLinguisticRelation(lexicalEntry.getLexicalEntry(), "morphology", "http://www.lexinfo.net/ontology/3.0/lexinfo#partOfSpeech", request.getPos());
         LexicographicComponent lexicographicComponent = lexoCreateLexicographicComponent(author, prefix, baseIRI);
-        lexoUpdateLinguisticRelation(author, lexicographicComponent.getComponent(), "lexicog", "http://www.w3.org/ns/lemon/lexicog#describes", lexicalEntry.getLexicalEntry());
+        lexoUpdateLinguisticRelation(lexicographicComponent.getComponent(), "lexicog", "http://www.w3.org/ns/lemon/lexicog#describes", lexicalEntry.getLexicalEntry());
         lexoUpdateLexicographicComponentPosition(request.getDictionaryEntryId(), "lexicog", "http://www.w3.org/1999/02/22-rdf-syntax-ns#_n", lexicographicComponent.getComponent(), request.getPosition());
         return new Date();
     }
@@ -265,4 +270,155 @@ public class LexoController extends ExternController {
         });
     }
 
+    @PostMapping("associate/lexicalConcept")
+    public Date associateLexicalConcept(@RequestBody AssociateLexicalConceptRequest request) throws Exception {
+        lexoUpdateLinguisticRelation(request.senseId, "conceptRel", "http://www.w3.org/ns/lemon/ontolex#isLexicalizedSenseOf", request.conceptId);
+        return new Date();
+    }
+
+    public static record AssociateLexicalConceptRequest(String senseId, String conceptId) {
+
+    }
+
+    @PostMapping("dissociate/lexicalConcept")
+    public Date dissociateLexicalConcept(@RequestBody AssociateLexicalConceptRequest request) throws Exception {
+        lexoDeleteRelation(request.senseId, "http://www.w3.org/ns/lemon/ontolex#isLexicalizedSenseOf", request.conceptId);
+        return new Date();
+    }
+
+    private void lexoDeleteRelation(String id, String relation, Object value) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Content-Type", Arrays.asList("application/json"));
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<DeleteRelation> entity = new HttpEntity<>(new DeleteRelation(relation, value), headers);
+        String url = "/delete/relation?id={id}";
+        Map<String, String> params = Map.of("id", id);
+        restTemplate().exchange(url, HttpMethod.POST, entity, String.class, params);
+    }
+
+    public static record DeleteRelation(String relation, Object value) {
+
+    }
+
+    @GetMapping("data/sense/lexicalConcepts")
+    public List<GenericEntity> dataSenseLexicalConcepts(@RequestParam(required = true) String id) throws Exception {
+        return lexoGetLinguisticRelations(id, "http://www.w3.org/ns/lemon/ontolex#isLexicalizedSenseOf");
+    }
+
+    private List<GenericEntity> lexoGetLinguisticRelations(String id, String property) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Accept", Arrays.asList("application/json"));
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String url = "/data/linguisticRelation?id={id}&property={property}";
+        Map<String, String> params = Map.of("id", id, "property", property);
+        ResponseEntity<String> response = restTemplate().exchange(url, HttpMethod.GET, entity, String.class, params);
+        return new ObjectMapper().readValue(response.getBody(), new TypeReference<List<GenericEntity>>() {
+        });
+    }
+
+    @GetMapping("data/dictionaryEntry/seeAlso")
+    public List<GenericEntity> dataDictionaryEntrySeeAlso(@RequestParam(required = true) String id) throws Exception {
+        return lexoGetGenericRelations(id, "http://www.w3.org/2000/01/rdf-schema#seeAlso");
+    }
+
+    private List<GenericEntity> lexoGetGenericRelations(String id, String property) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Accept", Arrays.asList("application/json"));
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String url = "/data/genericRelation?id={id}&property={property}";
+        Map<String, String> params = Map.of("id", id, "property", property);
+        ResponseEntity<String> response = restTemplate().exchange(url, HttpMethod.GET, entity, String.class, params);
+        return new ObjectMapper().readValue(response.getBody(), new TypeReference<List<GenericEntity>>() {
+        });
+    }
+
+    @PostMapping("update/dictionaryEntry/notes")
+    public Date updatDictionaryEntryNotes(@RequestParam(required = true) String id, @RequestParam String author, @RequestBody String notes) throws Exception {
+        notes = notes.replaceAll("\"", "\\\\\\\\\"").replaceAll("\\s", " ");
+        lexoUpdateDictionaryEntry(author, id, "http://www.w3.org/2004/02/skos/core#note", notes);
+        return new Date();
+    }
+
+    @GetMapping("data/lexicalConcepts")
+    public Map dataLexicalConcepts(@RequestParam(required = true) String type) throws Exception {
+        String id;
+        if ("marcheDUso".equalsIgnoreCase(type)) {
+            id = "http://lexica/mylexicon#cs_marca_d_uso";
+        } else if ("marcheSemantiche".equalsIgnoreCase(type)) {
+            id = "http://lexica/mylexicon#cs_marca_semantica";
+        } else {
+            throw new Exception("unknown type");
+        }
+        return lexoDataLexicalConcepts(id);
+    }
+
+    private Map lexoDataLexicalConcepts(String id) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Accept", Arrays.asList("application/json"));
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String url = "/data/lexicalConcepts?id={id}";
+        Map<String, String> params = Map.of("id", id);
+        ResponseEntity<String> response = restTemplate().exchange(url, HttpMethod.GET, entity, String.class, params);
+        return new ObjectMapper().readValue(response.getBody(), Map.class);
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @GetMapping("dictionary/etymology/languages")
+    public List<Etymology> dictionaryEtymologyLanguages() throws Exception {
+        String sql = "select * from _etymology";
+        return entityManager.createNativeQuery(sql, Etymology.class).getResultList();
+    }
+
+    public static record Etymology(String code, String name) {
+
+    }
+
+    @GetMapping("dictionary/otherDocuments")
+    public List<OtherDocument> dictionaryOtherDocuments() throws Exception {
+        String sql = "select * from _other_document";
+        return entityManager.createNativeQuery(sql, OtherDocument.class).getResultList();
+    }
+
+    public static record OtherDocument(String code, String title) {
+
+    }
+
+    @GetMapping("dictionary/authorDocuments")
+    public List<OtherDocument> dictionaryAuthorDocuments() throws Exception {
+        String sql = "select * from _author_document";
+        return entityManager.createNativeQuery(sql, OtherDocument.class).getResultList();
+    }
+
+    @PostMapping("associate/dictionaryEntry/seeAlso")
+    public Date associateDictionaryEntrySeeAlso(@RequestBody AssociateSeeAlsoRequest request) throws Exception {
+        lexoUpdateGenericRelation(request.dictionaryId, "reference", "http://www.w3.org/2000/01/rdf-schema#seeAlso", request.seeAlsoDictionaryId);
+        return new Date();
+    }
+
+    public static record AssociateSeeAlsoRequest(String dictionaryId, String seeAlsoDictionaryId) {
+
+    }
+
+    @PostMapping("delete/dictionaryEntry/seeAlso")
+    public Date deleteDictionaryEntrySeeAlso(@RequestBody AssociateSeeAlsoRequest request) throws Exception {
+        lexoDeleteRelation(request.dictionaryId, "http://www.w3.org/2000/01/rdf-schema#seeAlso", request.seeAlsoDictionaryId);
+        return new Date();
+    }
+
+    @PostMapping("update/dictionaryEntry/label")
+    public Date updateDictionaryEntryLabel(@RequestParam(required = true) String id, @RequestParam String author, @RequestBody UpdateDictionaryEntryLabelRequest label) throws Exception {
+        lexoUpdateDictionaryEntry(author, id, "http://www.w3.org/2000/01/rdf-schema#label", label.getLabel());
+        return new Date();
+    }
+    
+     @PostMapping("update/dictionaryEntry/status")
+    public Date updateDictionaryEntryStatus(@RequestParam(required = true) String id, @RequestParam String author, @RequestBody UpdateDictionaryEntryStatusRequest status) throws Exception {
+        lexoUpdateDictionaryEntry(author, id, "http://www.w3.org/2003/06/sw-vocab-status/ns#term_status", status.getStatus());
+        return new Date();
+    }
 }

@@ -15,15 +15,15 @@ public class KwicData {
     private final String kwic;
     private final String rightContext;
 
-    public KwicData(Map<String, Object> map) {
-        index = (Integer) map.get("id");
+    public KwicData(Integer id, Map<String, Object> map) {
+        index = id;
         rowIndex = (Integer) map.get("row_number");
         textId = ((Number) map.get("resource_id")).longValue();
         text = (String) map.get("resource_name");
         reference = (String) map.get("section_index");
-        leftContext = (String) map.get("left_context");
+        leftContext = (String) map.get("left");
         kwic = (String) map.get("token");
-        rightContext = (String) map.get("right_context");
+        rightContext = (String) map.get("right");
     }
 
 }

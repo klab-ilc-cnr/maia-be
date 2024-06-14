@@ -3,11 +3,15 @@ package it.cnr.ilc.maia.controller;
 import it.cnr.ilc.maia.dto.texto.TextoKwicRequest;
 import it.cnr.ilc.maia.dto.texto.KwicResponse;
 import it.cnr.ilc.maia.dto.texto.KwicRequest;
-import it.cnr.ilc.maia.dto.texto.TextoKwicResponse;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +28,21 @@ public class TextoController extends ExternController {
         body.add("file", file.getResource());
         HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
         UrlAndParams urlAndParams = getUrlAndPArams(httpServletRequest);
-        restTemplate().exchange(urlAndParams.url, HttpMethod.POST, entity, Void.class, urlAndParams.params);
+        ResponseEntity<Void> response = restTemplate().exchange(urlAndParams.url, HttpMethod.POST, entity, Void.class, urlAndParams.params);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            try {
+                textoRemoveResource(id);
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    private void textoRemoveResource(Long id) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String url = "resource/" + id + "/remove";
+        restTemplate().exchange(url, HttpMethod.DELETE, entity, Void.class);
     }
 
     @PostMapping("util/kwic")
@@ -34,8 +52,9 @@ public class TextoController extends ExternController {
         TextoKwicRequest textoRequest = new TextoKwicRequest(maiaRequest);
         HttpEntity<TextoKwicRequest> entity = new HttpEntity<>(textoRequest, headers);
         UrlAndParams urlAndParams = getUrlAndPArams(httpServletRequest);
-        TextoKwicResponse textResponse = restTemplate().exchange(urlAndParams.url, HttpMethod.POST, entity, TextoKwicResponse.class, urlAndParams.params).getBody();
-        KwicResponse maiaResponse = new KwicResponse(textResponse);
+        List<Map<String, Object>> textResponse = restTemplate().exchange(urlAndParams.url, HttpMethod.POST, entity, new ParameterizedTypeReference<List<Map<String, Object>>>() {
+        }, urlAndParams.params).getBody();
+        KwicResponse maiaResponse = new KwicResponse(textResponse, maiaRequest.getStart(), maiaRequest.getEnd(), maiaRequest.getFilters());
         return maiaResponse;
     }
 

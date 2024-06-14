@@ -26,7 +26,7 @@ public class DictionaryEntry {
     private String language;
     private String[] images;
     private Boolean hasChildren;
-    private String[] note;
+    private String note;
     private Map<String, String> seeAlso;
     private Map<String, String> sameDictionaryEntryAs;
 
