@@ -17,10 +17,12 @@ import it.cnr.ilc.maia.dto.lexo.LexiconCreateEntryRequest;
 import it.cnr.ilc.maia.dto.lexo.LexicalEntry;
 import it.cnr.ilc.maia.dto.lexo.LexicographicComponent;
 import it.cnr.ilc.maia.dto.lexo.LexicographicComponentResponse;
+import it.cnr.ilc.maia.dto.lexo.LexicographicTree;
 import it.cnr.ilc.maia.dto.lexo.LexiconCreateAndAssociateEntryRequest;
 import it.cnr.ilc.maia.dto.lexo.UpdateDictionaryEntryStatusRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -146,8 +148,8 @@ public class LexoController extends ExternController {
     @PostMapping("dictionary/associate/entry")
     public Date dictionaryAssociateEntry(@RequestParam String author, @RequestParam(required = true) String prefix, @RequestParam(required = true) String baseIRI, @RequestBody DictionaryAssociateEntryRequest request) throws Exception {
         LexicographicComponent lexicographicComponent = lexoCreateLexicographicComponent(author, prefix, baseIRI);
-        lexoUpdateLinguisticRelation(lexicographicComponent.getComponent(), "lexicog", "http://www.w3.org/ns/lemon/lexicog#describes", request.getLexicalEntryId());
         lexoUpdateLexicographicComponentPosition(request.getDictionaryEntryId(), "lexicog", "http://www.w3.org/1999/02/22-rdf-syntax-ns#_n", lexicographicComponent.getComponent(), request.getPosition());
+        lexoUpdateLinguisticRelation(lexicographicComponent.getComponent(), "lexicog", "http://www.w3.org/ns/lemon/lexicog#describes", request.getLexicalEntryId());
         return new Date();
     }
 
@@ -415,10 +417,71 @@ public class LexoController extends ExternController {
         lexoUpdateDictionaryEntry(author, id, "http://www.w3.org/2000/01/rdf-schema#label", label.getLabel());
         return new Date();
     }
-    
-     @PostMapping("update/dictionaryEntry/status")
+
+    @PostMapping("update/dictionaryEntry/status")
     public Date updateDictionaryEntryStatus(@RequestParam(required = true) String id, @RequestParam String author, @RequestBody UpdateDictionaryEntryStatusRequest status) throws Exception {
         lexoUpdateDictionaryEntry(author, id, "http://www.w3.org/2003/06/sw-vocab-status/ns#term_status", status.getStatus());
         return new Date();
     }
+
+    @GetMapping("dictionary/sortingTree")
+    public List<LexicographicTree> dataLemmaSensesTree(@RequestParam(required = true) String id) throws Exception {
+        List<LexicographicComponent> components = lexoLexicographicComponents(id);
+        List<LexicographicTree> trees = new ArrayList<>();
+        LexicographicTree tree;
+        for (LexicographicComponent component : components) {
+            tree = new LexicographicTree(component);
+            trees.add(tree);
+            tree.setChildren(dataLemmaSensesTree(tree.getReferredEntity()));
+        }
+        return trees;
+    }
+
+    @PostMapping("update/lemmaSenseTree")
+    public Date updateLemmaSensesTree(@RequestParam String author, @RequestParam(required = true) String prefix, @RequestParam(required = true) String baseIRI, @RequestParam(required = true) String id, @RequestBody List<LexicographicTree> trees) throws Exception {
+        for (LexicographicTree tree : trees) {
+            lexoDeleteLexicographicComponent(tree.getId());
+        }
+        doUpdateLemmaSensesTree(author, prefix, baseIRI, id, trees);
+        return new Date();
+    }
+
+    private void lexoDeleteLexicographicComponent(String id) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Content-Type", Arrays.asList("application/json"));
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String url = "/delete/lexicographicComponent?id={id}";
+        Map<String, String> params = Map.of("id", id);
+        restTemplate().exchange(url, HttpMethod.GET, entity, String.class, params);
+    }
+
+    public void doUpdateLemmaSensesTree(String author, String prefix, String baseIRI, String id, List<LexicographicTree> trees) throws Exception {
+        DictionaryAssociateEntryRequest request;
+        for (int i = 0; i < trees.size(); i++) {
+            request = new DictionaryAssociateEntryRequest();
+            request.setDictionaryEntryId(id);
+            request.setLexicalEntryId(trees.get(i).getReferredEntity());
+            request.setPosition(i + 1);
+            LexicographicComponent lexicographicComponent = lexoCreateLexicographicComponent(author, prefix, baseIRI);
+            lexoUpdateLexicographicComponentPosition(request.getDictionaryEntryId(), "lexicog", "http://www.w3.org/1999/02/22-rdf-syntax-ns#_n", lexicographicComponent.getComponent(), request.getPosition());
+            lexoUpdateLinguisticRelationSensesTree(lexicographicComponent.getComponent(), "lexicog", "http://www.w3.org/ns/lemon/lexicog#describes", request.getLexicalEntryId());
+            doUpdateLemmaSensesTree(author, prefix, baseIRI, trees.get(i).getReferredEntity(), trees.get(i).getChildren());
+        }
+    }
+    
+    public static record UpdateRelationSensesTree(String type, String relation, Object value, Boolean sensesCustomOrder) {
+
+    }
+
+    private void lexoUpdateLinguisticRelationSensesTree(String id, String type, String relation, Object value) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Content-Type", Arrays.asList("application/json"));
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<UpdateRelationSensesTree> entity = new HttpEntity<>(new UpdateRelationSensesTree(type, relation, value, Boolean.TRUE), headers);
+        String url = "/update/linguisticRelation?id={id}";
+        Map<String, String> params = Map.of("id", id);
+        restTemplate().exchange(url, HttpMethod.POST, entity, String.class, params);
+    }
+
 }

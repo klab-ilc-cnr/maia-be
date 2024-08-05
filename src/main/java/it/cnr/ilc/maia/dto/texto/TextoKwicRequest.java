@@ -24,7 +24,7 @@ public class TextoKwicRequest {
             value = value.replaceAll("\\*", "%").replaceAll("\\?", "_");
         }
         if ("form".equals(maiaRequest.getFilters().getSearchMode())) {
-            builder.append("token ").append(operand).append(" '").append(value).append("'");
+            builder.append("value ").append(operand).append(" '").append(value).append("'");
         } else if ("lemma".equals(maiaRequest.getFilters().getSearchMode())) {
             builder.append("lemma ").append(operand).append(" '").append(value).append("'");
         } else {
