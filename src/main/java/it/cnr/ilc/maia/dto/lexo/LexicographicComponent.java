@@ -26,5 +26,6 @@ public class LexicographicComponent {
     private Boolean hasChildren;
     private String completionDate;
     private String revisionDate;
+    private String[] lexicalConcepts;
 
 }

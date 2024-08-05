@@ -14,6 +14,7 @@ public class KwicData {
     private final String leftContext;
     private final String kwic;
     private final String rightContext;
+    private final Integer kwicOffset;
 
     public KwicData(Integer id, Map<String, Object> map) {
         index = id;
@@ -24,6 +25,7 @@ public class KwicData {
         leftContext = (String) map.get("left");
         kwic = (String) map.get("token");
         rightContext = (String) map.get("right");
+        kwicOffset = ((Number) map.get("start")).intValue();
     }
 
 }
