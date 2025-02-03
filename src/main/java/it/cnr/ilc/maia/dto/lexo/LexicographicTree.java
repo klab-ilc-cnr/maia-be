@@ -1,5 +1,6 @@
 package it.cnr.ilc.maia.dto.lexo;
 
+import java.util.Arrays;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,8 +25,16 @@ public class LexicographicTree {
         referredEntity = component.getReferredEntity();
         type = component.getType();
         label = component.getLabel();
-        prefix = component.getLexicalConcepts();
+        prefix = purgeLexicalConcepts(component.getLexicalConcepts());
         suffix = component.getPos();
+    }
+
+    private String[] purgeLexicalConcepts(String[] lexicalConcepts) {
+        Arrays.sort(lexicalConcepts);
+        for (int i = 0; i < lexicalConcepts.length; i++) {
+            lexicalConcepts[i] = lexicalConcepts[i].substring(lexicalConcepts[i].indexOf(":") + 1);
+        }
+        return lexicalConcepts;
     }
 
 }

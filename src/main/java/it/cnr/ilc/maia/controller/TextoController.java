@@ -35,14 +35,23 @@ public class TextoController extends ExternController {
             } catch (Exception e) {
             }
         }
+        textoAnalyzeResource(id);
     }
 
     private void textoRemoveResource(Long id) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
         HttpEntity<Void> entity = new HttpEntity<>(headers);
-        String url = "resource/" + id + "/remove";
+        String url = "/resource/" + id + "/remove";
         restTemplate().exchange(url, HttpMethod.DELETE, entity, Void.class);
+    }
+
+    private void textoAnalyzeResource(Long id) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String url = "/resource/" + id + "/analyze";
+        restTemplate().exchange(url, HttpMethod.GET, entity, Void.class);
     }
 
     @PostMapping("util/kwic")
@@ -56,6 +65,20 @@ public class TextoController extends ExternController {
         }, urlAndParams.params).getBody();
         KwicResponse maiaResponse = new KwicResponse(textResponse, maiaRequest.getStart(), maiaRequest.getEnd(), maiaRequest.getFilters());
         return maiaResponse;
+    }
+
+    @DeleteMapping("resource/{id}/remove")
+    public void resourceRemove(@PathVariable("id") Long id) throws Exception {
+        textoRemoveAnalysis(id);
+        textoRemoveResource(id);
+    }
+
+    private void textoRemoveAnalysis(Long id) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String url = "/resource/" + id + "/analysis";
+        restTemplate().exchange(url, HttpMethod.DELETE, entity, Void.class);
     }
 
 }

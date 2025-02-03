@@ -46,7 +46,6 @@ public class TileService {
     private List<Tile> mapToEntity(List<TileDto> tilesDto, Workspace workspace) {
         List<Tile> tiles = new LinkedList<>();
         tilesDto.stream().forEach(tileDto -> tiles.add(mapToEntity(tileDto, workspace)));
-
         return tiles;
     }
 
@@ -80,7 +79,8 @@ public class TileService {
 
         tileRepository.deleteAll(workspace.getTiles());
         workspace.setTiles(null);//cacelliamo la relazione altrimenti spring non cancella le tiles
-
+        
+        workspaceDto.getTiles().stream().forEach(t->t.setId(null));
         List<Tile> newTiles = mapToEntity(workspaceDto.getTiles(), workspace);
 
         workspace.setTiles(newTiles);
