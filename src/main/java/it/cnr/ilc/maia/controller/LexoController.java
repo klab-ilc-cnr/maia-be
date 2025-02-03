@@ -32,7 +32,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/lexo")
@@ -350,6 +353,8 @@ public class LexoController extends ExternController {
             id = "http://lexica/mylexicon#cs_marca_d_uso";
         } else if ("marcheSemantiche".equalsIgnoreCase(type)) {
             id = "http://lexica/mylexicon#cs_marca_semantica";
+        } else if ("marcheGrammaticali".equalsIgnoreCase(type)) {
+            id = "http://lexica/mylexicon#cs_marca_grammaticale";
         } else {
             throw new Exception("unknown type");
         }
@@ -469,7 +474,7 @@ public class LexoController extends ExternController {
             doUpdateLemmaSensesTree(author, prefix, baseIRI, trees.get(i).getReferredEntity(), trees.get(i).getChildren());
         }
     }
-    
+
     public static record UpdateRelationSensesTree(String type, String relation, Object value, Boolean sensesCustomOrder) {
 
     }
@@ -484,4 +489,14 @@ public class LexoController extends ExternController {
         restTemplate().exchange(url, HttpMethod.POST, entity, String.class, params);
     }
 
+    @PostMapping("ontology/data/upload")
+    public void upload(@RequestParam("file") MultipartFile file) throws Exception {
+        HttpHeaders headers = new HttpHeaders(getHeaders(httpServletRequest));
+        headers.remove("content-length");
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", file.getResource());
+        HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
+        UrlAndParams urlAndParams = getUrlAndPArams(httpServletRequest);
+        restTemplate().exchange(urlAndParams.url, HttpMethod.POST, entity, Void.class, urlAndParams.params);
+    }
 }
