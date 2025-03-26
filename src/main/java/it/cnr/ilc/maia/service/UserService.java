@@ -193,4 +193,14 @@ public class UserService {
         return mapToDto(user.get());
     }
 
+    @Transactional(readOnly = true)
+    public User retrieveUser(Long userId) {
+        Optional<User> maybe = userRepository.findById(userId);
+        return maybe.get();
+    }
+
+    @Transactional
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
 }
