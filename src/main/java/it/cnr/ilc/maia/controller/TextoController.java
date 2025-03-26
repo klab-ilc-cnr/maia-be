@@ -1,8 +1,14 @@
 package it.cnr.ilc.maia.controller;
 
+import it.cnr.ilc.maia.dto.texto.AicRequest;
+import it.cnr.ilc.maia.dto.texto.AicResponse;
+import it.cnr.ilc.maia.dto.texto.AisRequest;
+import it.cnr.ilc.maia.dto.texto.AisResponse;
 import it.cnr.ilc.maia.dto.texto.TextoKwicRequest;
 import it.cnr.ilc.maia.dto.texto.KwicResponse;
 import it.cnr.ilc.maia.dto.texto.KwicRequest;
+import it.cnr.ilc.maia.dto.texto.TextoAicRequest;
+import it.cnr.ilc.maia.dto.texto.TextoAisRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -65,6 +72,37 @@ public class TextoController extends ExternController {
         }, urlAndParams.params).getBody();
         KwicResponse maiaResponse = new KwicResponse(textResponse, maiaRequest.getStart(), maiaRequest.getEnd(), maiaRequest.getFilters());
         return maiaResponse;
+    }
+
+    @PostMapping("util/aic")
+    public AicResponse aic(@RequestBody AicRequest maiaRequest) throws Exception {
+        HttpHeaders headers = new HttpHeaders(getHeaders(httpServletRequest));
+        headers.remove("content-length");
+        TextoAicRequest textoRequest = new TextoAicRequest(maiaRequest);
+        HttpEntity<TextoAicRequest> entity = new HttpEntity<>(textoRequest, headers);
+        UrlAndParams urlAndParams = getUrlAndPArams(httpServletRequest);
+        List<Map<String, Object>> textResponse = restTemplate().exchange(urlAndParams.url, HttpMethod.POST, entity, new ParameterizedTypeReference<List<Map<String, Object>>>() {
+        }, urlAndParams.params).getBody();
+        AicResponse maiaResponse = new AicResponse(textResponse, maiaRequest.getStart(), maiaRequest.getEnd(), maiaRequest.getFilters());
+        return maiaResponse;
+    }
+
+    @PostMapping("util/ais")
+    public ResponseEntity<AisResponse> ais(@RequestBody AisRequest maiaRequest) throws Exception {
+        HttpHeaders headers = new HttpHeaders(getHeaders(httpServletRequest));
+        headers.remove("content-length");
+        TextoAisRequest textoRequest = new TextoAisRequest(maiaRequest);
+        HttpEntity<TextoAisRequest> entity = new HttpEntity<>(textoRequest, headers);
+        UrlAndParams urlAndParams = getUrlAndPArams(httpServletRequest);
+        ResponseEntity<List<Map<String, Object>>> response = restTemplate().exchange(urlAndParams.url, HttpMethod.POST, entity, new ParameterizedTypeReference<List<Map<String, Object>>>() {
+        }, urlAndParams.params);
+        List<Map<String, Object>> textResponse = response.getBody();
+        AisResponse maiaResponse = new AisResponse(textResponse, maiaRequest.getStart(), maiaRequest.getEnd(), maiaRequest.getFilters());
+        if (response.getStatusCode().equals(HttpStatus.PARTIAL_CONTENT)) {
+            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).header("excluded", response.getHeaders().getFirst("excluded")).body(maiaResponse);
+        } else {
+            return ResponseEntity.ok(maiaResponse);
+        }
     }
 
     @DeleteMapping("resource/{id}/remove")

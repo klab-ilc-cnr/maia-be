@@ -7,6 +7,7 @@ import it.cnr.ilc.maia.dto.UserDto;
 import it.cnr.ilc.maia.mediator.Mediator;
 import it.cnr.ilc.maia.model.Role;
 import it.cnr.ilc.maia.request.CreateUserRequest;
+import it.cnr.ilc.maia.request.DeleteUserRequest;
 import it.cnr.ilc.maia.request.UpdateUserRequest;
 import it.cnr.ilc.maia.service.UserService;
 import it.cnr.ilc.maia.utils.UserUtils;
@@ -41,7 +42,7 @@ public class UserController {
     public ResponseEntity<UserDto> getUser(@PathVariable @NotNull Long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
-    
+
     @GetMapping(value = "/roles")
     public ResponseEntity<List<String>> getRoles() {
         return ResponseEntity.ok(userService.getRoles());
@@ -84,5 +85,14 @@ public class UserController {
         }
         UserDto responseUserDto = response.getPayload();
         return ResponseEntity.ok(responseUserDto);
+    }
+
+    @DeleteMapping("{userId}")
+    public ResponseEntity<Long> deleteUser(@PathVariable @NotNull Long userId) throws Exception {
+        XResult<Long> response = mediator.sendXResult(new DeleteUserRequest(userId));
+        if (response.IsFailed()) {
+            ResponseEntity.badRequest();
+        }
+        return ResponseEntity.ok(response.getPayload());
     }
 }
