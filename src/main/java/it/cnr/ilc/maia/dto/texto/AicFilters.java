@@ -1,13 +1,11 @@
 package it.cnr.ilc.maia.dto.texto;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class AicFilters {
 
     @NonNull

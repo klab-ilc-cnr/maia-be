@@ -2,22 +2,18 @@ package it.cnr.ilc.maia.dto.texto;
 
 import java.util.List;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
+/**
+ *
+ * @author oakgen
+ */
 @Getter
 @Setter
-public class AicRequest {
+public class WordAnnotationsRequest {
 
-    private List<Long> resources;
-
-    @NonNull
+    private List<Long> layers;
     private Integer start;
-
-    @NonNull
     private Integer end;
-
-    @NonNull
-    private AicFilters filters;
 
 }

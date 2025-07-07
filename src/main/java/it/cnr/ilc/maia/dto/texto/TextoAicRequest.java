@@ -10,16 +10,14 @@ import lombok.Getter;
 @Getter
 public class TextoAicRequest {
 
-    public final Long FEATURE_ID = 20081537l;
-    
     private final List<Long> resources;
     private final Long featureId;
     private final String value;
     private final Integer width;
 
-    public TextoAicRequest(AicRequest maiaRequest) {
+    public TextoAicRequest(AicRequest maiaRequest, Long semanticsFeatureId) {
         resources = maiaRequest.getResources();
-        featureId = FEATURE_ID;
+        featureId = semanticsFeatureId;
         value = maiaRequest.getFilters().getSearchValue();
         width = maiaRequest.getFilters().getContextLength();
     }

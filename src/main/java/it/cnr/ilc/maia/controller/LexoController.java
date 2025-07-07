@@ -19,15 +19,25 @@ import it.cnr.ilc.maia.dto.lexo.LexicographicComponent;
 import it.cnr.ilc.maia.dto.lexo.LexicographicComponentResponse;
 import it.cnr.ilc.maia.dto.lexo.LexicographicTree;
 import it.cnr.ilc.maia.dto.lexo.LexiconCreateAndAssociateEntryRequest;
+import it.cnr.ilc.maia.dto.lexo.MorphologyEntry;
+import it.cnr.ilc.maia.dto.lexo.MorphologyEntryResponse;
+import static it.cnr.ilc.maia.dto.lexo.PosTraitUtil.getLabel;
+import it.cnr.ilc.maia.dto.lexo.PosTraitsResponse;
 import it.cnr.ilc.maia.dto.lexo.UpdateDictionaryEntryStatusRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -35,11 +45,46 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 
 @RestController
 @RequestMapping("/lexo")
 public class LexoController extends ExternController {
+
+    private RestTemplate textoRestTemplate;
+
+    protected RestTemplate textoRestTemplate() throws Exception {
+        if (textoRestTemplate == null) {
+            final SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, new TrustManager[]{new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {
+                }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {
+                }
+
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+            }}, null);
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier((String hostname, SSLSession session) -> true);
+            textoRestTemplate = new RestTemplate();
+            String baseUrl = TextoController.class.getAnnotation(RequestMapping.class).value()[0].substring(1);
+            baseUrl = environment.getProperty(baseUrl + ".url");
+            if (baseUrl.endsWith("/")) {
+                baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+            }
+            DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory(baseUrl);
+            textoRestTemplate.setUriTemplateHandler(uriBuilderFactory);
+        }
+        return textoRestTemplate;
+    }
 
     @GetMapping("data/dictionaryEntry")
     public DictionaryEntryCoreResponse dataDictionaryEntry(@RequestParam(required = true) String id) throws Exception {
@@ -498,5 +543,83 @@ public class LexoController extends ExternController {
         HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
         UrlAndParams urlAndParams = getUrlAndPArams(httpServletRequest);
         restTemplate().exchange(urlAndParams.url, HttpMethod.POST, entity, Void.class, urlAndParams.params);
+    }
+
+    @GetMapping("data/dictionaryEntryPosTraits")
+    public List<PosTraitsResponse> dataDictionaryEntryPosTraits(@RequestParam(required = true) String id) throws Exception {
+        List list = new ArrayList();
+        List<LexicographicComponent> components = lexoLexicographicComponents(id);
+        for (LexicographicComponent component : components) {
+            LexicalEntry lexicalEntry = lexoGetLexicalEntry(component.getReferredEntity());
+            List<Map<String, String>> traits = lexicalEntry.getMorphology();
+            list.add(new PosTraitsResponse(traits.stream().map(m -> Map.of("trait", getLabel(m.get("trait")), "value", getLabel(m.get("value")))).toList()));
+        }
+        return list;
+    }
+
+    @GetMapping("lexinfo/data/morphology")
+    public List<MorphologyEntryResponse> lexinfoDataMorphology() throws Exception {
+        boolean filter = environment.getProperty("lexo.morphology.pos-filter", Boolean.class);
+        return lexoLexinfoDataMorphology().stream()
+                .map(m -> new MorphologyEntryResponse(m, filter))
+                .toList();
+    }
+
+    private List<MorphologyEntry> lexoLexinfoDataMorphology() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Accept", Arrays.asList("application/json"));
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String url = "/lexinfo/data/morphology";
+        ResponseEntity<String> response = restTemplate().exchange(url, HttpMethod.GET, entity, String.class);
+        return new ObjectMapper().readValue(response.getBody(), new TypeReference<List<MorphologyEntry>>() {
+        });
+    }
+
+    @GetMapping("delete/form")
+    public String deleteForm(@RequestParam(required = true) String id) throws Exception {
+        if (textoExistsAnnotationFeatire(id).isEmpty()) {
+            return lexoDelete(id, "form");
+        } else {
+            throw new Exception("Deletion not allowed: entity is referenced by existing annotations.");
+        }
+    }
+
+    @GetMapping("delete/lexicalSense")
+    public String deleteLexicalSense(@RequestParam(required = true) String id) throws Exception {
+        if (textoExistsAnnotationFeatire(id).isEmpty()) {
+            return lexoDelete(id, "lexicalSense");
+        } else {
+            throw new Exception("Deletion not allowed: entity is referenced by existing annotations.");
+        }
+    }
+
+    @GetMapping("delete/lexicalEntry")
+    public String deleteLexicalEntry(@RequestParam(required = true) String id) throws Exception {
+        if (textoExistsAnnotationFeatire(id).isEmpty()) {
+            return lexoDelete(id, "lexicalEntry");
+        } else {
+            throw new Exception("Deletion not allowed: entity is referenced by existing annotations.");
+        }
+    }
+
+    private List<Map<String, Object>> textoExistsAnnotationFeatire(String value) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String url = "/annotationFeature/list?where={where}";
+        Map<String, String> params = Map.of("where", "value='" + value + "'");
+        ResponseEntity<String> response = textoRestTemplate().exchange(url, HttpMethod.GET, entity, String.class, params);
+        return new ObjectMapper().readValue(response.getBody(), new TypeReference<List<Map<String, Object>>>() {
+        });
+    }
+
+    private String lexoDelete(String id, String topic) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String url = "/delete/" + topic + "?id={id}";
+        Map<String, String> params = Map.of("id", id);
+        return restTemplate().exchange(url, HttpMethod.GET, entity, String.class, params).getBody();
     }
 }

@@ -1,25 +1,22 @@
 package it.cnr.ilc.maia.dto.texto;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class KwicRequest {
+public class AnnotationOffset {
 
-    private List<Long> resources;
+    @NonNull
+    private Integer index;
 
-    private Long layerId;
+    @NonNull
+    private Long resourceId;
 
     @NonNull
     private Integer start;
 
     @NonNull
     private Integer end;
-
-    @NonNull
-    private KwicFilters filters;
-
 }

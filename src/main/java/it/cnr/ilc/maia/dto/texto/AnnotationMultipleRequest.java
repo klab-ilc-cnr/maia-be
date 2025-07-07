@@ -7,17 +7,15 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AicRequest {
-
-    private List<Long> resources;
+public class AnnotationMultipleRequest {
 
     @NonNull
-    private Integer start;
+    private Long layerId;
 
     @NonNull
-    private Integer end;
-
+    private List<AnnotationFeature> features;
+    
     @NonNull
-    private AicFilters filters;
-
+    private List<AnnotationOffset> offsets;
+    
 }

@@ -39,6 +39,9 @@ public class KwicResponse {
         if (filters.getRightContext() != null && !data.getRightContext().toLowerCase().contains(filters.getRightContext().toLowerCase())) {
             return false;
         }
+        if (filters.getAnnotated() != null && !data.getAnnotated().equals(filters.getAnnotated())) {
+            return false;
+        }
         return true;
     }
 

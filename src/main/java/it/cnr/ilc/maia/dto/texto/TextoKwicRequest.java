@@ -11,11 +11,13 @@ import lombok.Getter;
 public class TextoKwicRequest {
 
     private final List<Long> resources;
+    private final Long layer;
     private final String query;
     private final Integer width;
 
     public TextoKwicRequest(KwicRequest maiaRequest) {
         resources = maiaRequest.getResources();
+        layer = maiaRequest.getLayerId();
         StringBuilder builder = new StringBuilder();
         String value = maiaRequest.getFilters().getSearchValue();
         String operand = "=";
