@@ -15,6 +15,7 @@ public class KwicData {
     private final String kwic;
     private final String rightContext;
     private final Integer kwicOffset;
+    private final Boolean annotated;
 
     public KwicData(Integer id, Map<String, Object> map) {
         index = id;
@@ -26,6 +27,7 @@ public class KwicData {
         kwic = (String) map.get("token");
         rightContext = (String) map.get("right");
         kwicOffset = ((Number) map.get("start")).intValue();
+        annotated = (Boolean) map.get("annotated");
     }
 
 }

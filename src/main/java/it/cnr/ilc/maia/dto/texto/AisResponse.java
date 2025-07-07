@@ -1,6 +1,5 @@
 package it.cnr.ilc.maia.dto.texto;
 
-import it.cnr.ilc.maia.dto.texto.AisData.Offset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

@@ -16,10 +16,6 @@ public class AisData {
     private final String section;
     private final List<Offset> offsets = new ArrayList<>();
 
-    public static record Offset(Integer start, Integer end) {
-
-    }
-
     public AisData(Integer id, Map<String, Object> map) {
         index = id;
         rowIndex = (Integer) map.get("row_left_number");

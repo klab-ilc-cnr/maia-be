@@ -52,15 +52,12 @@ public class FeatureController {
         return ResponseEntity.ok(responsePayload);
     }
 
-    public ResponseEntity<Boolean> canBeDeleted(@PathVariable @NotNull Long layerId,
-            @PathVariable @NotNull Long featureId) {
+    public ResponseEntity<Boolean> canBeDeleted(@PathVariable @NotNull Long layerId, @PathVariable @NotNull Long featureId) {
         return ResponseEntity.ok(featureService.canBeDeleted(layerId, featureId));
     }
 
     @DeleteMapping("{layerId}/{featureId}")
-    public ResponseEntity<Boolean> deleteFeature(@PathVariable @NotNull Long layerId,
-            @PathVariable @NotNull Long featureId) throws Exception {
-
+    public ResponseEntity<Boolean> deleteFeature(@PathVariable @NotNull Long layerId, @PathVariable @NotNull Long featureId) throws Exception {
         XResult<Boolean> response = mediator.sendXResult(new DeleteFeatureRequest(layerId, featureId));
         if (response.IsFailed()) {
             ResponseEntity.badRequest();
