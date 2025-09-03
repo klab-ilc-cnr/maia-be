@@ -6,13 +6,21 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class KwicFilters {
+public class SearchFilters {
 
     @NonNull
     private String searchValue;
 
     @NonNull
     private String searchMode;
+
+    private String[] semantics;
+
+    private String[] poss;
+
+    private String[] namedEntities;
+
+    private String cooccurValue;
 
     private Integer contextLength;
 
@@ -27,7 +35,5 @@ public class KwicFilters {
     private String kwic;
 
     private String rightContext;
-
-    private Boolean annotated;
 
 }

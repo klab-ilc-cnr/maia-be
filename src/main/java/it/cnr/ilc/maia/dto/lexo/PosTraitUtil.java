@@ -9,17 +9,23 @@ import java.util.Properties;
  */
 public class PosTraitUtil {
 
+    private static final Properties uposs = new Properties();
     private static final Properties poss = new Properties();
     private static final Properties traits = new Properties();
 
     static {
-        try (InputStream input = PosTraitUtil.class.getResourceAsStream("/pos.properties")) {
+        try (InputStream input = PosTraitUtil.class.getResourceAsStream("/pos-lexo.properties")) {
             poss.load(input);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try (InputStream input = PosTraitUtil.class.getResourceAsStream("/trait.properties")) {
+        try (InputStream input = PosTraitUtil.class.getResourceAsStream("/trait-lexo.properties")) {
             traits.load(input);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try (InputStream input = PosTraitUtil.class.getResourceAsStream("/upos-texto.properties")) {
+            uposs.load(input);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,4 +47,7 @@ public class PosTraitUtil {
         return traits.getProperty(key);
     }
 
+    public static String getUPos(String key) {
+        return uposs.getProperty(key);
+    }
 }

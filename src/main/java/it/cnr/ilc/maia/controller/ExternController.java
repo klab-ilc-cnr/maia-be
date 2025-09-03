@@ -121,9 +121,9 @@ abstract class ExternController {
 
     protected HttpHeaders getHeaders(ResponseEntity response) {
         HttpHeaders headers = new HttpHeaders();
-        response.getHeaders().keySet().stream().forEach(k -> {
+        response.getHeaders().forEach((k, v) -> {
             if (!k.toLowerCase().startsWith("access-control-") && !k.equalsIgnoreCase("vary") && !k.equalsIgnoreCase("transfer-encoding")) {
-                headers.put(k, response.getHeaders().get(k));
+                headers.put(k, v);
             }
         });
         return headers;
