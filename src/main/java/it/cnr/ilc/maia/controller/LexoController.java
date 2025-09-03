@@ -195,9 +195,10 @@ public class LexoController extends ExternController {
 
     @PostMapping("dictionary/associate/entry")
     public Date dictionaryAssociateEntry(@RequestParam String author, @RequestParam(required = true) String prefix, @RequestParam(required = true) String baseIRI, @RequestBody DictionaryAssociateEntryRequest request) throws Exception {
-        LexicographicComponent lexicographicComponent = lexoCreateLexicographicComponent(author, prefix, baseIRI);
-        lexoUpdateLexicographicComponentPosition(request.getDictionaryEntryId(), "lexicog", "http://www.w3.org/1999/02/22-rdf-syntax-ns#_n", lexicographicComponent.getComponent(), request.getPosition());
-        lexoUpdateLinguisticRelation(lexicographicComponent.getComponent(), "lexicog", "http://www.w3.org/ns/lemon/lexicog#describes", request.getLexicalEntryId());
+//        LexicographicComponent lexicographicComponent = lexoCreateLexicographicComponent(author, prefix, baseIRI);
+//        lexoUpdateLexicographicComponentPosition(request.getDictionaryEntryId(), "lexicog", "http://www.w3.org/1999/02/22-rdf-syntax-ns#_n", lexicographicComponent.getComponent(), request.getPosition());
+//        lexoUpdateLinguisticRelation(lexicographicComponent.getComponent(), "lexicog", "http://www.w3.org/ns/lemon/lexicog#describes", request.getLexicalEntryId());
+        lexoCreateLexicographicAssociation(author, request.getDictionaryEntryId(), request.getLexicalEntryId(), prefix, baseIRI, request.getPosition());
         return new Date();
     }
 
@@ -237,6 +238,22 @@ public class LexoController extends ExternController {
         lexoUpdateLinguisticRelation(lexicographicComponent.getComponent(), "lexicog", "http://www.w3.org/ns/lemon/lexicog#describes", lexicalEntry.getLexicalEntry());
         lexoUpdateLexicographicComponentPosition(request.getDictionaryEntryId(), "lexicog", "http://www.w3.org/1999/02/22-rdf-syntax-ns#_n", lexicographicComponent.getComponent(), request.getPosition());
         return new Date();
+    }
+
+    private void lexoCreateLexicographicAssociation(String author, String dictionaryEntryID, String lexicalEntryID, String prefix, String baseIRI, Integer position) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Accept", Arrays.asList("application/json"));
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String url = "/create/lexicographicAssociation?author={author}&dictionaryEntryID={dictionaryEntryID}&lexicalEntryID={lexicalEntryID}&prefix={prefix}&baseIRI={baseIRI}&position={position}";
+        Map<String, String> params = Map.of(
+                "author", author,
+                "dictionaryEntryID", dictionaryEntryID,
+                "lexicalEntryID", lexicalEntryID,
+                "prefix", prefix,
+                "baseIRI", baseIRI,
+                "position", "" + position);
+        restTemplate().exchange(url, HttpMethod.GET, entity, String.class, params);
     }
 
     @GetMapping("data/lexicographicComponents")

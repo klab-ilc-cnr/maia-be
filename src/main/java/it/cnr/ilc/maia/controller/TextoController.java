@@ -1,5 +1,6 @@
 package it.cnr.ilc.maia.controller;
 
+import it.cnr.ilc.maia.dto.lexo.PosTraitUtil;
 import it.cnr.ilc.maia.dto.texto.AicRequest;
 import it.cnr.ilc.maia.dto.texto.AicResponse;
 import it.cnr.ilc.maia.dto.texto.AisRequest;
@@ -10,10 +11,14 @@ import it.cnr.ilc.maia.dto.texto.AnnotationMultipleRequest;
 import it.cnr.ilc.maia.dto.texto.TextoKwicRequest;
 import it.cnr.ilc.maia.dto.texto.KwicResponse;
 import it.cnr.ilc.maia.dto.texto.KwicRequest;
+import it.cnr.ilc.maia.dto.texto.SearchFilterValuesRequest;
+import it.cnr.ilc.maia.dto.texto.SearchRequest;
+import it.cnr.ilc.maia.dto.texto.SearchResponse;
 import it.cnr.ilc.maia.dto.texto.TextoAicRequest;
 import it.cnr.ilc.maia.dto.texto.TextoAisRequest;
 import it.cnr.ilc.maia.dto.texto.TextoAnnotationCreateRequest;
 import it.cnr.ilc.maia.dto.texto.TextoAnnotationFeatureCreateRequest;
+import it.cnr.ilc.maia.dto.texto.TextoFeatureValuesRequest;
 import it.cnr.ilc.maia.dto.texto.TextoWordAnnotationsRequest;
 import it.cnr.ilc.maia.dto.texto.WordAnnotationsRequest;
 import java.security.cert.X509Certificate;
@@ -340,5 +345,91 @@ public class TextoController extends ExternController {
         ResponseEntity<Map<String, Object>> response = lexoRestTemplate().exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<Map<String, Object>>() {
         }, params);
         return response.getBody();
+    }
+
+    @PostMapping("util/search")
+    public SearchResponse search(@RequestBody SearchRequest maiaRequest) throws Exception {
+        HttpHeaders headers = new HttpHeaders(getHeaders(httpServletRequest));
+        headers.remove("content-length");
+        TextoKwicRequest.FeatureIds featureIds = new TextoKwicRequest.FeatureIds(
+                environment.getProperty("texto.semantics-feature-id", Long.class),
+                environment.getProperty("texto.pos-feature-id", Long.class),
+                environment.getProperty("texto.named-entity-feature-id", Long.class)
+        );
+        TextoKwicRequest textoRequest = new TextoKwicRequest(maiaRequest, featureIds);
+        HttpEntity<TextoKwicRequest> entity = new HttpEntity<>(textoRequest, headers);
+        UrlAndParams urlAndParams = getUrlAndPArams(httpServletRequest);
+        urlAndParams.url = "/util/kwic";
+        List<Map<String, Object>> textResponse = restTemplate().exchange(urlAndParams.url, HttpMethod.POST, entity, new ParameterizedTypeReference<List<Map<String, Object>>>() {
+        }, urlAndParams.params).getBody();
+        SearchResponse maiaResponse = new SearchResponse(textResponse, maiaRequest.getStart(), maiaRequest.getEnd(), maiaRequest.getFilters());
+        return maiaResponse;
+    }
+
+    public static record SearchFilterValuesResponse(List<Semantics> semantics, List<Pos> poss) {
+
+    }
+
+    public static record Semantics(String uri, String label) {
+
+    }
+
+    public static record Pos(String upos, String label) {
+
+    }
+
+    @PostMapping("util/search-filter-values")
+    public SearchFilterValuesResponse searchFilterValues(@RequestBody SearchFilterValuesRequest maiaRequest) throws Exception {
+        TextoKwicRequest.FeatureIds featureIds = new TextoKwicRequest.FeatureIds(
+                environment.getProperty("texto.semantics-feature-id", Long.class),
+                environment.getProperty("texto.pos-feature-id", Long.class),
+                environment.getProperty("texto.named-entity-feature-id", Long.class)
+        );
+        List<String> list = textoFeatureValues(maiaRequest, featureIds.semanticsFeatureId());
+        List<Semantics> semantics = new ArrayList<>();
+        for (String string : list) {
+            semantics.add(new Semantics(string, lexoGetLexicaSenseDescription(string)));
+        }
+        list = textoFeatureValues(maiaRequest, featureIds.posFeatureId());
+        List<Pos> poss = new ArrayList<>();
+        for (String string : list) {
+            poss.add(new Pos(string, PosTraitUtil.getUPos(string)));
+        }
+        return new SearchFilterValuesResponse(semantics, poss);
+    }
+
+    private List<String> textoFeatureValues(SearchFilterValuesRequest maiaRequest, Long featureId) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        headers.put("Content-Type", Arrays.asList("application/json"));
+        TextoFeatureValuesRequest textoRequest = new TextoFeatureValuesRequest(maiaRequest, featureId);
+        HttpEntity<TextoFeatureValuesRequest> entity = new HttpEntity<>(textoRequest, headers);
+        String url = "/util/feature-values";
+        ResponseEntity<List<String>> response = restTemplate().exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<List<String>>() {
+        });
+        return response.getBody();
+    }
+
+    private String lexoGetLexicaSenseDescription(String id) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Accept", Arrays.asList("application/json"));
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String url = "/data/lexicalSense?id={id}&module={module}";
+        Map<String, String> params = Map.of("id", id, "module", "core");
+        ResponseEntity<Map<String, Object>> response = lexoRestTemplate().exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<Map<String, Object>>() {
+        }, params);
+        return (String) ((List<Map<String, Object>>) response.getBody().get("definition")).get(0).get("propertyValue");
+    }
+
+    @GetMapping("util/upos")
+    public List<Pos> upos() throws Exception {
+        HttpEntity<Void> entity = new HttpEntity<>(getHeaders(httpServletRequest));
+        UrlAndParams urlAndParams = getUrlAndPArams(httpServletRequest);
+        ResponseEntity<List<Map<String, Object>>> response = restTemplate().exchange(urlAndParams.url, HttpMethod.GET, entity, new ParameterizedTypeReference<List<Map<String, Object>>>() {
+        }, urlAndParams.params);
+        return response.getBody().stream()
+                .map(m -> new Pos((String) m.get("name"), PosTraitUtil.getUPos((String) m.get("name"))))
+                .toList();
     }
 }
