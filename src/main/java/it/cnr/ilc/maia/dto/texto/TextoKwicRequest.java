@@ -2,6 +2,7 @@ package it.cnr.ilc.maia.dto.texto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Getter;
 
 /**
@@ -43,6 +44,12 @@ public class TextoKwicRequest {
         } else {
             throw new RuntimeException("searchMode unknown");
         }
+        if (maiaRequest.getFilters().getPos() != null && !maiaRequest.getFilters().getPos().isEmpty()) {
+            builder.append("and pos in ")
+                    .append(maiaRequest.getFilters().getPos().stream()
+                            .map(p -> "'" + p + "'")
+                            .collect(Collectors.joining(",", "(", ")")));
+        }
         query = builder.toString();
         width = maiaRequest.getFilters().getContextLength();
         features = null;
@@ -66,6 +73,12 @@ public class TextoKwicRequest {
         } else {
             throw new RuntimeException("searchMode unknown");
         }
+         if (maiaRequest.getFilters().getPos() != null && !maiaRequest.getFilters().getPos().isEmpty()) {
+            builder.append("and pos in ")
+                    .append(maiaRequest.getFilters().getPos().stream()
+                            .map(p -> "'" + p + "'")
+                            .collect(Collectors.joining(",", "(", ")")));
+        }
         query = builder.toString();
         width = maiaRequest.getFilters().getContextLength();
         features = new ArrayList<>();
@@ -80,24 +93,4 @@ public class TextoKwicRequest {
         }
     }
 
-    /*
-{
- "resources":[123],
- "start":0,
- "end":50,
- "filters":{
-  "searchValue":"allegrezza",
-  "searchMode":"lemma",
-  "semantics":["http://lexica/mylexicon#LexO_2024-05-3013_26_22_095","http://lexica/mylexicon#LexO_2024-05-3013_25_58_697"],
-  "poss":["NOUN"],
-  "contextLength":10,
-  "index":1,
-  "text":"Decameron",
-  "reference": "I.Intro",
-  "leftContext": "festa",
-  "kwic": "allegrezza",
-  "rightContext": "piacere"
- }
-}
-     */
 }
