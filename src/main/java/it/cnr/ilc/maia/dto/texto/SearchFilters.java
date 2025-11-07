@@ -1,6 +1,5 @@
 package it.cnr.ilc.maia.dto.texto;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -14,8 +13,6 @@ public class SearchFilters {
 
     @NonNull
     private String searchMode;
-    
-    private List<String> pos;
 
     private String[] semantics;
 
@@ -24,6 +21,14 @@ public class SearchFilters {
     private String[] namedEntities;
 
     private String cooccurValue;
+
+    private String cooccurMode;
+
+    private String[] cooccurSemantics;
+
+    private String[] cooccurPoss;
+
+    private String[] cooccurNamedEntities;
 
     private Integer contextLength;
 
