@@ -2,6 +2,7 @@ package it.cnr.ilc.maia.dto.texto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Getter;
 
 /**
@@ -16,6 +17,8 @@ public class TextoKwicRequest {
     private final String query;
     private final Integer width;
     private final List<KwicFeatureFiler> features;
+    private final String query2;
+    private final List<KwicFeatureFiler> features2;
 
     public static record KwicFeatureFiler(Long feature, String[] values) {
 
@@ -37,15 +40,23 @@ public class TextoKwicRequest {
             value = value.replaceAll("\\*", "%").replaceAll("\\?", "_");
         }
         if ("form".equals(maiaRequest.getFilters().getSearchMode())) {
-            builder.append("value ").append(operand).append(" '").append(value).append("'");
+            builder.append("token ").append(operand).append(" '").append(value).append("'");
         } else if ("lemma".equals(maiaRequest.getFilters().getSearchMode())) {
             builder.append("lemma ").append(operand).append(" '").append(value).append("'");
         } else {
             throw new RuntimeException("searchMode unknown");
         }
+        if (maiaRequest.getFilters().getPos() != null && !maiaRequest.getFilters().getPos().isEmpty()) {
+            builder.append("and pos in ")
+                    .append(maiaRequest.getFilters().getPos().stream()
+                            .map(p -> "'" + p + "'")
+                            .collect(Collectors.joining(",", "(", ")")));
+        }
         query = builder.toString();
         width = maiaRequest.getFilters().getContextLength();
         features = null;
+        query2 = null;
+        features2 = null;
     }
 
     public TextoKwicRequest(SearchRequest maiaRequest, FeatureIds featureIds) {
@@ -60,7 +71,7 @@ public class TextoKwicRequest {
             value = value.replaceAll("\\*", "%").replaceAll("\\?", "_");
         }
         if ("form".equals(maiaRequest.getFilters().getSearchMode())) {
-            builder.append("value ").append(operand).append(" '").append(value).append("'");
+            builder.append("token ").append(operand).append(" '").append(value).append("'");
         } else if ("lemma".equals(maiaRequest.getFilters().getSearchMode())) {
             builder.append("lemma ").append(operand).append(" '").append(value).append("'");
         } else {
@@ -78,26 +89,40 @@ public class TextoKwicRequest {
         if (maiaRequest.getFilters().getNamedEntities() != null && maiaRequest.getFilters().getNamedEntities().length > 0) {
             features.add(new KwicFeatureFiler(featureIds.namedEntityFeatureId, maiaRequest.getFilters().getNamedEntities()));
         }
+        if (maiaRequest.getFilters().getCooccurValue() != null) {
+            if (maiaRequest.getFilters().getCooccurMode() == null) {
+                throw new RuntimeException("co-occurrence mode missing");
+            }
+            builder = new StringBuilder();
+            value = maiaRequest.getFilters().getCooccurValue();
+            value = value.replaceAll("'", "''");
+            operand = "=";
+            if (value.matches(".*[*?].*")) {
+                operand = "like";
+                value = value.replaceAll("\\*", "%").replaceAll("\\?", "_");
+            }
+            if ("form".equals(maiaRequest.getFilters().getCooccurMode())) {
+                builder.append("token ").append(operand).append(" '").append(value).append("'");
+            } else if ("lemma".equals(maiaRequest.getFilters().getCooccurMode())) {
+                builder.append("lemma ").append(operand).append(" '").append(value).append("'");
+            } else {
+                throw new RuntimeException("searchMode unknown");
+            }
+            query2 = builder.toString();
+        } else {
+            query2 = null;
+        }
+        List<KwicFeatureFiler> temp = new ArrayList<>();
+        if (maiaRequest.getFilters().getCooccurSemantics() != null && maiaRequest.getFilters().getCooccurSemantics().length > 0) {
+            temp.add(new KwicFeatureFiler(featureIds.semanticsFeatureId, maiaRequest.getFilters().getCooccurSemantics()));
+        }
+        if (maiaRequest.getFilters().getCooccurPoss() != null && maiaRequest.getFilters().getCooccurPoss().length > 0) {
+            temp.add(new KwicFeatureFiler(featureIds.posFeatureId, maiaRequest.getFilters().getCooccurPoss()));
+        }
+        if (maiaRequest.getFilters().getCooccurNamedEntities() != null && maiaRequest.getFilters().getCooccurNamedEntities().length > 0) {
+            temp.add(new KwicFeatureFiler(featureIds.namedEntityFeatureId, maiaRequest.getFilters().getCooccurNamedEntities()));
+        }
+        features2 = temp.isEmpty() ? null : temp;
     }
 
-    /*
-{
- "resources":[123],
- "start":0,
- "end":50,
- "filters":{
-  "searchValue":"allegrezza",
-  "searchMode":"lemma",
-  "semantics":["http://lexica/mylexicon#LexO_2024-05-3013_26_22_095","http://lexica/mylexicon#LexO_2024-05-3013_25_58_697"],
-  "poss":["NOUN"],
-  "contextLength":10,
-  "index":1,
-  "text":"Decameron",
-  "reference": "I.Intro",
-  "leftContext": "festa",
-  "kwic": "allegrezza",
-  "rightContext": "piacere"
- }
-}
-     */
 }

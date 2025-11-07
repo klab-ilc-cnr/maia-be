@@ -16,6 +16,7 @@ public class KwicData {
     private final String rightContext;
     private final Integer kwicOffset;
     private final Boolean annotated;
+    private final String cooccur;
 
     public KwicData(Integer id, Map<String, Object> map) {
         index = id;
@@ -28,6 +29,7 @@ public class KwicData {
         rightContext = (String) map.get("right");
         kwicOffset = ((Number) map.get("start")).intValue();
         annotated = (Boolean) map.get("annotated");
+        cooccur = (String) map.get("cooccur_token");
     }
 
 }

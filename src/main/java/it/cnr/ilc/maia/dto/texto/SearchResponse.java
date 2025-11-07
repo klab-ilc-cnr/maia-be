@@ -39,11 +39,6 @@ public class SearchResponse {
         if (filters.getRightContext() != null && !data.getRightContext().toLowerCase().contains(filters.getRightContext().toLowerCase())) {
             return false;
         }
-        if (filters.getCooccurValue() != null
-                && !data.getRightContext().toLowerCase().contains(filters.getCooccurValue().toLowerCase())
-                && !data.getLeftContext().toLowerCase().contains(filters.getCooccurValue().toLowerCase())) {
-            return false;
-        }
         return true;
     }
 

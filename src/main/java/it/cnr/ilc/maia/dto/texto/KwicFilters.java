@@ -1,5 +1,6 @@
 package it.cnr.ilc.maia.dto.texto;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -13,6 +14,8 @@ public class KwicFilters {
 
     @NonNull
     private String searchMode;
+    
+    private List<String> pos;
 
     private Integer contextLength;
 

@@ -273,6 +273,45 @@ public class TextoController extends ExternController {
         restTemplate().exchange(url, HttpMethod.DELETE, entity, Void.class);
     }
 
+    @PostMapping("annotation/multiple-update")
+    public Map<String, Object> annotationMultipleUpdate(@RequestBody AnnotationMultipleRequest maiaRequest) throws Exception {
+        Set<Integer> errors = new HashSet<>();
+        int updateds = 0;
+        List<Map<String, Object>> textoResult;
+        for (AnnotationOffset offset : maiaRequest.getOffsets()) {
+            try {
+                textoResult = textoWordAnnotations(maiaRequest, offset);
+                for (Map<String, Object> textoMap : textoResult) {
+                    for (Map<String, Object> textoFeature : (List<Map<String, Object>>) textoMap.get("features")) {
+                        for (AnnotationFeature feature : maiaRequest.getFeatures()) {
+                            if (((Number) textoFeature.get("feature_id")).longValue() == feature.getFeatureId()) {
+                                textoAnnotationFeatureUpdate(Long.valueOf(textoFeature.get("annotation_feature_id").toString()), feature.getValue());
+                                updateds++;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                errors.add(offset.getIndex());
+            }
+        }
+        return Map.of("success", updateds, "errors", errors);
+    }
+
+    public static record SimpleValue(String value) {
+
+    }
+
+    private void textoAnnotationFeatureUpdate(Long id, String value) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        headers.put("Content-Type", Arrays.asList("application/json"));
+        SimpleValue textoRequest = new SimpleValue(value);
+        HttpEntity<SimpleValue> entity = new HttpEntity<>(textoRequest, headers);
+        String url = "/annotationFeature/" + id + "/update";
+        restTemplate().exchange(url, HttpMethod.POST, entity, Void.class);
+    }
+
     @PostMapping("util/resource/{id}/word-annotations")
     public List<Map<String, Object>> wordAnnotations(@PathVariable("id") Long id, @RequestBody WordAnnotationsRequest request) throws Exception {
         HttpHeaders headers = new HttpHeaders(getHeaders(httpServletRequest));

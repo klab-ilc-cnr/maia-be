@@ -22,6 +22,14 @@ public class SearchFilters {
 
     private String cooccurValue;
 
+    private String cooccurMode;
+
+    private String[] cooccurSemantics;
+
+    private String[] cooccurPoss;
+
+    private String[] cooccurNamedEntities;
+
     private Integer contextLength;
 
     private Integer index;
