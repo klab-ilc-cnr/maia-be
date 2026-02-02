@@ -14,13 +14,14 @@ public class TextoKwicRequest {
 
     private final List<Long> resources;
     private final Long layer;
-    private final String query;
     private final Integer width;
-    private final List<KwicFeatureFiler> features;
+    private final Boolean reload;
+    private final String query;
+    private final List<KwicFeatureFilter> features;
     private final String query2;
-    private final List<KwicFeatureFiler> features2;
+    private final List<KwicFeatureFilter> features2;
 
-    public static record KwicFeatureFiler(Long feature, String[] values) {
+    public static record KwicFeatureFilter(Long feature, String[] values) {
 
     }
 
@@ -52,8 +53,9 @@ public class TextoKwicRequest {
                             .map(p -> "'" + p + "'")
                             .collect(Collectors.joining(",", "(", ")")));
         }
-        query = builder.toString();
+        reload = maiaRequest.getReload();
         width = maiaRequest.getFilters().getContextLength();
+        query = builder.toString();
         features = null;
         query2 = null;
         features2 = null;
@@ -77,17 +79,18 @@ public class TextoKwicRequest {
         } else {
             throw new RuntimeException("searchMode unknown");
         }
-        query = builder.toString();
+        reload = maiaRequest.getReload();
         width = maiaRequest.getFilters().getContextLength();
+        query = builder.toString();
         features = new ArrayList<>();
         if (maiaRequest.getFilters().getSemantics() != null && maiaRequest.getFilters().getSemantics().length > 0) {
-            features.add(new KwicFeatureFiler(featureIds.semanticsFeatureId, maiaRequest.getFilters().getSemantics()));
+            features.add(new KwicFeatureFilter(featureIds.semanticsFeatureId, maiaRequest.getFilters().getSemantics()));
         }
         if (maiaRequest.getFilters().getPoss() != null && maiaRequest.getFilters().getPoss().length > 0) {
-            features.add(new KwicFeatureFiler(featureIds.posFeatureId, maiaRequest.getFilters().getPoss()));
+            features.add(new KwicFeatureFilter(featureIds.posFeatureId, maiaRequest.getFilters().getPoss()));
         }
         if (maiaRequest.getFilters().getNamedEntities() != null && maiaRequest.getFilters().getNamedEntities().length > 0) {
-            features.add(new KwicFeatureFiler(featureIds.namedEntityFeatureId, maiaRequest.getFilters().getNamedEntities()));
+            features.add(new KwicFeatureFilter(featureIds.namedEntityFeatureId, maiaRequest.getFilters().getNamedEntities()));
         }
         if (maiaRequest.getFilters().getCooccurValue() != null) {
             if (maiaRequest.getFilters().getCooccurMode() == null) {
@@ -112,15 +115,15 @@ public class TextoKwicRequest {
         } else {
             query2 = null;
         }
-        List<KwicFeatureFiler> temp = new ArrayList<>();
+        List<KwicFeatureFilter> temp = new ArrayList<>();
         if (maiaRequest.getFilters().getCooccurSemantics() != null && maiaRequest.getFilters().getCooccurSemantics().length > 0) {
-            temp.add(new KwicFeatureFiler(featureIds.semanticsFeatureId, maiaRequest.getFilters().getCooccurSemantics()));
+            temp.add(new KwicFeatureFilter(featureIds.semanticsFeatureId, maiaRequest.getFilters().getCooccurSemantics()));
         }
         if (maiaRequest.getFilters().getCooccurPoss() != null && maiaRequest.getFilters().getCooccurPoss().length > 0) {
-            temp.add(new KwicFeatureFiler(featureIds.posFeatureId, maiaRequest.getFilters().getCooccurPoss()));
+            temp.add(new KwicFeatureFilter(featureIds.posFeatureId, maiaRequest.getFilters().getCooccurPoss()));
         }
         if (maiaRequest.getFilters().getCooccurNamedEntities() != null && maiaRequest.getFilters().getCooccurNamedEntities().length > 0) {
-            temp.add(new KwicFeatureFiler(featureIds.namedEntityFeatureId, maiaRequest.getFilters().getCooccurNamedEntities()));
+            temp.add(new KwicFeatureFilter(featureIds.namedEntityFeatureId, maiaRequest.getFilters().getCooccurNamedEntities()));
         }
         features2 = temp.isEmpty() ? null : temp;
     }

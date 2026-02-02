@@ -39,8 +39,12 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable @NotNull Long id) {
-        return ResponseEntity.ok(userService.getUser(id));
+    public ResponseEntity<UserDto> getUser(@PathVariable @NotNull String id) {
+        try {
+            return ResponseEntity.ok(userService.getUser(Long.valueOf(id)));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.ok(userService.getUserByUsername(id));
+        }
     }
 
     @GetMapping(value = "/roles")
