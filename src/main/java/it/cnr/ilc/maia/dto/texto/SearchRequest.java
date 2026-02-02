@@ -10,6 +10,8 @@ import lombok.Setter;
 public class SearchRequest {
 
     private List<Long> resources;
+    
+    private Boolean reload;
 
     @NonNull
     private Integer start;

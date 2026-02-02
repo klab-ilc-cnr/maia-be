@@ -13,6 +13,8 @@ public class KwicRequest {
 
     private Long layerId;
 
+    private Boolean reload;
+    
     @NonNull
     private Integer start;
 

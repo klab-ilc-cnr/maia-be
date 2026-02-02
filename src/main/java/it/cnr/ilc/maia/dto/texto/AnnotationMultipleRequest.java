@@ -13,7 +13,7 @@ public class AnnotationMultipleRequest {
     private Long layerId;
 
     @NonNull
-    private List<AnnotationFeature> features;
+    private List<AnnotationFeatureUpdate> features;
     
     @NonNull
     private List<AnnotationOffset> offsets;

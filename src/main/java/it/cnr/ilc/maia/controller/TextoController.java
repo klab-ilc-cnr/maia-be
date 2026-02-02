@@ -6,6 +6,7 @@ import it.cnr.ilc.maia.dto.texto.AicResponse;
 import it.cnr.ilc.maia.dto.texto.AisRequest;
 import it.cnr.ilc.maia.dto.texto.AisResponse;
 import it.cnr.ilc.maia.dto.texto.AnnotationFeature;
+import it.cnr.ilc.maia.dto.texto.AnnotationFeatureUpdate;
 import it.cnr.ilc.maia.dto.texto.AnnotationOffset;
 import it.cnr.ilc.maia.dto.texto.AnnotationMultipleRequest;
 import it.cnr.ilc.maia.dto.texto.TextoKwicRequest;
@@ -25,6 +26,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -278,16 +280,21 @@ public class TextoController extends ExternController {
         Set<Integer> errors = new HashSet<>();
         int updateds = 0;
         List<Map<String, Object>> textoResult;
+        Map<String, Object> textoFeature;
         for (AnnotationOffset offset : maiaRequest.getOffsets()) {
             try {
                 textoResult = textoWordAnnotations(maiaRequest, offset);
-                for (Map<String, Object> textoMap : textoResult) {
-                    for (Map<String, Object> textoFeature : (List<Map<String, Object>>) textoMap.get("features")) {
-                        for (AnnotationFeature feature : maiaRequest.getFeatures()) {
-                            if (((Number) textoFeature.get("feature_id")).longValue() == feature.getFeatureId()) {
-                                textoAnnotationFeatureUpdate(Long.valueOf(textoFeature.get("annotation_feature_id").toString()), feature.getValue());
-                                updateds++;
-                            }
+                for (Map<String, Object> textoAnnotation : textoResult) {
+                    for (AnnotationFeatureUpdate feature : maiaRequest.getFeatures()) {
+                        textoFeature = getFeature(textoAnnotation, feature.getFeatureId());
+                        if (textoFeature != null
+                                && (feature.getOldValue() == null || feature.getOldValue().equals(textoFeature.get("value")))
+                                && !feature.getValue().equals(textoFeature.get("value"))) {
+                            textoAnnotationFeatureUpdate(Long.valueOf(textoFeature.get("annotation_feature_id").toString()), feature.getValue());
+                            updateds++;
+                        } else if (textoFeature == null && feature.getOldValue() == null) {
+                            textoAnnotationFeatureCreate(Long.valueOf(textoAnnotation.get("annotation_id").toString()), feature.getFeatureId(), feature.getValue());
+                            updateds++;
                         }
                     }
                 }
@@ -296,6 +303,15 @@ public class TextoController extends ExternController {
             }
         }
         return Map.of("success", updateds, "errors", errors);
+    }
+
+    public Map<String, Object> getFeature(Map<String, Object> textoAnnotation, Long featureId) {
+        for (Map<String, Object> textoFeature : (List<Map<String, Object>>) textoAnnotation.get("features")) {
+            if (((Number) textoFeature.get("feature_id")).longValue() == featureId) {
+                return textoFeature;
+            }
+        }
+        return null;
     }
 
     public static record SimpleValue(String value) {
@@ -309,6 +325,24 @@ public class TextoController extends ExternController {
         SimpleValue textoRequest = new SimpleValue(value);
         HttpEntity<SimpleValue> entity = new HttpEntity<>(textoRequest, headers);
         String url = "/annotationFeature/" + id + "/update";
+        restTemplate().exchange(url, HttpMethod.POST, entity, Void.class);
+    }
+
+    private Map<String, Object> createAnnotationFeatureRequest(Long annotationId, Long featureId, String value) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("annotation", Map.of("id", annotationId));
+        map.put("feature", Map.of("id", featureId));
+        map.put("value", value);
+        return map;
+    }
+
+    private void textoAnnotationFeatureCreate(Long annotationId, Long featureId, String value) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Authorization", Arrays.asList(httpServletRequest.getHeader("Authorization")));
+        headers.put("Content-Type", Arrays.asList("application/json"));
+        Map<String, Object> textoRequest = createAnnotationFeatureRequest(annotationId, featureId, value);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(textoRequest, headers);
+        String url = "/annotationFeature/create";
         restTemplate().exchange(url, HttpMethod.POST, entity, Void.class);
     }
 
