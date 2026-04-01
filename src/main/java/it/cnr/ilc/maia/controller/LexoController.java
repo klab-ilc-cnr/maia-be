@@ -325,6 +325,12 @@ public class LexoController extends ExternController {
         return dictionaryEntryCores.stream().map(d -> d.getLabel()).collect(Collectors.toList());
     }
 
+    @GetMapping("data/dictionaryEntryByLexicalEntry2")
+    public DictionaryEntryCore dataDictionaryByLexicalEntry2(@RequestParam(required = true) String id) throws Exception {
+        List<DictionaryEntryCore> dictionaryEntryCores = lexoGetDictionaryEntryByLexicalEntry(id);
+        return dictionaryEntryCores.isEmpty() ? null : dictionaryEntryCores.get(0);
+    }
+
     private List<DictionaryEntryCore> lexoGetDictionaryEntryByLexicalEntry(String id) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.put("Accept", Arrays.asList("application/json"));
