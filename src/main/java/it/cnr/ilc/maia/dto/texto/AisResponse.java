@@ -14,8 +14,9 @@ public class AisResponse {
     public AisResponse(List<Map<String, Object>> response, Integer start, Integer end, AisFilters filters) {
         Map<Integer, AisData> map = new LinkedHashMap<>();
         Number sectionId;
-        int id = 0, astart, aend;
+        int id = 0, astart, aend, tstart, tend;
         AisData maia;
+        String string;
         for (Map<String, Object> texto : response) {
             sectionId = ((Number) texto.get("section_left_id"));
             sectionId = sectionId == null ? texto.hashCode() : sectionId;
@@ -24,11 +25,28 @@ public class AisResponse {
                 maia = new AisData(id++, texto);
                 if (filter(maia, filters)) {
                     map.put(sectionId.intValue(), maia);
+                } else {
+                    maia = null;
                 }
-            } else {
+            }
+            if (maia != null) {
                 astart = ((Number) texto.get("start")).intValue() - ((Number) texto.get("left_start")).intValue();
                 aend = ((Number) texto.get("end")).intValue() - ((Number) texto.get("left_start")).intValue();
-                maia.getOffsets().add(new Offset(astart, aend));
+                string = (String) texto.get("extra_value");
+                if (string == null) {
+                    maia.getOffsets().add(new Offset(astart, aend));
+                } else {
+                    String section = maia.getSection().substring(astart, aend);
+                    section = section.replaceAll("[^a-zA-Z0-9'àèéìòù]", " ");
+                    tend = 0;
+                    for (String token : string.split("\\s+")) {
+                        tstart = section.indexOf(token, tend);
+                        if (tstart != -1) {
+                            tend = tstart + token.length();
+                            maia.getOffsets().add(new Offset(astart + tstart, astart + tend));
+                        }
+                    }
+                }
             }
         }
         count = map.size();

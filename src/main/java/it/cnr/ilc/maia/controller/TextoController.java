@@ -22,6 +22,8 @@ import it.cnr.ilc.maia.dto.texto.TextoAnnotationFeatureCreateRequest;
 import it.cnr.ilc.maia.dto.texto.TextoFeatureValuesRequest;
 import it.cnr.ilc.maia.dto.texto.TextoWordAnnotationsRequest;
 import it.cnr.ilc.maia.dto.texto.WordAnnotationsRequest;
+import it.cnr.ilc.maia.service.AsyncService;
+import it.cnr.ilc.maia.service.AsyncService.AsyncInfo;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -137,7 +139,7 @@ public class TextoController extends ExternController {
     public AicResponse aic(@RequestBody AicRequest maiaRequest) throws Exception {
         HttpHeaders headers = new HttpHeaders(getHeaders(httpServletRequest));
         headers.remove("content-length");
-        Long semanticsFeatureId = environment.getProperty("texto.semantics-feature-id", Long.class);
+        Long semanticsFeatureId = environment.getProperty("texto.semantics-sense-feature-id", Long.class);
         TextoAicRequest textoRequest = new TextoAicRequest(maiaRequest, semanticsFeatureId);
         HttpEntity<TextoAicRequest> entity = new HttpEntity<>(textoRequest, headers);
         UrlAndParams urlAndParams = getUrlAndPArams(httpServletRequest);
@@ -151,8 +153,9 @@ public class TextoController extends ExternController {
     public ResponseEntity<AisResponse> ais(@RequestBody AisRequest maiaRequest) throws Exception {
         HttpHeaders headers = new HttpHeaders(getHeaders(httpServletRequest));
         headers.remove("content-length");
-        Long semanticsFeatureId = environment.getProperty("texto.semantics-feature-id", Long.class);
-        TextoAisRequest textoRequest = new TextoAisRequest(maiaRequest, semanticsFeatureId);
+        Long semanticsSenseFeatureId = environment.getProperty("texto.semantics-sense-feature-id", Long.class);
+        Long semanticsStringFeatureId = environment.getProperty("texto.semantics-string-feature-id", Long.class);
+        TextoAisRequest textoRequest = new TextoAisRequest(maiaRequest, semanticsSenseFeatureId, semanticsStringFeatureId);
         HttpEntity<TextoAisRequest> entity = new HttpEntity<>(textoRequest, headers);
         UrlAndParams urlAndParams = getUrlAndPArams(httpServletRequest);
         ResponseEntity<List<Map<String, Object>>> response = restTemplate().exchange(urlAndParams.url, HttpMethod.POST, entity, new ParameterizedTypeReference<List<Map<String, Object>>>() {
@@ -305,6 +308,52 @@ public class TextoController extends ExternController {
         return Map.of("success", updateds, "errors", errors);
     }
 
+    @PostMapping("annotation/multiple-update2")
+    public AsyncInfo annotationMultipleUpdate2(@RequestBody AnnotationMultipleRequest maiaRequest) throws Exception {
+        AsyncInfo info = AsyncService.createAsync();
+        new Thread() {
+            @Override
+            public void run() {
+                annotationMultipleUpdate(info.getUuid(), maiaRequest);
+            }
+        }.start();
+        return info;
+    }
+
+    private void annotationMultipleUpdate(String uuid, AnnotationMultipleRequest maiaRequest) {
+        try {
+            Set<Integer> errors = new HashSet<>();
+            int updateds = 0;
+            List<Map<String, Object>> textoResult;
+            Map<String, Object> textoFeature;
+            for (AnnotationOffset offset : maiaRequest.getOffsets()) {
+                try {
+                    textoResult = textoWordAnnotations(maiaRequest, offset);
+                    for (Map<String, Object> textoAnnotation : textoResult) {
+                        for (AnnotationFeatureUpdate feature : maiaRequest.getFeatures()) {
+                            textoFeature = getFeature(textoAnnotation, feature.getFeatureId());
+                            if (textoFeature != null
+                                    && (feature.getOldValue() == null || feature.getOldValue().equals(textoFeature.get("value")))
+                                    && !feature.getValue().equals(textoFeature.get("value"))) {
+                                textoAnnotationFeatureUpdate(Long.valueOf(textoFeature.get("annotation_feature_id").toString()), feature.getValue());
+                                updateds++;
+                            } else if (textoFeature == null && feature.getOldValue() == null) {
+                                textoAnnotationFeatureCreate(Long.valueOf(textoAnnotation.get("annotation_id").toString()), feature.getFeatureId(), feature.getValue());
+                                updateds++;
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    errors.add(offset.getIndex());
+                }
+                AsyncService.setPercentage(uuid, (double) (updateds + errors.size()) / maiaRequest.getOffsets().size());
+            }
+            AsyncService.setDone(uuid, Map.of("success", updateds, "errors", errors));
+        } catch (Exception er) {
+            AsyncService.setError(uuid, er);
+        }
+    }
+
     public Map<String, Object> getFeature(Map<String, Object> textoAnnotation, Long featureId) {
         for (Map<String, Object> textoFeature : (List<Map<String, Object>>) textoAnnotation.get("features")) {
             if (((Number) textoFeature.get("feature_id")).longValue() == featureId) {
@@ -354,7 +403,7 @@ public class TextoController extends ExternController {
         UrlAndParams urlAndParams = getUrlAndPArams(httpServletRequest);
         List<Map<String, Object>> textoResponse = restTemplate().exchange(urlAndParams.url, HttpMethod.POST, entity, new ParameterizedTypeReference<List<Map<String, Object>>>() {
         }, urlAndParams.params).getBody();
-        final Long semanticsFeatureId = environment.getProperty("texto.semantics-feature-id", Long.class);
+        final Long semanticsFeatureId = environment.getProperty("texto.semantics-sense-feature-id", Long.class);
         for (Map<String, Object> annotation : textoResponse) {
             for (Map<String, Object> map : (List<Map<String, Object>>) annotation.get("features")) {
                 resolveValueFromLexo(map, semanticsFeatureId);
@@ -425,7 +474,7 @@ public class TextoController extends ExternController {
         HttpHeaders headers = new HttpHeaders(getHeaders(httpServletRequest));
         headers.remove("content-length");
         TextoKwicRequest.FeatureIds featureIds = new TextoKwicRequest.FeatureIds(
-                environment.getProperty("texto.semantics-feature-id", Long.class),
+                environment.getProperty("texto.semantics-sense-feature-id", Long.class),
                 environment.getProperty("texto.pos-feature-id", Long.class),
                 environment.getProperty("texto.named-entity-feature-id", Long.class)
         );
@@ -454,7 +503,7 @@ public class TextoController extends ExternController {
     @PostMapping("util/search-filter-values")
     public SearchFilterValuesResponse searchFilterValues(@RequestBody SearchFilterValuesRequest maiaRequest) throws Exception {
         TextoKwicRequest.FeatureIds featureIds = new TextoKwicRequest.FeatureIds(
-                environment.getProperty("texto.semantics-feature-id", Long.class),
+                environment.getProperty("texto.semantics-sense-feature-id", Long.class),
                 environment.getProperty("texto.pos-feature-id", Long.class),
                 environment.getProperty("texto.named-entity-feature-id", Long.class)
         );
