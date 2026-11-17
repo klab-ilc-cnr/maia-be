@@ -39,3 +39,4 @@ replay_pid*
 private.pem
 private8.pem
 public.pem
+springboot.keystore
